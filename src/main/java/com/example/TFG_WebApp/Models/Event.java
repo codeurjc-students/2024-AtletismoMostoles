@@ -17,5 +17,7 @@ public class Event {
     private List<Discipline> disciplines;
     @OneToMany(mappedBy = "event")
     private List<Results> results;
+    private Boolean organizers;
+    private String link_image = ".../static/images/FAM.jpg";
 
 }

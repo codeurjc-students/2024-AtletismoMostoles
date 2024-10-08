@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 <!-- site metas -->
-<title>Package</title>
+<title>Eventos</title>
 <meta name="keywords" content="">
 <meta name="description" content="">
 <meta name="author" content="">	
@@ -32,124 +32,143 @@
 
 </head>
 <body>
-	<!--header section start -->
-    <div class="header_section">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="logo"><a href="index.html"><img src="../static/images/logo.png"></a></div>
+<!--header section start -->
+<div class="header_section">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="logo"><a href="index.html"><img src="../static/images/logo.png"></a></div>
+            </div>
+            <div class="col-md-9">
+                <div class="menu_text">
+                    <ul>
+                        <li><a href="index.html">INICIO</a></li>
+                        <li><a href="clubmembers.html">MIENBROS DEL CLUB</a></li>
+                        <li><a href="events.html">EVENTOS</a></li>
+                        <li><a href="ranking.html">RANKING</a></li>
+                        <li><a href="contact.html">CONTACTANOS</a></li>
+                        <li><a href="#"><img src="../static/images/search-icon.png"></a></li>
+                        <div id="myNav" class="overlay">
+                            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                            <div class="overlay-content">
+                                <a href="index.html">INICIO</a>
+                                <a href="clubmembers.html">MIEMBROS DEL CLUB</a>
+                                <a href="events.html">EVENTOS</a>
+                                <a href="events_calendar.html">CALENDARIO DE EVENTOS</a>
+                                <a href="ranking.html">RANKING</a>
+                                <a href="class.html">DISCIPLINAS</a>
+                                <a href="contact.html">CONTACTANOS</a>
+                                <a href="#">INICIAR SECION</a>
+                            </div>
+                        </div>
+                        <span  style="font-size:33px;cursor:pointer; color: #ffffff;" onclick="openNav()"><img src="../static/images/toggle.png" class="toggle_menu"></span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="col-md-9">
-                    <div class="menu_text">
-                        <ul>
-                            <li><a href="index.html">HOME</a></li>
-                            <li><a href="clubmembers.html">ABOUT</a></li>
-                            <li><a href="events.html">PACKAGE</a></li>
-                            <li><a href="gym.html">TRAINING</a></li>
-                            <li><a href="contact.html">CONTACT US</a></li>
-                            <li><a href="#"><img src="../static/images/search-icon.png"></a></li>
-                            <div id="myNav" class="overlay">
-                <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                <div class="overlay-content">
-                  <a href="index.html">HOME</a>
-                  <a href="clubmembers.html">ABOUT</a>
-                  <a href="events.html">PACKAGE</a>
-                  <a href="gym.html">TRAINING</a>
-                  <a href="contact.html">CONTACT US</a>
-                </div>
-                </div>
-                <span  style="font-size:33px;cursor:pointer; color: #ffffff;" onclick="openNav()"><img src="../static/images/toggle.png" class="toggle_menu"></span>
-                </div>  
-                </li>
-                        </ul>
-                    </div>
             </div>
         </div>
     </div>
-    <!-- header section end -->
-    <!-- our price section start -->   
+</div>
+<!-- header section end -->
+<!-- filter section start -->
+<div class="banner_section layout_padding">
+    <div id="my_Controls" class="carousel slide" data-ride="carousel">
+        <div class="tab">
+            <div class="tab-content">
+                <div class="tab-content-inner active" data-content="signup">
+                    <h3><strong>Ver los eventos:</strong></h3>
+                    <form action="/eventos/">
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <select name="continent" id="destination" class="form-control">
+                                    <option value="Organizados por el club" {{#defaultOrganizador}}selected>{{/defaultOrganizador}}{{^defaultOrganizador}}>{{/defaultOrganizador}}Organizador</option>
+                                    <option value="En los que participa"  {{#defaultParticipante}}selected>{{/defaultParticipante}}{{^defaultParticipante}}>{{/defaultParticipante}}Participante</option>
+                                    <option value="Los proximos "  {{#defaultProximos}}selected>{{/defaultProximos}}{{^defaultProximos}}>{{/defaultProximos}}Proximos</option>
+                                    <option value="Todos"  {{#defaultTodos}}selected>{{/defaultTodos}}{{^defaultTodos}}>{{/defaultTodos}}Todos</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <input type="submit" class="btn btn-primary btn-block" value="Filtrar">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- filter section end -->
+    <!-- events section start -->
     <div class="our_price_section layout_padding about_main">
         <div class="container">
-            <h1 class="our_price"><strong>OUR PRICE</strong></h1>
-            <p class="client_long_text">t is a long established fact that a reader will be distracted by the readable content 
-            of a page when looking at its layout. The point of using Lorem Ipsum is tha</p>
-            <div class="price_section_2">
-                <div class="row">
-                    <div class="col-sm-12 col-lg-4">
-                        <div class="beginner">
-                            <h2 class="beginner_text">BEGINNER PLAN</h2>
-                            <h1 class="plan_text">$40</h1>
-                            <P class="access_text">Unlimited access to the gym</P>
-                            <P class="access_text">3 classes per week</P>
-                            <P class="access_text">One Year memberships</P>
-                            <P class="access_text">FREE drinking package</P>
-                            <P class="free_text">1 Free personal training</P>
+            <h1 class="our_price"><strong>LOS MEJORES EVENTOS</strong></h1>
+            <p class="client_long_text">Como club organizamos y participamos en muchos eventos deportivos,
+                en todos podras ver nuestra gran pación por el atletismo, y el espiritu de nuestros atletas.</p>
+            <div class="gtco-section">
+                <div class="gtco-container">
+                    <div class="row">
+                        {{#events}}
+                        <div class="col-lg-4 col-md-4 col-sm-6">
+                            <div class="fh5co-card-item">
+                                <a href="{{link_image}}" class="image-popup">
+                                    <figure>
+                                        <div class="overlay"><i class="ti-plus"></i></div>
+                                        <img src="{{link_image}}" alt="Image" class="img-responsive">
+                                    </figure>
+                                </a>
+                                <div class="fh5co-text">
+                                    <h2>{{name}}</h2>
+                                    <p>Fecha: {{date}}</p>
+                                    @if($organizers)
+                                    <p>Organizamos este evento</p>
+                                    @endif
+                                    <label><a class="btn-seemore" href="...">Mas</a></label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="select_boton">
-                            <div class="select_bt"><a href="#">SELECT PLAN</a></div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-lg-4">
-                        <div class="premium">
-                            <h2 class="beginner_text">PREMIUM PLAN</h2>
-                            <h1 class="plan_text">$40</h1>
-                            <P class="access_text">access to the gym</P>
-                            <P class="access_text">3 classes per week</P>
-                            <P class="access_text">One Year memberships</P>
-                            <P class="access_text">FREE drinking package</P>
-                            <P class="free_text">1 Free personal training</P>
-                        </div>
-                        <div class="select_boton">
-                            <div class="premium_bt"><a href="#">SELECT PLAN</a></div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-lg-4">
-                        <div class="beginner">
-                            <h2 class="beginner_text">ULTIMATE PLAN</h2>
-                            <h1 class="plan_text">$40</h1>
-                            <P class="access_text">Unlimited access to the gym</P>
-                            <P class="access_text">3 classes per week</P>
-                            <P class="access_text">One Year memberships</P>
-                            <P class="access_text">FREE drinking package</P>
-                            <P class="free_text">1 Free personal training</P>
-                        </div>
-                        <div class="select_boton">
-                            <div class="select_bt"><a href="#">SELECT PLAN</a></div>
-                        </div>
+                        {{/events}}
                     </div>
                 </div>
             </div>
-        </div>
-    </div> 
-    <!-- our price section end -->   
-    <!-- footer section start -->
-    <div class="footer_section layout_padding">
-        <div class="footer_section_2">
-          <div class="container">
-            <div class="row map_addres">
-              <div class="col-sm-12 col-lg-4">
-                <div class="map_text"><img src="../static/images/map-icon.png"><span class="map_icon">No.123 Chalingt Gates, Supper market New York</span></div>
-              </div>
-                    <div class="col-sm-12 col-lg-4">
-                      <div class="map_text"><img src="../static/images/phone-icon.png"><span class="map_icon">( +71 7986543234 )</span></div>
-                    </div>
-              <div class="col-sm-12 col-lg-4">
-                <div class="map_text"><img src="../static/images/email-icon.png"><span class="map_icon">demo@gmail.com</span></div>
-              </div>
-            </div>
-            <div class="social_icon">
-              <ul>
-                <li><a href="#"><img src="../static/images/fb-icon.png"></a></li>
-                <li><a href="#"><img src="../static/images/twitter-icon.png"></a></li>
-                <li><a href="#"><img src="../static/images/in-icon.png"></a></li>
-                <li><a href="#"><img src="../static/images/instagram-icon.png"></a></li>
-              </ul>
-            </div>
-            <p class="copyright_text">Copyright 2019 All Right Reserved By.<a href="https://html.design"> Free  html Templates</p>
-          </div>
+            <label><a class="about_bt" href="events_calendar.html">Ver en el calendario</a></label>
         </div>
     </div>
-    <!-- footer section end -->
+
+    <!-- our price section end -->
+    <!-- calendar section-->
+    <a
+
+<!-- footer section start -->
+<div class="footer_section layout_padding">
+    <div class="footer_section_2">
+        <div class="container">
+            <div class="row map_addres">
+                <div class="col-sm-12 col-lg-4">
+                    <div class="map_text"><img src="../static/images/map-icon.png"><span class="map_icon"> Av. de Iker Casillas, S/N, 28935 Móstoles, Madrid</span></div>
+                </div>
+                <div class="col-sm-12 col-lg-4">
+                    <div class="map_text"><img src="../static/images/phone-icon.png"><span class="map_icon">( +34  606379480 )</span></div>
+                </div>
+                <div class="col-sm-12 col-lg-4">
+                    <div class="map_text"><img src="../static/images/email-icon.png"><span class="map_icon">demo@gmail.com</span></div>
+                </div>
+            </div>
+            <div class="social_icon">
+                <ul>
+                    <li><a href="#"><img src="../static/images/fb-icon.png"></a></li>
+                    <li><a href="#"><img src="../static/images/twitter-icon.png"></a></li>
+                    <li><a href="#"><img src="../static/images/in-icon.png"></a></li>
+                    <li><a href="#"><img src="../static/images/instagram-icon.png"></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- footer section end -->
 
 
 
