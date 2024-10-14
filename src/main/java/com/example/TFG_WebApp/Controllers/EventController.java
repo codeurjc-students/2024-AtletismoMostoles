@@ -30,4 +30,10 @@ public class EventController {
         model.addAttribute("defaultProximos",  order.equals("Proximos"));
         return "events";
     }
+
+    @GetMapping("/calendario/")
+    private String getCalendarEventes(Model model){
+
+        return "events_calendar";
+    }
 }

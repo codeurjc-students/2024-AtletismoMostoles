@@ -19,15 +19,12 @@
 <link rel="stylesheet" type="text/css" href="/css/style.css">
 <!-- Responsive-->
 <link rel="stylesheet" href="/css/responsive.css">
-<!-- fevicon -->
-<link rel="icon" href="/images/fevicon.png" type="image/gif" />
 <!-- Scrollbar Custom CSS -->
 <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
 <!-- Tweaks for older IEs-->
 <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 <!-- owl stylesheets --> 
 <link rel="stylesheet" href="/css/owl.carousel.min.css">
-<link rel="stylesheet" href="/css/owl.theme.default.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
 
 </head>
@@ -82,30 +79,27 @@
             <div class="col-md-6">
                 <div class="about_taital">
                     <h1 class="about_text">NUESTROS ENTRENADORES</h1>
-                    <div class="athlete_list">
-                        <!-- Coach list -->
-                        {{#coachs.content}}
-                        <li class="athlete_item"><a href="/coachs/{{license}}">{{license}} {{name}} {{lastname}} {{discipline}}</a></li>
-                        {{/coachs.content}}
-                    </div>
-
-                    <p>
+                        <div class="athlete_list">
+                            <a>TExto de prueba</a>
+                            <!-- Coach list -->
+                            {{#coachs.content}}
+                            <li class="athlete_item"><a href="/coachs/{{license}}">{{license}} {{name}} {{lastname}} {{discipline}}</a></li>
+                            {{/coachs.content}}
+                        </div>
                         <!-- Pagination controls -->
                         <div class="pagination">
                             <a href="/coachs/?page={{previousPageNumber}}">
-                                <button class="button" {{^hasPrevious}} disabled> {{/hasPrevious}} {{#hasPrevious}} > {{/hasPrevious}}
+                                <button class="about_bt" {{^hasPrevious}} disabled> {{/hasPrevious}} {{#hasPrevious}} > {{/hasPrevious}}
                                     Anterior
                                 </button>
                             </a>
                             <label class="pagesnumber">  {{current}} de {{coachs.totalPages}} páginas  </label>
                             <a href="/coachs/?page={{nextPageNumber}}">
-                                <button class="button" {{^hasNext}} disabled> {{/hasNext}} {{#hasNext}} > {{/hasNext}}
+                                <button class="about_bt" {{^hasNext}} disabled> {{/hasNext}} {{#hasNext}} > {{/hasNext}}
                                     Siguiente
                                 </button>
                             </a>
                         </div>
-                    </p>
-                    <div class="about_bt"><a href="#">ABOUT MORE</a></div>
                 </div>
             </div>
             <div class="col-md-6">
@@ -176,8 +170,7 @@
       <!-- sidebar -->
       <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
       <script src="js/custom.js"></script>
-      <!-- javascript --> 
-      <script src="js/owl.carousel.js"></script>
+      <!-- javascript -->
       <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
       <script>
       $(document).ready(function(){
