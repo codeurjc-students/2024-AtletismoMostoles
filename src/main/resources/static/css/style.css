@@ -1534,5 +1534,36 @@ button {
     text-decoration: underline;
 }
 
+/* basic lists styles */
+.athlete_list {
+    list-style-type: none;
+    padding: 0;
+}
+.athlete_item {
+    border-bottom: 1px solid #ffffff;
+    padding: 10px;
+}
+
+/* Page styles */
+
+.pages_number{
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
+}
+
+.btn-primary{
+    float: left;
+    font-size: 19px;
+    color: #ffffff;
+    border-radius: 5px;
+    background-color: #099657;
+    height: 50px;
+    text-align: center;
+    padding-top: 9px;
+    margin-top: 40px;
+}
+
+
 
 

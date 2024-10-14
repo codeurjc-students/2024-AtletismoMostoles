@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>WebApp02</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="Description" lang="en" content="open source x/html and css templates">
+<meta name="author" content="mlp design">
+<meta name="robots" content="index, follow">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+
+
+<!--start wrapper-->
+<div id="wrapper">
+
+<!--start body-->
+<div id="body">
+
+<!--start header-->
+<div id="banner">
+<h1>Información</h1>
+<p>A continuación se muestra información sobre como ha ido la petición anterior</p>
+</div>
+<!--end of header-->
+	<!--start containter-->
+	<div class="container">
+		<!--start content-->
+		<div class="content">
+			<h2>{{infoTitle}}</h2>
+			<div class="item">
+				<h2>{{info}}</h2>
+				{{#showReturn}}
+				<a href="{{returnDirection}}"><button>Volver</button></a>
+				{{/showReturn}}
+				<a href="{{acceptDirection}}"><button>Aceptar</button></a>
+			</div>
+		</div>
+		<!--end of content-->
+	</div>
+	<!--end of container-->
+
+</div>
+<!--end of body-->
+
+	<!--start footer-->
+
+	<!--end of footer-->	
+
+</div>
+<!--end of wrapper-->
+
+	<!--start credits-->
+	<!--//Under CC-NC 3.0, this portion must be left intact and must not be hidden.//-->
+	<div id="credits">
+	<span><a href="http://www.mlpdesign.net" title="CSS &amp; HTML by MLP Design.net">CSS &amp; HTML</a> by MLP Design<br />Licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0</a>.</span>
+	</div>
+	<!--end of credits-->
+</body>
+
+</html>

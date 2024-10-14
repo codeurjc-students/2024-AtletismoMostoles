@@ -45,7 +45,7 @@
                             <li><a href="index.html">INICIO</a></li>
                             <li><a href="clubmembers.html">MIENBROS DEL CLUB</a></li>
                             <li><a href="events.html">EVENTOS</a></li>
-                            <li><a href="ranking.html">RANKING</a></li>
+                            <li><a href="athletes">RANKING</a></li>
                             <li><a href="contact.html">CONTACTANOS</a></li>
                             <li><a href="#"><img src="../static/images/search-icon.png"></a></li>
                             <div id="myNav" class="overlay">
@@ -55,7 +55,7 @@
                                     <a href="clubmembers.html">MIEMBROS DEL CLUB</a>
                                     <a href="events.html">EVENTOS</a>
                                     <a href="events_calendar.html">CALENDARIO DE EVENTOS</a>
-                                    <a href="ranking.html">RANKING</a>
+                                    <a href="athletes">RANKING</a>
                                     <a href="class.html">DISCIPLINAS</a>
                                     <a href="contact.html">CONTACTANOS</a>
                                     <a href="#">INICIAR SECION</a>
@@ -82,6 +82,29 @@
             <div class="col-md-6">
                 <div class="about_taital">
                     <h1 class="about_text">NUESTROS ENTRENADORES</h1>
+                    <div class="athlete_list">
+                        <!-- Coach list -->
+                        {{#coachs.content}}
+                        <li class="athlete_item"><a href="/coachs/{{license}}">{{license}} {{name}} {{lastname}} {{discipline}}</a></li>
+                        {{/coachs.content}}
+                    </div>
+
+                    <p>
+                        <!-- Pagination controls -->
+                        <div class="pagination">
+                            <a href="/coachs/?page={{previousPageNumber}}">
+                                <button class="button" {{^hasPrevious}} disabled> {{/hasPrevious}} {{#hasPrevious}} > {{/hasPrevious}}
+                                    Anterior
+                                </button>
+                            </a>
+                            <label class="pagesnumber">  {{current}} de {{parks.totalPages}} páginas  </label>
+                            <a href="/coachs/?page={{nextPageNumber}}">
+                                <button class="button" {{^hasNext}} disabled> {{/hasNext}} {{#hasNext}} > {{/hasNext}}
+                                    Siguiente
+                                </button>
+                            </a>
+                        </div>
+                    </p>
                     <div class="about_bt"><a href="#">ABOUT MORE</a></div>
                 </div>
             </div>

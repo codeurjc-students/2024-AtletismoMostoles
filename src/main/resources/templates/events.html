@@ -45,7 +45,7 @@
                         <li><a href="index.html">INICIO</a></li>
                         <li><a href="clubmembers.html">MIENBROS DEL CLUB</a></li>
                         <li><a href="events.html">EVENTOS</a></li>
-                        <li><a href="ranking.html">RANKING</a></li>
+                        <li><a href="athletes">RANKING</a></li>
                         <li><a href="contact.html">CONTACTANOS</a></li>
                         <li><a href="#"><img src="../static/images/search-icon.png"></a></li>
                         <div id="myNav" class="overlay">
@@ -55,7 +55,7 @@
                                 <a href="clubmembers.html">MIEMBROS DEL CLUB</a>
                                 <a href="events.html">EVENTOS</a>
                                 <a href="events_calendar.html">CALENDARIO DE EVENTOS</a>
-                                <a href="ranking.html">RANKING</a>
+                                <a href="athletes">RANKING</a>
                                 <a href="class.html">DISCIPLINAS</a>
                                 <a href="contact.html">CONTACTANOS</a>
                                 <a href="#">INICIAR SECION</a>
@@ -83,14 +83,13 @@
                                 <select name="continent" id="destination" class="form-control">
                                     <option value="Organizados por el club" {{#defaultOrganizador}}selected>{{/defaultOrganizador}}{{^defaultOrganizador}}>{{/defaultOrganizador}}Organizador</option>
                                     <option value="En los que participa"  {{#defaultParticipante}}selected>{{/defaultParticipante}}{{^defaultParticipante}}>{{/defaultParticipante}}Participante</option>
-                                    <option value="Los proximos "  {{#defaultProximos}}selected>{{/defaultProximos}}{{^defaultProximos}}>{{/defaultProximos}}Proximos</option>
-                                    <option value="Todos"  {{#defaultTodos}}selected>{{/defaultTodos}}{{^defaultTodos}}>{{/defaultTodos}}Todos</option>
+                                    <option value="Mas Proximos"  {{#defaultProximos}}selected>{{/defaultProximos}}{{^defaultProximos}}>{{/defaultProximos}}Proximos</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-md-12">
-                                <input type="submit" class="btn btn-primary btn-block" value="Filtrar">
+                                <input type="submit" class="btn-primary btn-block" value="Filtrar">
                             </div>
                         </div>
                     </form>
@@ -125,7 +124,9 @@
                                     @if($organizers)
                                     <p>Organizamos este evento</p>
                                     @endif
-                                    <label><a class="btn-seemore" href="...">Mas</a></label>
+                                    <label><a class="btn-primary" href="...">Ver Más</a></label>
+                                    <label><a class="btn-primary" href="...}">Modificar Evento</a></label>
+                                    <label><a class="btn-primary" href="...">Eliminar Evento</a></label>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +134,12 @@
                     </div>
                 </div>
             </div>
-            <label><a class="about_bt" href="events_calendar.html">Ver en el calendario</a></label>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 text-center">
+                    <label><a class="about_bt" href="...">Añadir Nuevo Evento</a></label>
+                    <label><a class="about_bt" href="events_calendar.html">Ver en el calendario</a></label>
+                </div>
+            </div>
         </div>
     </div>
 

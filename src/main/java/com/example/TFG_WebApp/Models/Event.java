@@ -2,6 +2,7 @@ package com.example.TFG_WebApp.Models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -12,12 +13,13 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String name;
-    private Date date;
+    private LocalDate date;
     @ManyToMany(mappedBy = "events")
     private List<Discipline> disciplines;
     @OneToMany(mappedBy = "event")
     private List<Results> results;
     private Boolean organizers;
     private String link_image = ".../static/images/FAM.jpg";
+
 
 }
