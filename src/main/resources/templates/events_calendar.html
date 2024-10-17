@@ -24,7 +24,6 @@
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
     <!-- owl stylesheets -->
     <link rel="stylesheet" href="/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="/css/owl.theme.default.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
     <link
             rel="stylesheet"
@@ -33,7 +32,7 @@
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="/js/calendar_script.js" />
+    <link rel="stylesheet" href="/js/calendar-script.js" />
 </head>
 <body>
 <!--header section start -->
@@ -46,20 +45,20 @@
             <div class="col-md-9">
                 <div class="menu_text">
                     <ul>
-                        <li><a href="index.html">INICIO</a></li>
-                        <li><a href="clubmembers.html">MIENBROS DEL CLUB</a></li>
-                        <li><a href="events.html">EVENTOS</a></li>
-                        <li><a href="athletes">RANKING</a></li>
-                        <li><a href="contact.html">CONTACTANOS</a></li>
+                        <li><a href="/">INICIO</a></li>
+                        <li><a href="/coachs/">MIEMBROS DEL CLUB</a></li>
+                        <li><a href="/events/?order=Proximo">EVENTOS</a></li>
+                        <li><a href="/athletes/">RANKING</a></li>
+                        <li><a href="/events/calendario/">CALENDARIO</a></li>
                         <li><a href="#"><img src="/images/search-icon.png"></a></li>
                         <div id="myNav" class="overlay">
                             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
                             <div class="overlay-content">
-                                <a href="index.html">INICIO</a>
-                                <a href="clubmembers.html">MIEMBROS DEL CLUB</a>
-                                <a href="events.html">EVENTOS</a>
-                                <a href="events_calendar.html">CALENDARIO DE EVENTOS</a>
-                                <a href="athletes">RANKING</a>
+                                <a href="/">INICIO</a>
+                                <a href="/coachs/">MIEMBROS DEL CLUB</a>
+                                <a href="/events/?order=Proximo">EVENTOS</a>
+                                <a href="/events/calendario/">CALENDARIO DE EVENTOS</a>
+                                <a href="/athletes/">RANKING</a>
                                 <a href="class.html">DISCIPLINAS</a>
                                 <a href="contact.html">CONTACTANOS</a>
                                 <a href="#">INICIAR SECION</a>
@@ -113,20 +112,27 @@
                 </div>
                 <div class="add-event-body">
                     <div class="add-event-input">
-                        <input type="text" placeholder="Event Name" class="event-name" />
-                    </div>
-                    <div class="add-event-input">
                         <input
                                 type="text"
-                                placeholder="Event Time From"
-                                class="event-time-from"
+                                placeholder="Nombre"
                         />
                     </div>
                     <div class="add-event-input">
                         <input
                                 type="text"
-                                placeholder="Event Time To"
-                                class="event-time-to"
+                                placeholder="Fecha"
+                        />
+                    </div>
+                    <div class="add-event-input">
+                        <input
+                                type="text"
+                                placeholder="Link Imagen"
+                        />
+                    </div>
+                    <div class="add-event-input">
+                        <input
+                                type="text"
+                                placeholder="
                         />
                     </div>
                 </div>
@@ -139,7 +145,7 @@
             <i class="fas fa-plus" content="a"></i>
         </button>
     </div>
-    <script src="../static/js/calendar_script.js"></script>
+    <script src="/js/calendar-script.js"></script>
 
     <div class="row">
         <div class="col-md-8 col-md-offset-2 text-center">
@@ -193,7 +199,6 @@
     <script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
     <script src="/js/custom.js"></script>
     <!-- javascript -->
-    <script src="/js/owl.carousel.js"></script>
     <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
     <script>
         $(document).ready(function(){
@@ -225,6 +230,6 @@
 
 
 
-
+</div>
 </body>
 </html>
