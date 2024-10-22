@@ -43,4 +43,10 @@ public class EventController {
 
         return "event_details";
     }
+
+    @GetMapping("/newEvent/")
+    private String newEventForm(Model model){
+
+        return "newEventFrom";
+    }
 }

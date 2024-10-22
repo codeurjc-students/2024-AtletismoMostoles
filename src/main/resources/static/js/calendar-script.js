@@ -219,7 +219,7 @@ function getActiveDay(date) {
     eventDate.innerHTML = date + " " + months[month] + " " + year;
 }
 
-//function update events when a day is active
+/*function update events when a day is active
 function updateEvents(date) {
     let events = "";
     eventsArr.forEach((event) => {
@@ -245,6 +245,33 @@ function updateEvents(date) {
     }
     eventsContainer.innerHTML = events;
     saveEvents();
+}
+*/
+//function update events when a day is active
+function updateEvents(date) {
+    let events = "";
+    eventsArr.forEach((event) => {
+        const eventDate = new Date(event.date);  // Convertir la fecha del evento
+        if (
+            date === eventDate.getDate() &&
+            month + 1 === eventDate.getMonth() + 1 &&
+            year === eventDate.getFullYear()
+        ) {
+            events += `<div class="event">
+                <div class="title">
+                    <i class="fas fa-circle"></i>
+                    <h3 class="event-title">${event.name}</h3>
+                </div>
+                <div class="event-time">${event.timeFrom} - ${event.timeTo}</div>
+            </div>`;
+        }
+    });
+    if (events === "") {
+        events = `<div class="no-event">
+            <h3>No Events</h3>
+        </div>`;
+    }
+    eventsContainer.innerHTML = events;
 }
 
 //function to add event
@@ -308,7 +335,7 @@ addEventTo.addEventListener("input", (e) => {
     }
 });
 
-//function to add event to eventsArr
+/*function to add event to eventsArr
 addEventSubmit.addEventListener("click", () => {
     const eventTitle = addEventTitle.value;
     const eventTimeFrom = addEventFrom.value;
@@ -396,29 +423,49 @@ addEventSubmit.addEventListener("click", () => {
         activeDayEl.classList.add("event");
     }
 });
+*/
 
-//function to delete event when clicked on event
+//function to accede to details when clicked on event
 eventsContainer.addEventListener("click", (e) => {
-    if (e.target.classList.contains("event")) {
-        if (confirm("Quieres ver los detalles de este evento?")) {
-            const eventTitle = e.target.children[0].children[1].innerHTML;
-            window.location.href = '/events/details/?title=${encodeURIComponent(eventTitle)}';
+    // Verificar que se ha hecho clic en un evento
+    const eventElement = e.target.closest(".event");
+    if (eventElement) {
+        if (confirm("¿Quieres ver los detalles de este evento?")) {
+            const eventTitle = eventElement.querySelector(".event-title").innerHTML;
+            window.location.href = `/events/details/?title=${encodeURIComponent(eventTitle)}`;
         }
     }
 });
 
-//function to save events in local storage
+/*function to save events in local storage
 function saveEvents() {
     localStorage.setItem("events", JSON.stringify(eventsArr));
 }
-
-//function to get events from local storage
+*/
+/*function to get events from local storage
 function getEvents() {
     //check if events are already saved in local storage then return event else nothing
     if (localStorage.getItem("events") === null) {
         return;
     }
     eventsArr.push(...JSON.parse(localStorage.getItem("events")));
+} */
+//function to get events from the API
+function getEvents() {
+    // Obtener el mes y el año actuales
+    month = month;
+    year = year;
+
+    // Hacer una petición GET a la API de eventos
+    fetch(`/api/events?month=${month}&year=${year}`)
+        .then(response => response.json())
+        .then(data => {
+            // Guardar los eventos obtenidos en el array local (si aún necesitas localmente para manipulación)
+            eventsArr.length = 0;  // Limpia el array existente
+            eventsArr.push(...data);  // Agrega los eventos obtenidos de la base de datos
+            initCalendar();  // Inicializa el calendario con los nuevos eventos
+        })
+        .catch(error => console.error("Error fetching events:", error));
 }
 
 function convertTime(time) {

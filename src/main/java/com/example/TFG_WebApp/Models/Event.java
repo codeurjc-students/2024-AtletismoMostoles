@@ -78,4 +78,12 @@ public class Event {
     public void setLink_image(String link_image) {
         this.link_image = link_image;
     }
+
+    public String getLink_map() {
+        return link_map;
+    }
+    public void setLink_map(String link_map) {
+        this.link_map = link_map;
+    }
+
 }
