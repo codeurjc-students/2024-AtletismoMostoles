@@ -36,4 +36,11 @@ public class EventController {
 
         return "events_calendar";
     }
+
+    @GetMapping("/details/")
+    private String getEventDetails(Model model, @RequestParam String id){
+
+
+        return "event_details";
+    }
 }

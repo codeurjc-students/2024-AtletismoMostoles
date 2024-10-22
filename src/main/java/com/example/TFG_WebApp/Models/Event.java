@@ -20,6 +20,7 @@ public class Event {
     private List<Results> results;
     private Boolean organizers;
     private String link_image = ".../static/images/FAM.jpg";
+    private String link_map;
 
 
     public long getId() {

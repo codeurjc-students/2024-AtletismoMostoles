@@ -1419,6 +1419,12 @@ button {
     font-weight: 400;
     color: #373c4f;
 }
+
+.add-event-body .add-event-input label {
+    padding-left: -4px ;
+    color: #0b0e13;
+
+}
 .add-event-body .add-event-input input::placeholder {
     color: #a5a5a5;
 }
