@@ -47,6 +47,6 @@ public class EventController {
     @GetMapping("/newEvent/")
     private String newEventForm(Model model){
 
-        return "newEventFrom";
+        return "newEventForm";
     }
 }
