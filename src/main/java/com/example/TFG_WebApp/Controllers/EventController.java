@@ -1,5 +1,7 @@
 package com.example.TFG_WebApp.Controllers;
 
+import com.example.TFG_WebApp.Models.Discipline;
+import com.example.TFG_WebApp.Services.DisciplineService;
 import com.example.TFG_WebApp.Services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,12 +10,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/events/")
 public class EventController {
 
     @Autowired
     private EventService eventService;
+    @Autowired
+    private DisciplineService disciplineService;
 
     @GetMapping("/")
     private String getEvents(Model model, @RequestParam String order){
@@ -40,13 +46,14 @@ public class EventController {
     @GetMapping("/details/")
     private String getEventDetails(Model model, @RequestParam String id){
 
-
         return "event_details";
     }
 
     @GetMapping("/newEvent/")
     private String newEventForm(Model model){
-
+        List<Discipline> disciplines = disciplineService.getAllDisciplines();
+        model.addAttribute("disciplines", disciplines);
+        model.addAttribute("direction", "/events/");
         return "newEventForm";
     }
 }
