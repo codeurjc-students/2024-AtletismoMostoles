@@ -25,5 +25,7 @@ public class Discipline {
             joinColumns = @JoinColumn(name = "discipline"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     private List<Event> events;
+    private String link_img;
+    private String class_schedule;
 
 }

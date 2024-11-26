@@ -1,31 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>WebApp02</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="Description" lang="en" content="open source x/html and css templates">
-<meta name="author" content="mlp design">
-<meta name="robots" content="index, follow">
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/css/responsive.css">
+	<!-- basic -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- mobile metas -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+	<!-- site metas -->
+	<title>Asociacion Atletica de Mostoles</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!-- bootstrap css -->
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+	<!-- style css -->
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<!-- Responsive-->
+	<link rel="stylesheet" href="/css/responsive.css">
+	<!-- fevicon -->
+	<link rel="icon" href="/images/fevicon.png" type="image/gif" />
+	<!-- Scrollbar Custom CSS -->
+	<link rel="stylesheet" href="/css/jquery.mCustomScrollbar.min.css">
+	<!-- Tweaks for older IEs-->
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+	<!-- owl stylesheets -->
+	<link rel="stylesheet" href="/css/owl.carousel.min.css">
+	<link rel="stylesheet" href="/css/owl.theme.default.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+
 </head>
 <body>
-
-
-<!--start wrapper-->
-<div id="wrapper">
-
-<!--start body-->
-<div id="body">
-
-<!--start header-->
-<div id="banner">
-<h1>Información</h1>
-<p>A continuación se muestra información sobre como ha ido la petición anterior</p>
+<!--header section start -->
+<div class="header_section">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="logo"><a href="index.html"><img src="/images/logo.png"></a></div>
+			</div>
+			<div class="col-md-9">
+				<div class="menu_text">
+					<ul>
+						<li><a href="/">INICIO</a></li>
+						<li><a href="/coachs/">MIENBROS DEL CLUB</a></li>
+						<li><a href="/events/?order=Proximo">EVENTOS</a></li>
+						<li><a href="/athletes/">RANKING</a></li>
+						<li><a href="/events/calendario/">CALENDARIO</a></li>
+						<li><a href="#"><img src="/images/search-icon.png"></a></li>
+						<div id="myNav" class="overlay">
+							<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+							<div class="overlay-content">
+								<a href="/">INICIO</a>
+								<a href="/coachs/">MIEMBROS DEL CLUB</a>
+								<a href="/events/?order=Proximo">EVENTOS</a>
+								<a href="/events/calendario/">CALENDARIO DE EVENTOS</a>
+								<a href="/athletes/">RANKING</a>
+								<a href="class.html">DISCIPLINAS</a>
+								<a href="#">INICIAR SECION</a>
+							</div>
+						</div>
+						<span  style="font-size:33px;cursor:pointer; color: #ffffff;" onclick="openNav()"><img src="/images/toggle.png" class="toggle_menu"></span>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-<!--end of header-->
+<!-- header section end -->
 	<!--start containter-->
 	<div class="container">
 		<!--start content-->
@@ -34,31 +76,42 @@
 			<div class="item">
 				<h2>{{info}}</h2>
 				{{#showReturn}}
-				<a href="{{returnDirection}}"><button>Volver</button></a>
+				<a href="{{returnDirection}}"><button class = "about_bt">Volver</button></a>
 				{{/showReturn}}
-				<a href="{{acceptDirection}}"><button>Aceptar</button></a>
+				<a href="{{acceptDirection}}"><button class = "about_bt">Aceptar</button></a>
 			</div>
 		</div>
 		<!--end of content-->
 	</div>
 	<!--end of container-->
 
-</div>
-<!--end of body-->
-
-	<!--start footer-->
-
-	<!--end of footer-->	
-
-</div>
-<!--end of wrapper-->
-
-	<!--start credits-->
-	<!--//Under CC-NC 3.0, this portion must be left intact and must not be hidden.//-->
-	<div id="credits">
-	<span><a href="http://www.mlpdesign.net" title="CSS &amp; HTML by MLP Design.net">CSS &amp; HTML</a> by MLP Design<br />Licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0</a>.</span>
+<!-- footer section start -->
+<div class="footer_section layout_padding">
+	<div class="footer_section_2">
+		<div class="container">
+			<div class="row map_addres">
+				<div class="col-sm-12 col-lg-4">
+					<div class="map_text"><img src="/images/map-icon.png"><span class="map_icon"> Av. de Iker Casillas, S/N, 28935 Móstoles, Madrid</span></div>
+				</div>
+				<div class="col-sm-12 col-lg-4">
+					<div class="map_text"><img src="/images/phone-icon.png"><span class="map_icon">( +34  606379480 )</span></div>
+				</div>
+				<div class="col-sm-12 col-lg-4">
+					<div class="map_text"><img src="/images/email-icon.png"><span class="map_icon">demo@gmail.com</span></div>
+				</div>
+			</div>
+			<div class="social_icon">
+				<ul>
+					<li><a href="#"><img src="/images/fb-icon.png"></a></li>
+					<li><a href="#"><img src="/images/twitter-icon.png"></a></li>
+					<li><a href="#"><img src="/images/in-icon.png"></a></li>
+					<li><a href="#"><img src="/images/instagram-icon.png"></a></li>
+				</ul>
+			</div>
+		</div>
 	</div>
-	<!--end of credits-->
+</div>
+</div>
+<!-- footer section end -->
 </body>
-
 </html>

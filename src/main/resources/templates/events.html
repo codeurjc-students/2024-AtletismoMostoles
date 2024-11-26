@@ -77,9 +77,9 @@
                         <div class="row form-group">
                             <div class="col-md-12">
                                 <select name="order" id="order" class="form-control">
-                                    <option value="Organizados por el club" {{#defaultOrganizador}}selected>{{/defaultOrganizador}}{{^defaultOrganizador}}>{{/defaultOrganizador}}Organizador</option>
-                                    <option value="En los que participa"  {{#defaultParticipante}}selected>{{/defaultParticipante}}{{^defaultParticipante}}>{{/defaultParticipante}}Participante</option>
-                                    <option value="Mas Proximos"  {{#defaultProximos}}selected>{{/defaultProximos}}{{^defaultProximos}}>{{/defaultProximos}}Proximos</option>
+                                    <option value="Proximos"  {{#defaultProximos}}selected>{{/defaultProximos}}{{^defaultProximos}}>{{/defaultProximos}}Mas Proximos</option>
+                                    <option value="Organizador" {{#defaultOrganizador}}selected>{{/defaultOrganizador}}{{^defaultOrganizador}}>{{/defaultOrganizador}}Organizados por el club</option>
+                                    <option value="Participante"  {{#defaultParticipante}}selected>{{/defaultParticipante}}{{^defaultParticipante}}>{{/defaultParticipante}}En los que participa</option>
                                 </select>
                             </div>
                         </div>
@@ -117,12 +117,12 @@
                                 <div class="fh5co-text">
                                     <h2>{{name}}</h2>
                                     <p>Fecha: {{date}}</p>
-                                    @if($organizers)
+                                    {{#organizers}}
                                     <p>Organizamos este evento</p>
-                                    @endif
+                                    {{/organizers}}
                                     <label><a class="btn-primary" href="...">Ver Más</a></label>
                                     <label><a class="btn-primary" href="...}">Modificar Evento</a></label>
-                                    <label><a class="btn-primary" href="...">Eliminar Evento</a></label>
+                                    <label><a class="btn-primary" href="/events/eliminar/{{id}}/">Eliminar Evento</a></label>
                                 </div>
                             </div>
                         </div>

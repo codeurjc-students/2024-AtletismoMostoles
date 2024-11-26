@@ -38,11 +38,11 @@ const months = [
 ];
 
 const eventsArr = [];
-getEvents();
 console.log(eventsArr);
 
 //function to add days in days with class day and prev-date next-date on previous month and next month days and active on today
 function initCalendar() {
+    getEvents();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const prevLastDay = new Date(year, month, 0);
@@ -460,7 +460,7 @@ function getEvents() {
     fetch(`/api/events?month=${month}&year=${year}`)
         .then(response => response.json())
         .then(data => {
-            // Guardar los eventos obtenidos en el array local (si aún necesitas localmente para manipulación)
+            // Guardar los eventos obtenidos en el array local (si aún se necesita localmente para manipulación)
             eventsArr.length = 0;  // Limpia el array existente
             eventsArr.push(...data);  // Agrega los eventos obtenidos de la base de datos
             initCalendar();  // Inicializa el calendario con los nuevos eventos

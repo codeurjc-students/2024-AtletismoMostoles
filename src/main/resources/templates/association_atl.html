@@ -68,62 +68,57 @@
     </div>
 </div>
 <!-- header section end -->
-
-<!-- form section start -->
-<div class="about_section_2 layout_padding">
+<!-- top section start -->
+<div class="project_section layout_padding">
     <div class="container">
-        <h1 class="about_text_2"><strong>CREAR NUEVO EVENTO</strong></h1>
-        <p class="client_long_text"> Introduce los datos del nuevo evento</p>
+        <h1 class="partner_text">CLUB DE ATLETISMO<br>A.A. MOSTOLES</h1>
+        <p class="lorem_ipsum_text">
+            Nuestro equipo cuenta con un excelente grupo de entrenadores, y atletas que portan con orgullo los colore del equipo.
+        </p>
+        <div class="choice_main">
+            <div class="choose_bt"><a href="/coachs/">Nuestros Entrenadores</a></div>
+        </div>
     </div>
 </div>
-<div class="about_section about_main">
-    <div class="row">
-        <form method="post" action="{{direction}}">
-            <div class="col-md-6">
-                <div class="container">
-                    <h2 class="request_text">ENCUENTRA AL ATLETA QUE BUSCAS</h2>
-                        <div class="form-group">
-                            <input type="text" placeholder="Nombre" name="name">
-                        </div>
-                        <div class="form-group">
-                            <input type="date" placeholder="Fecha" name="date">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" placeholder="Link_Direccion" name="link_map">
-                        </div>
-                        <div class="form-group">
-                            <input type="text" placeholder="Link_Imagen" name="link_image">
-                        </div>
-                        <div class="form_group">
-                            <input type="checkbox" name="organizer"> <a style="color: white">Organizado por el club</a>
-                        </div>
-                        <div>
-                            <h3 style="color: white">Disciplinas: </h3>
-                            <select name="idDisciplina" multiple class="form-control">
-                                {{#disciplines}}
-                                <option value="{{id}}">{{name}}</option>
-                                {{/disciplines}}
-                            </select>
-                        </div>
-                        <div class="form_group">
-                        </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="ranking_filter_section">
-                    <div class="row">
-                        <div class="contact_bg">
-                            <div class="input_main">
-                                <input type="submit" class="send_bt" value ="Crear Evento">
+<!-- top section end-->
+<!-- disciplines section start -->
+<div class="our_price_section layout_padding about_main">
+    <div class="container">
+        <h1 class="our_price"><strong>LAS DISTINTAS DISCIPLINAS DEL ATLETISMO</strong></h1>
+        <p class="client_long_text">En el club contamos con excelentes entrenadores para las diversas disciplinas que formar parte del atletismo</p>
+        <div class="gtco-section">
+            <div class="gtco-container">
+                <div class="row">
+                    {{#disciplies}}
+                    <div class="col-lg-4 col-md-4 col-sm-6">
+                        <div class="fh5co-card-item">
+                            <a href="{{link_img}}" class="image-popup">
+                                <figure>
+                                    <div class="overlay"><i class="ti-plus"></i></div>
+                                    <img src="{{link_img}}" alt="Image" class="img-responsive">
+                                </figure>
+                            </a>
+                            <div class="fh5co-text">
+                                <h2>{{name}}</h2>
+                                <p>Horario: {{class_schedule}}</p>
+                                <label><a class="btn-primary" href="...">Ver Más</a></label>
+                                <label><a class="btn-primary" href="...}">Modificar Disciplina</a></label>
+                                <label><a class="btn-primary" href="...">Eliminar Disciplina</a></label>
                             </div>
                         </div>
                     </div>
+                    {{/disciplines}}
                 </div>
             </div>
-        </form>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <label><a class="about_bt" href="/events/newEvent/">Añadir Nueva Disciplina</a></label>
+            </div>
+        </div>
     </div>
 </div>
-<!-- form section end -->
+<!-- disciplines section end -->
 
 <!-- footer section start -->
 <div class="footer_section layout_padding">

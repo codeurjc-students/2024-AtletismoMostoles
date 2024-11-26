@@ -1,16 +1,17 @@
 package com.example.TFG_WebApp.Controllers;
 
 import com.example.TFG_WebApp.Models.Discipline;
+import com.example.TFG_WebApp.Models.Event;
 import com.example.TFG_WebApp.Services.DisciplineService;
 import com.example.TFG_WebApp.Services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/events/")
@@ -56,4 +57,39 @@ public class EventController {
         model.addAttribute("direction", "/events/");
         return "newEventForm";
     }
+
+    @PostMapping("/")
+    public String addEvent(Model model, @RequestParam String name, @RequestParam LocalDate date, @RequestParam String link_map, @RequestParam String link_image, @RequestParam(required = false) String organizer){
+        boolean organizerB;
+        if (organizer != null){
+            organizerB = Boolean.parseBoolean(organizer);
+        } else {
+            organizerB = false;
+        }
+        Event newEvent = eventService.createEvent(new Event(name, date,organizerB, Optional.of(link_image), link_map));
+        model.addAttribute("isError", false);
+        model.addAttribute("infoTitle", "Nuevo evento");
+        model.addAttribute("returnDirection", "/events/?order=Proximo");
+        model.addAttribute("acceptDirection", "/events/?order=Proximo");
+        model.addAttribute("info","Se ha añadido con éxito el nuevo evento \"" + newEvent.getName() + "\".");
+        return "infoScreen";
+    }
+
+    @GetMapping("/eliminar/{idEvent}/")
+    public String eliminarEvent(@PathVariable Long idEvent, Model model){
+        Optional<Event> deletEvent = eventService.deleteEvent(idEvent);
+        model.addAttribute("infoTitle", "Eliminación de Evento");
+        model.addAttribute("returnDirection", "/events/?order=Proximo");
+        model.addAttribute("acceptDirection", "/events/?order=Proximo");
+        if(deletEvent != null){
+            model.addAttribute("isError", false);
+            model.addAttribute("info","Se ha eliminado con éxito el país \"" + deletEvent.get().getName() + "\".");
+        } else {
+            model.addAttribute("isError", true);
+            model.addAttribute("info","No se ha podido eliminar el país \"" + deletEvent.get().getName() + "\".");
+        }
+        return "infoScreen";
+
+    }
+
 }

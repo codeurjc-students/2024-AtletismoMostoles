@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 public class Event {
@@ -22,6 +23,18 @@ public class Event {
     private String link_image = ".../static/images/FAM.jpg";
     private String link_map;
 
+    public Event(){
+    }
+
+    public Event(String name, LocalDate date, Boolean organizers, Optional<String> link_image, String link_map) {
+        this.name = name;
+        this.date = date;
+        this.organizers = organizers;
+        if (link_image != null) {
+            this.link_image = link_image.get();
+        }
+        this.link_map = link_map;
+    }
 
     public long getId() {
         return id;

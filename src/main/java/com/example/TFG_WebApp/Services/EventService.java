@@ -58,9 +58,12 @@ public class EventService {
     }
 
     // Eliminar un evento
-    public void deleteEvent(Long id) {
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
-        eventRepository.delete(event);
+    public Optional<Event> deleteEvent(Long id) {
+        Optional<Event> event = getEventById(id);
+        if (event.isPresent()) {
+            eventRepository.delete(event.get());
+        }
+        return event    ;
     }
+
 }
