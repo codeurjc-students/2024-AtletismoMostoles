@@ -17,19 +17,19 @@ public class EventService {
     private EventRepository eventRepository;
 
     public Collection<Event> getNextEvents() {
-        LocalDate today = LocalDate.now();
-        return eventRepository.findByDateAfter(today);
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        return eventRepository.findByDateAfterOrderByDate(yesterday);
     }
 
     public Collection<Event> getEventeOrganized(Boolean organizer) {
-        return eventRepository.findByOrganizers(organizer);
+        return eventRepository.findByOrganizersOrderByDate(organizer);
     }
 
     // Obtener todos los eventos por mes y año
     public List<Event> getAllEvents(int month, int year) {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-        return eventRepository.findByDateBetween(startDate, endDate);
+        return eventRepository.findByMonthAndYear(month, year);
     }
 
     // Obtener evento por ID

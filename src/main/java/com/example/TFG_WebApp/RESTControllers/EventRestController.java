@@ -18,7 +18,7 @@ public class EventRestController {
     // Obtener todos los eventos por mes y año
     @GetMapping
     public List<Event> getAllEvents(@RequestParam int month, @RequestParam int year) {
-        List<Event> events = eventService.getAllEvents(month, year);
+        List<Event> events = eventService.getAllEvents(month+1, year);
         //events.forEach(event -> event.setDate(event.getDate().toString())); // Convertir LocalDate a String
         return events;
     }

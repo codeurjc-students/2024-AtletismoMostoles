@@ -38,11 +38,11 @@ const months = [
 ];
 
 const eventsArr = [];
+getEvents();
 console.log(eventsArr);
 
 //function to add days in days with class day and prev-date next-date on previous month and next month days and active on today
 function initCalendar() {
-    getEvents();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const prevLastDay = new Date(year, month, 0);
@@ -107,7 +107,7 @@ function prevMonth() {
         month = 11;
         year--;
     }
-    initCalendar();
+    getEvents();
 }
 
 function nextMonth() {
@@ -116,7 +116,7 @@ function nextMonth() {
         month = 0;
         year++;
     }
-    initCalendar();
+    getEvents();
 }
 
 prev.addEventListener("click", prevMonth);
@@ -219,34 +219,6 @@ function getActiveDay(date) {
     eventDate.innerHTML = date + " " + months[month] + " " + year;
 }
 
-/*function update events when a day is active
-function updateEvents(date) {
-    let events = "";
-    eventsArr.forEach((event) => {
-        if (
-            date === event.day &&
-            month + 1 === event.month &&
-            year === event.year
-        ) {
-            event.events.forEach((event) => {
-                events += `<div class="event">
-            <div class="title">
-              <i class="fas fa-circle"></i>
-              <h3 class="event-title">${event.title}</h3>
-            </div>
-        </div>`;
-            });
-        }
-    });
-    if (events === "") {
-        events = `<div class="no-event">
-            <h3>No Events</h3>
-        </div>`;
-    }
-    eventsContainer.innerHTML = events;
-    saveEvents();
-}
-*/
 //function update events when a day is active
 function updateEvents(date) {
     let events = "";
@@ -257,12 +229,16 @@ function updateEvents(date) {
             month + 1 === eventDate.getMonth() + 1 &&
             year === eventDate.getFullYear()
         ) {
-            events += `<div class="event">
+            const organizerMessage = event.organizers
+                ? `<p class="organizer-message">Evento organizado por el club</p>`
+                : "";
+            // Incluye la ID del evento como atributo data-id
+            events += `<div class="event" data-id="${event.id}">
                 <div class="title">
                     <i class="fas fa-circle"></i>
                     <h3 class="event-title">${event.name}</h3>
                 </div>
-                <div class="event-time">${event.timeFrom} - ${event.timeTo}</div>
+                ${organizerMessage}
             </div>`;
         }
     });
@@ -273,6 +249,7 @@ function updateEvents(date) {
     }
     eventsContainer.innerHTML = events;
 }
+
 
 //function to add event
 addEventBtn.addEventListener("click", () => {
@@ -335,121 +312,22 @@ addEventTo.addEventListener("input", (e) => {
     }
 });
 
-/*function to add event to eventsArr
-addEventSubmit.addEventListener("click", () => {
-    const eventTitle = addEventTitle.value;
-    const eventTimeFrom = addEventFrom.value;
-    const eventTimeTo = addEventTo.value;
-    if (eventTitle === "" || eventTimeFrom === "" || eventTimeTo === "") {
-        alert("Please fill all the fields");
-        return;
-    }
-
-    //check correct time format 24 hour
-    const timeFromArr = eventTimeFrom.split(":");
-    const timeToArr = eventTimeTo.split(":");
-    if (
-        timeFromArr.length !== 2 ||
-        timeToArr.length !== 2 ||
-        timeFromArr[0] > 23 ||
-        timeFromArr[1] > 59 ||
-        timeToArr[0] > 23 ||
-        timeToArr[1] > 59
-    ) {
-        alert("Invalid Time Format");
-        return;
-    }
-
-    const timeFrom = convertTime(eventTimeFrom);
-    const timeTo = convertTime(eventTimeTo);
-
-    //check if event is already added
-    let eventExist = false;
-    eventsArr.forEach((event) => {
-        if (
-            event.day === activeDay &&
-            event.month === month + 1 &&
-            event.year === year
-        ) {
-            event.events.forEach((event) => {
-                if (event.title === eventTitle) {
-                    eventExist = true;
-                }
-            });
-        }
-    });
-    if (eventExist) {
-        alert("Event already added");
-        return;
-    }
-    const newEvent = {
-        title: eventTitle,
-        time: timeFrom + " - " + timeTo,
-    };
-    console.log(newEvent);
-    console.log(activeDay);
-    let eventAdded = false;
-    if (eventsArr.length > 0) {
-        eventsArr.forEach((item) => {
-            if (
-                item.day === activeDay &&
-                item.month === month + 1 &&
-                item.year === year
-            ) {
-                item.events.push(newEvent);
-                eventAdded = true;
-            }
-        });
-    }
-
-    if (!eventAdded) {
-        eventsArr.push({
-            day: activeDay,
-            month: month + 1,
-            year: year,
-            events: [newEvent],
-        });
-    }
-
-    console.log(eventsArr);
-    addEventWrapper.classList.remove("active");
-    addEventTitle.value = "";
-    addEventFrom.value = "";
-    addEventTo.value = "";
-    updateEvents(activeDay);
-    //select active day and add event class if not added
-    const activeDayEl = document.querySelector(".day.active");
-    if (!activeDayEl.classList.contains("event")) {
-        activeDayEl.classList.add("event");
-    }
-});
-*/
-
 //function to accede to details when clicked on event
 eventsContainer.addEventListener("click", (e) => {
     // Verificar que se ha hecho clic en un evento
     const eventElement = e.target.closest(".event");
     if (eventElement) {
+        const eventId = eventElement.getAttribute("data-id"); // Obtén el ID del evento
+        console.log("ID del evento seleccionado:", eventId);
+
         if (confirm("¿Quieres ver los detalles de este evento?")) {
-            const eventTitle = eventElement.querySelector(".event-title").innerHTML;
-            window.location.href = `/events/details/?title=${encodeURIComponent(eventTitle)}`;
+            // Redirigir usando el ID
+            window.location.href = `/events/details/?id=${encodeURIComponent(eventId)}`;
         }
     }
 });
 
-/*function to save events in local storage
-function saveEvents() {
-    localStorage.setItem("events", JSON.stringify(eventsArr));
-}
-*/
-/*function to get events from local storage
-function getEvents() {
-    //check if events are already saved in local storage then return event else nothing
-    if (localStorage.getItem("events") === null) {
-        return;
-    }
-    eventsArr.push(...JSON.parse(localStorage.getItem("events")));
-} */
+
 //function to get events from the API
 function getEvents() {
     // Obtener el mes y el año actuales
@@ -468,13 +346,6 @@ function getEvents() {
         .catch(error => console.error("Error fetching events:", error));
 }
 
-function convertTime(time) {
-    //convert time to 24 hour format
-    let timeArr = time.split(":");
-    let timeHour = timeArr[0];
-    let timeMin = timeArr[1];
-    let timeFormat = timeHour >= 12 ? "PM" : "AM";
-    timeHour = timeHour % 12 || 12;
-    time = timeHour + ":" + timeMin + " " + timeFormat;
-    return time;
-}
+document.addEventListener("click", (e) => {
+    console.log("Elemento clicado:", e.target);
+});
