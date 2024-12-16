@@ -314,7 +314,13 @@ addEventTo.addEventListener("input", (e) => {
 
 //function to accede to details when clicked on event
 eventsContainer.addEventListener("click", (e) => {
-    // Verificar que se ha hecho clic en un evento
+    if (e.target.classList.contains("event")) {
+        if (confirm("Quieres ver los detalles de este evento?")) {
+            const eventTitle = e.target.children[0].children[1].innerHTML;
+            window.location.href = '/events/details/?title=${encodeURIComponent(eventTitle)}';
+        }
+    }
+    /* Verificar que se ha hecho clic en un evento
     const eventElement = e.target.closest(".event");
     if (eventElement) {
         const eventId = eventElement.getAttribute("data-id"); // Obtén el ID del evento
@@ -324,7 +330,7 @@ eventsContainer.addEventListener("click", (e) => {
             // Redirigir usando el ID
             window.location.href = `/events/details/?id=${encodeURIComponent(eventId)}`;
         }
-    }
+    }*/
 });
 
 
@@ -346,6 +352,3 @@ function getEvents() {
         .catch(error => console.error("Error fetching events:", error));
 }
 
-document.addEventListener("click", (e) => {
-    console.log("Elemento clicado:", e.target);
-});
