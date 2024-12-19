@@ -1,28 +1,58 @@
 package com.example.TFG_WebApp.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.List;
 
+
 @Entity
 public class Coach {
-
     @Id
-    private String license;
-    private String name;
-    private String lastname;
-    @ManyToOne
-    private Discipline discipline;
-    @OneToMany(mappedBy = "coach")
-    private List<Athlete> athletes;
-    private String link_image;
+    private String licenseNumber;
+    private String firstName;
+    private String lastName;
 
-    public List<Athlete> getAthletes() {
-        return athletes;
+    @ManyToOne
+    @JsonIgnoreProperties("coaches")
+    private Discipline discipline;
+
+    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Athlete> athletes;
+
+    public Coach() {}
+    public Coach(String firstName, String lastName, Discipline discipline) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.discipline = discipline;
     }
 
-    public void setAthletes(List<Athlete> athletes) {
-        this.athletes = athletes;
+    // Getters and setters
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Discipline getDiscipline() {
@@ -33,35 +63,11 @@ public class Coach {
         this.discipline = discipline;
     }
 
-    public String getLastname() {
-        return lastname;
+    public List<Athlete> getAthletes() {
+        return athletes;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLicense() {
-        return license;
-    }
-
-    public void setLicense(String license) {
-        this.license = license;
-    }
-
-    public String getLink_image() {
-        return link_image;
-    }
-
-    public void setLink_image(String link_image) {
-        this.link_image = link_image;
+    public void setAthletes(List<Athlete> athletes) {
+        this.athletes = athletes;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.TFG_WebApp.Models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -9,38 +11,43 @@ import java.util.Optional;
 
 @Entity
 public class Event {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
     private LocalDate date;
+    private String locationLink;
+    private boolean organizedByClub;
+    private String imageLink;
+
     @ManyToMany(mappedBy = "events")
+    @JsonIgnoreProperties("events")
     private List<Discipline> disciplines;
-    @OneToMany(mappedBy = "event")
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Results> results;
-    private Boolean organizers;
-    private String link_image = ".../static/images/FAM.jpg";
-    private String link_map;
 
-    public Event(){
-    }
 
-    public Event(String name, LocalDate date, Boolean organizers, Optional<String> link_image, String link_map) {
+    public Event(String name, LocalDate date, boolean organizedByClub, Optional<String> imageLink, String locationLink) {
         this.name = name;
         this.date = date;
-        this.organizers = organizers;
-        if (link_image != null) {
-            this.link_image = link_image.get();
-        }
-        this.link_map = link_map;
+        this.organizedByClub = organizedByClub;
+        imageLink.ifPresent(s -> this.imageLink = s);
+        this.locationLink = locationLink;
     }
 
-    public long getId() {
+    public Event() {
+
+    }
+
+    // Getters and setters
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -60,6 +67,30 @@ public class Event {
         this.date = date;
     }
 
+    public String getLocationLink() {
+        return locationLink;
+    }
+
+    public void setLocationLink(String locationLink) {
+        this.locationLink = locationLink;
+    }
+
+    public boolean isOrganizedByClub() {
+        return organizedByClub;
+    }
+
+    public void setOrganizedByClub(boolean organizedByClub) {
+        this.organizedByClub = organizedByClub;
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
+    }
+
     public List<Discipline> getDisciplines() {
         return disciplines;
     }
@@ -75,28 +106,4 @@ public class Event {
     public void setResults(List<Results> results) {
         this.results = results;
     }
-
-    public Boolean getOrganizers() {
-        return organizers;
-    }
-
-    public void setOrganizers(Boolean organizers) {
-        this.organizers = organizers;
-    }
-
-    public String getLink_image() {
-        return link_image;
-    }
-
-    public void setLink_image(String link_image) {
-        this.link_image = link_image;
-    }
-
-    public String getLink_map() {
-        return link_map;
-    }
-    public void setLink_map(String link_map) {
-        this.link_map = link_map;
-    }
-
 }
