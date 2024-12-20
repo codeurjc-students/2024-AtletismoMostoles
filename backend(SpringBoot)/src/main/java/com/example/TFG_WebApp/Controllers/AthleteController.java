@@ -24,7 +24,7 @@ public class AthleteController {
     private String showAthlete(Model model, Pageable page) {
 
         Page<Athlete> athletes;
-        athletes = athleteService.getAllAthletes(page);
+        athletes = athleteService.getPaginatedAndFilteredAthletes(null, null,null,null,null,page);
 
         metod_aux(model, athletes.hasPrevious(), athletes.previousPageable(), athletes.hasNext(), athletes.nextPageable(), athletes.getNumber());
         model.addAttribute("athletes", athletes);

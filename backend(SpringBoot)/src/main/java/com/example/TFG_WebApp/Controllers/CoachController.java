@@ -22,7 +22,7 @@ public class CoachController {
     @GetMapping("/")
     private String showCoachs(Model model, HttpServletRequest request, Pageable page) {
         Page<Coach> coachs;
-        coachs = coachService.getCoaches(page);
+        coachs = coachService.getPaginatedAndFilteredCoaches(null,null,null,null,page);
 
         AthleteController.metod_aux(model, coachs.hasPrevious(), coachs.previousPageable(), coachs.hasNext(), coachs.nextPageable(), coachs.getNumber());
         model.addAttribute("coachs", coachs);
@@ -31,12 +31,12 @@ public class CoachController {
     }
 
     private String showCoach(Model model, @PathVariable String license){
-        Coach coach = coachService.findCoachByLicense(license);
+        Coach coach = coachService.getCoachById(license);
 
         if (coach != null){
-            model.addAttribute("name", coach.getName());
-            model.addAttribute("lastname", coach.getLastname());
-            model.addAttribute("license", coach.getLicense());
+            model.addAttribute("name", coach.getFirstName());
+            model.addAttribute("lastname", coach.getLastName());
+            model.addAttribute("license", coach.getLicenseNumber());
             model.addAttribute("discipline", coach.getDiscipline());
 
             return "coach_profile";
