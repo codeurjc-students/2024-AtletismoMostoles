@@ -12,6 +12,7 @@ public class Discipline {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String category;
 
     @ManyToMany(mappedBy = "disciplines")
     @JsonManagedReference
@@ -30,8 +31,9 @@ public class Discipline {
     private List<Event> events;
 
     public Discipline() {}
-    public Discipline(String name) {
+    public Discipline(String name, String category) {
         this.name = name;
+        this.category = category;
     }
 
     // Getters and setters
@@ -49,6 +51,14 @@ public class Discipline {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public List<Athlete> getAthletes() {
