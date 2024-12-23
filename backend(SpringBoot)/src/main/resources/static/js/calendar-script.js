@@ -320,17 +320,6 @@ eventsContainer.addEventListener("click", (e) => {
             window.location.href = '/events/details/?title=${encodeURIComponent(eventTitle)}';
         }
     }
-    /* Verificar que se ha hecho clic en un evento
-    const eventElement = e.target.closest(".event");
-    if (eventElement) {
-        const eventId = eventElement.getAttribute("data-id"); // Obtén el ID del evento
-        console.log("ID del evento seleccionado:", eventId);
-
-        if (confirm("¿Quieres ver los detalles de este evento?")) {
-            // Redirigir usando el ID
-            window.location.href = `/events/details/?id=${encodeURIComponent(eventId)}`;
-        }
-    }*/
 });
 
 

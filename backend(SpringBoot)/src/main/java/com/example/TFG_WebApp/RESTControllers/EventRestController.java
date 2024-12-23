@@ -5,6 +5,8 @@ import com.example.TFG_WebApp.Services.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -15,39 +17,37 @@ public class EventRestController {
     @Autowired
     private EventService eventService;
 
-    // Obtener todos los eventos por mes y año
-    @GetMapping
-    public List<Event> getAllEvents(@RequestParam int month, @RequestParam int year) {
-        List<Event> events = eventService.getAllEvents(month+1, year);
-        //events.forEach(event -> event.setDate(event.getDate().toString())); // Convertir LocalDate a String
-        return events;
-    }
-
-    // Obtener evento por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
-        Event event = eventService.getEventById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found with id: " + id));
-        return ResponseEntity.ok(event);
-    }
-
-    // Crear un nuevo evento
     @PostMapping
-    public Event createEvent(@RequestBody Event event) {
-        return eventService.createEvent(event);
+    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
+        return ResponseEntity.ok(eventService.createEvent(event));
     }
 
-    // Actualizar un evento existente
     @PutMapping("/{id}")
-    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody Event eventDetails) {
-        Event updatedEvent = eventService.updateEvent(id, eventDetails);
-        return ResponseEntity.ok(updatedEvent);
+    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody Event event) {
+        return ResponseEntity.ok(eventService.updateEvent(id, event));
     }
 
-    // Eliminar un evento
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.getEventById(id));
+    }
+
+    @GetMapping("/calendar")
+    public List<Event> getAllEvents(@RequestParam int month, @RequestParam int year) {
+        return eventService.getAllEventsByMonthAndYear(month + 1, year);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Event>> getFilteredAndPaginatedEvents(
+            @RequestParam(required = false) Boolean upcoming,
+            @RequestParam(required = false) Boolean organizedByClub,
+            Pageable pageable) {
+        return ResponseEntity.ok(eventService.getFilteredAndPaginatedEvents(upcoming, organizedByClub, pageable));
     }
 }
