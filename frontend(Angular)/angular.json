@@ -23,19 +23,13 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "src/assets",
-                "output": "assets"
+                "input": "public"
               }
             ],
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -87,37 +81,19 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "src/assets",
-                "output": "assets"
+                "input": "public"
               }
             ],
             "styles": [
-              "src/styles.css",
-              "src/assets/css/bootstrap.min.css",
-              "src/assets/css/style.css",
-              "src/assets/css/responsive.css",
-              "src/assets/css/jquery.mCustomScrollbar.min.css",
-              "src/assets/css/owl.carousel.min.css",
-              "https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css",
-              "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css"
-            ]
-          ,
-            "scripts": [
-              "src/assets/js/jquery.min.js",
-              "src/assets/js/popper.min.js",
-              "src/assets/js/bootstrap.bundle.min.js",
-              "src/assets/js/jquery.mCustomScrollbar.concat.min.js",
-              "src/assets/js/custom.js",
-              "src/assets/js/plugin.js",
-              "https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"
-            ]
-
+              "src/styles.css"
+            ],
+            "scripts": []
           }
         }
       }
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": "5b0e721e-cf68-4bc7-b61d-9c0f66110d66"
   }
 }

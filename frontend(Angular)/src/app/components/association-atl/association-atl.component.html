@@ -1,0 +1,18 @@
+<div class="association-container">
+  <h1>Detalles de la Asociación</h1>
+  <p>Bienvenido al sistema de gestión de la asociación.</p>
+  <table class="members-table">
+    <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Rol</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let member of members">
+      <td>{{ member.name }}</td>
+      <td>{{ member.role }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
