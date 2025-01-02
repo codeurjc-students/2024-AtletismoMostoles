@@ -5,6 +5,7 @@ body {
 }
 header {
   background-color: #007f00;
+  width: 100%;
   color: white;
   display: flex;
   align-items: center;
@@ -63,6 +64,7 @@ section {
 
 .section-1 {
   background: url(/assets/images/coach_bg.jpg) no-repeat center center/cover;
+  width: 100%;
   color: white;
   text-align: center;
 }
@@ -78,6 +80,7 @@ footer {
   color: white;
   text-align: center;
   padding: 20px;
+  width: 100%;
 }
 .filters{
   width: 100%;
@@ -97,6 +100,7 @@ footer {
   font-size: 20px;
   width: 100%;
   padding: 20px;
+  background-color: #333333;
 }
 .list-section ul {
   list-style: none;
@@ -111,7 +115,7 @@ table {
   margin-top: 10px;
 }
 th, td {
-  border: 1px solid #024f02;
+  border: 1px solid #00ffc4;
   text-align: left;
   padding: 8px;
 }
