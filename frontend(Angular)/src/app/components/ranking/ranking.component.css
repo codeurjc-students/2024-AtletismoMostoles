@@ -62,7 +62,7 @@ section {
 }
 
 .section-1 {
-  background: url(/assets/images/banner-bg.jpg) no-repeat center center/cover;
+  background: url(/assets/images/ranking-bg.png) no-repeat center center/cover;
   color: white;
   text-align: center;
 }
@@ -79,12 +79,12 @@ footer {
   padding: 20px;
 }
 .section-2{
-  background-color: rgb(170, 69, 34);
+  background-color: rgb(37, 128, 150);
 }
 .section-2 .filter-section{
   width: 30%;
   padding: 20px;
-  background-color: rgb(170, 69, 34);
+  background-color: rgb(37, 128, 150);
   font-size: 20px;
 }
 .filter-section input {
@@ -92,7 +92,7 @@ footer {
   width: 100%;
   padding: 8px;
   margin-bottom: 10px;
-  background-color: rgba(215, 114, 81, 0.82);
+  background-color: rgb(103, 197, 227);
 }
 .filter-section button{
   margin-top: 15px;
@@ -116,7 +116,7 @@ table {
   margin-top: 10px;
 }
 th, td {
-  border: 1px solid #024f02;
+  border: 3px solid #130002;
   text-align: left;
   padding: 8px;
 }
@@ -137,7 +137,7 @@ button {
   margin-top: 20px;
   margin-left: 20px;
   padding: 10px 20px;
-  background-color: #ff7f00;
+  background-color: #02bd12;
   color: white;
   border-radius: 5px;
   cursor: pointer;
