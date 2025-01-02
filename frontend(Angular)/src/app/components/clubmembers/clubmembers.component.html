@@ -1,1 +1,95 @@
-<p>clubmembers works!</p>
+<header>
+
+  <div class="logo">
+    <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
+  </div>
+  <nav>
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/miembros">Miembros del Club</a>
+    <a routerLink="/ranking">Ranking</a>
+    <a routerLink="/eventos">Eventos</a>
+    <a routerLink="/calendario">Calendario</a>
+  </nav>
+  <div class="menu-icon" (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="dropdown" id="dropdown-menu">
+
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/miembros">Miembros del Club</a>
+    <a routerLink="/ranking">Ranking</a>
+    <a routerLink="/eventos">Eventos</a>
+    <a routerLink="/calendario">Calendario</a>
+    <a routerLink="">Disciplinas</a>
+    <a routerLink="">Inicio de Sesión</a>
+  </div>
+</header>
+
+
+<section class="section-1">
+  <div class="overlay">
+    <h1>Nuestros Entrenadores</h1>
+    <p>Contamos con los mejores entrenadores, que aman el atletismo y enseñar a otros lo genial que puede ser. Cada uno de ellos está completamente comprometido en enseñarte todo lo que saben y en ayudarte a convertirte en el mejor.</p>
+  </div>
+</section>
+
+<section class="trainers-list">
+  <h2>Lista de Entrenadores</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Apellido</th>
+      <th>Número de Licencia</th>
+      <th>Disciplina</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let entrenador of coaches">
+      <td>{{ entrenador.nombre }}</td>
+      <td>{{ entrenador.apellido }}</td>
+      <td>{{ entrenador.numeroLicencia }}</td>
+      <td>{{ entrenador.disciplina }}</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+  </div>
+</section>
+
+<section class="filters">
+  <h2>Filtrar Entrenadores</h2>
+  <form (ngSubmit)="applyFilters()">
+    <label>
+      Nombre:
+      <input type="text" [(ngModel)]="filters.nombre" name="nombre">
+    </label>
+    <label>
+      Apellido:
+      <input type="text" [(ngModel)]="filters.apellido" name="apellido">
+    </label>
+    <label>
+      Número de Licencia:
+      <input type="text" [(ngModel)]="filters.numeroLicencia" name="numeroLicencia">
+    </label>
+    <label>
+      Disciplina:
+      <input type="text" [(ngModel)]="filters.disciplina" name="disciplina">
+    </label>
+    <button type="submit">Aplicar Filtros</button>
+  </form>
+</section>
+
+<footer style="background-color: #007f00; color: white; padding: 20px; text-align: center;">
+  <p><i class="fas fa-phone"></i> +34 600 123 456</p>
+  <p><i class="fab fa-instagram"></i> &#64;aam_mostoles</p>
+  <p><i class="fab fa-facebook"></i> AAM Club</p>
+  <p><i class="fas fa-map-marker-alt"></i> Dirección del Club</p>
+</footer>
+<router-outlet></router-outlet>
