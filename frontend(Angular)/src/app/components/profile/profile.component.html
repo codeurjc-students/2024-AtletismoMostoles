@@ -38,7 +38,7 @@
       <p><strong>License Number:</strong> {{ profile.numeroLicencia }}</p>
       <p><strong>First Name:</strong> {{ profile.nombre }}</p>
       <p><strong>Last Name:</strong> {{ profile.apellido }}</p>
-      <p><strong>Coach:</strong> <a [routerLink]="['/perfil', profile.entrenadorId]">{{ profile.entrenador }}</a></p>
+      <p><strong>Coach:</strong> <a [routerLink]="['/profile/coach/', profile.entrenadorId]">{{ profile.entrenador }}</a></p>
       <p><strong>Date of Birth:</strong> {{ profile.fechaNacimiento }}</p>
       <p><strong>Disciplines:</strong></p>
       <ul>
