@@ -13,13 +13,14 @@ public class Discipline {
     private Long id;
     private String name;
     private String category;
+    private String link_img;
 
     @ManyToMany(mappedBy = "disciplines")
     @JsonManagedReference
     private List<Athlete> athletes;
 
-    @ManyToMany(mappedBy = "disciplines")
-    @JsonIgnoreProperties("disciplines")
+    @OneToMany(mappedBy = "discipline")
+    @JsonIgnoreProperties("discipline")
     private List<Coach> coaches;
 
     @ManyToMany
@@ -31,7 +32,7 @@ public class Discipline {
     private List<Event> events;
 
     public Discipline() {}
-    public Discipline(String name, String category) {
+    public Discipline(String name, String category, String link_img) {
         this.name = name;
         this.category = category;
     }

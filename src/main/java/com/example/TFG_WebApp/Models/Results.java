@@ -22,11 +22,14 @@ public class Results {
     @JsonIgnoreProperties("results")
     private Event event;
 
+    private String result;
+
     public Results() {}
-    public Results(Athlete athlete, Discipline discipline, Event event) {
+    public Results(Athlete athlete, Discipline discipline, Event event, String Result) {
         this.athlete = athlete;
         this.discipline = discipline;
         this.event = event;
+        this.result = Result;
     }
     // Getters and setters
 
