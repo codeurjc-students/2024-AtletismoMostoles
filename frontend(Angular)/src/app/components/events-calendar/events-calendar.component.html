@@ -1,1 +1,95 @@
-<p>events-calendar works!</p>
+<header>
+
+  <div class="logo">
+    <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
+  </div>
+  <nav>
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/miembros">Miembros del Club</a>
+    <a routerLink="/ranking">Ranking</a>
+    <a routerLink="/eventos">Eventos</a>
+    <a routerLink="/calendario">Calendario</a>
+  </nav>
+  <div class="menu-icon" (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="dropdown" id="dropdown-menu">
+
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/miembros">Miembros del Club</a>
+    <a routerLink="/ranking">Ranking</a>
+    <a routerLink="/eventos">Eventos</a>
+    <a routerLink="/calendario">Calendario</a>
+    <a routerLink="">Disciplinas</a>
+    <a routerLink="">Inicio de Sesión</a>
+  </div>
+</header>
+
+<main>
+  <section class="calendar-section">
+    <div class="calendar-container">
+      <div class="calendar">
+        <div class="month">
+          <i class="fas fa-angle-left prev" (click)="prevMonth()"></i>
+          <div class="date">{{ currentMonth }} {{ currentYear }}</div>
+          <i class="fas fa-angle-right next" (click)="nextMonth()"></i>
+        </div>
+        <div class="weekdays">
+          <div>Dom</div>
+          <div>Lun</div>
+          <div>Mar</div>
+          <div>Mié</div>
+          <div>Jue</div>
+          <div>Vie</div>
+          <div>Sáb</div>
+        </div>
+        <div class="days">
+          <div *ngFor="let day of days" [ngClass]="{'prev-date': day.prev, 'next-date': day.next, 'today': day.today, 'event': day.hasEvent}" (click)="selectDay(day)">
+            {{ day.date }}
+          </div>
+        </div>
+        <div class="goto-today">
+          <div class="goto">
+            <input type="text" placeholder="mm/aaaa" [(ngModel)]="inputDate" class="date-input" />
+            <button class="goto-btn" (click)="gotoDate()">Ir</button>
+          </div>
+          <button class="today-btn" (click)="goToToday()">Hoy</button>
+        </div>
+      </div>
+      <div class="events-container">
+        <div class="today-date">
+          <div class="event-day">{{ selectedDayName }}</div>
+          <div class="event-date">{{ selectedDay }} {{ currentMonth }} {{ currentYear }}</div>
+        </div>
+        <div class="events" *ngIf="events.length > 0; else noEvents">
+          <div *ngFor="let event of events" class="event-card" (click)="viewEvent(event.id)">
+            <h3 class="event-title">{{ event.name }}</h3>
+            <p *ngIf="event.organizedByClub">Organizamos este evento</p>
+          </div>
+        </div>
+        <ng-template #noEvents>
+          <div class="no-event">
+            <h3>No hay eventos para este día</h3>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+    <div class="actions">
+      <button routerLink="/eventos/nuevo" class="btn-primary">Añadir Evento</button>
+      <button routerLink="/eventos" class="btn-secondary">Volver a la lista de Eventos</button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="contact-info">
+    <p><i class="fas fa-phone"></i> +34 600 123 456
+      <i class="fab fa-instagram"></i> &#64;aam_mostoles
+      <i class="fab fa-facebook"></i> AAM Club
+    </p>
+  </div>
+</footer>
+<router-outlet></router-outlet>
+

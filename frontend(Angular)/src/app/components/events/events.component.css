@@ -66,3 +66,18 @@ section {
   display: inline-block;
   font-size: 35px;
 }
+
+footer {
+  background-color: #007f00;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+footer div{
+  font-size: 20px;
+  padding-left: 100px;
+  gap: 100px;
+}

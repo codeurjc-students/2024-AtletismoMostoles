@@ -4,12 +4,14 @@ import { IndexComponent } from './components/index/index.component';
 import { RankingComponent } from './components/ranking/ranking.component';
 import {ClubMembersComponent} from './components/clubmembers/clubmembers.component';
 import {EventsComponent} from './components/events/events.component';
+import {EventsCalendarComponent} from './components/events-calendar/events-calendar.component';
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
   { path: 'ranking', component: RankingComponent },
   { path: 'miembros', component: ClubMembersComponent},
-  { path: 'eventos', component: EventsComponent}
+  { path: 'eventos', component: EventsComponent},
+  { path: 'calendario', component: EventsCalendarComponent}
 ];
 
 @NgModule({
