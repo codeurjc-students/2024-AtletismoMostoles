@@ -6,6 +6,7 @@ import {ClubMembersComponent} from './components/clubmembers/clubmembers.compone
 import {EventsComponent} from './components/events/events.component';
 import {EventsCalendarComponent} from './components/events-calendar/events-calendar.component';
 import {EventDetailsComponent} from './components/event-details/event-details.component';
+import {ProfileComponent} from './components/profile/profile.component';
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
@@ -13,7 +14,8 @@ export const routes: Routes = [
   { path: 'miembros', component: ClubMembersComponent},
   { path: 'eventos', component: EventsComponent},
   { path: 'calendario', component: EventsCalendarComponent},
-  { path: '/eventos/${eventId}', component: EventDetailsComponent}
+  { path: '/eventos/:id', component: EventDetailsComponent},
+  { path: '/profile/:type/:id', component: ProfileComponent}
 ];
 
 @NgModule({

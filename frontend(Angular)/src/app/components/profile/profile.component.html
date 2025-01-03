@@ -1,1 +1,110 @@
-<p>profile works!</p>
+<header>
+  <div class="logo">
+    <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
+  </div>
+  <nav>
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/miembros">Miembros del Club</a>
+    <a routerLink="/ranking">Ranking</a>
+    <a routerLink="/eventos">Eventos</a>
+    <a routerLink="/calendario">Calendario</a>
+  </nav>
+  <div class="menu-icon" (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="dropdown" id="dropdown-menu">
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/miembros">Miembros del Club</a>
+    <a routerLink="/ranking">Ranking</a>
+    <a routerLink="/eventos">Eventos</a>
+    <a routerLink="/calendario">Calendario</a>
+    <a routerLink="">Disciplinas</a>
+    <a routerLink="">Inicio de Sesión</a>
+  </div>
+</header>
+
+<main>
+  <!-- First Section: Profile title -->
+  <section class="profile-header">
+    <h1>{{ isAthlete ? 'Atleta' : 'Entrenador' }}</h1>
+  </section>
+
+  <!-- Second Section: Profile details -->
+  <section class="profile-details">
+    <!-- Athlete details -->
+    <div *ngIf="isAthlete; else trainerDetails">
+      <p><strong>License Number:</strong> {{ profile.numeroLicencia }}</p>
+      <p><strong>First Name:</strong> {{ profile.nombre }}</p>
+      <p><strong>Last Name:</strong> {{ profile.apellido }}</p>
+      <p><strong>Coach:</strong> <a [routerLink]="['/perfil', profile.entrenadorId]">{{ profile.entrenador }}</a></p>
+      <p><strong>Date of Birth:</strong> {{ profile.fechaNacimiento }}</p>
+      <p><strong>Disciplines:</strong></p>
+      <ul>
+        <li *ngFor="let disciplina of profile.disciplinas">{{ disciplina }}</li>
+      </ul>
+
+      <h2>Results</h2>
+      <table>
+        <thead>
+        <tr>
+          <th>Event</th>
+          <th>Discipline</th>
+          <th>Result</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let result of paginatedResults">
+          <td>{{ result.evento }}</td>
+          <td>{{ result.disciplina }}</td>
+          <td>{{ result.valor }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Trainer details -->
+    <ng-template #trainerDetails>
+      <p><strong>License Number:</strong> {{ profile.numeroLicencia }}</p>
+      <p><strong>First Name:</strong> {{ profile.nombre }}</p>
+      <p><strong>Last Name:</strong> {{ profile.apellido }}</p>
+      <p><strong>Discipline:</strong> {{ profile.disciplina }}</p>
+
+      <h2>Athletes</h2>
+      <table>
+        <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Date of Birth</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let atleta of paginatedAthletes">
+          <td>{{ atleta.nombre }}</td>
+          <td>{{ atleta.apellido }}</td>
+          <td>{{ atleta.fechaNacimiento }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </ng-template>
+  </section>
+
+  <!-- Action buttons -->
+  <div class="actions">
+    <button (click)="goBack()" class="btn-secondary">Back</button>
+    <button (click)="editProfile()" class="btn-primary">Edit</button>
+    <button (click)="deleteProfile()" class="btn-danger">Delete</button>
+  </div>
+</main>
+
+<footer>
+  <div class="contact-info">
+    <p><i class="fas fa-phone"></i> +34 600 123 456
+      <i class="fab fa-instagram"></i> &#64;aam_mostoles
+      <i class="fab fa-facebook"></i> AAM Club
+    </p>
+  </div>
+</footer>
+<router-outlet></router-outlet>
