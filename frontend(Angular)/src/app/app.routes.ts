@@ -8,6 +8,7 @@ import {EventsCalendarComponent} from './components/events-calendar/events-calen
 import {EventDetailsComponent} from './components/event-details/event-details.component';
 import {ProfileComponent} from './components/profile/profile.component';
 import {AssociationAtlComponent} from './components/association-atl/association-atl.component';
+import {DisciplineDetailsComponent} from './components/discipline-details/discipline-details.component';
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
@@ -15,9 +16,10 @@ export const routes: Routes = [
   { path: 'miembros', component: ClubMembersComponent},
   { path: 'eventos', component: EventsComponent},
   { path: 'calendario', component: EventsCalendarComponent},
-  { path: '/eventos/:id', component: EventDetailsComponent},
-  { path: '/profile/:type/:id', component: ProfileComponent},
-  { path: 'disciplines', component: AssociationAtlComponent}
+  { path: 'eventos/:id', component: EventDetailsComponent},
+  { path: 'profile/:type/:id', component: ProfileComponent},
+  { path: 'disciplines', component: AssociationAtlComponent},
+  { path: 'discipline-details/:id', component: DisciplineDetailsComponent}
 ];
 
 @NgModule({

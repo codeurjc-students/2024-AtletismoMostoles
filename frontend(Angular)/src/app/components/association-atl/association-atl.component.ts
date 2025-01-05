@@ -1,16 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {NgForOf} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-association-atl',
   templateUrl: './association-atl.component.html',
   standalone: true,
   imports: [
-    RouterLink,
+    RouterOutlet,
+    FormsModule,
+    NgIf,
     NgForOf,
-    RouterOutlet
+    RouterLink
   ],
   styleUrls: ['./association-atl.component.css']
 })
@@ -19,6 +22,13 @@ export class AssociationAtlComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 5;
   private apiUrl: string = 'http://localhost:8080/api/disciplines'; // URL del backend
+
+  isModalOpen: boolean = false;
+  newDiscipline: { name: string; description: string; image: string } = {
+    name: '',
+    description: '',
+    image: ''
+  };
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -39,8 +49,7 @@ export class AssociationAtlComponent implements OnInit {
 
   paginatedDisciplines(): { id: number; name: string; image: string; coaches: string[] }[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    return this.disciplines.slice(startIndex, endIndex);
+    return this.disciplines.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
   totalPages(): number {
@@ -83,6 +92,32 @@ export class AssociationAtlComponent implements OnInit {
 
   addNewDiscipline(): void {
     this.router.navigate(['/new-discipline']);
+  }
+
+  openModal(): void {
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.newDiscipline = { name: '', description: '', image: '' };
+  }
+
+  saveDiscipline(): void {
+    if (this.newDiscipline.name && this.newDiscipline.description && this.newDiscipline.image) {
+      this.http.post(this.apiUrl, this.newDiscipline).subscribe(
+        () => {
+          alert('Nueva disciplina agregada correctamente');
+          this.closeModal();
+          this.loadDisciplines();
+        },
+        (error) => {
+          console.error('Error al agregar la disciplina:', error);
+        }
+      );
+    } else {
+      alert('Por favor, complete todos los campos antes de guardar.');
+    }
   }
 
   toggleMenu() {

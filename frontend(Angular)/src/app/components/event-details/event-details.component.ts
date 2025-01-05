@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import {NgForOf, NgIf, NgStyle} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 
 interface Event {
   id: number;
@@ -22,6 +24,14 @@ interface Result {
   selector: 'app-event-details',
   templateUrl: './event-details.component.html',
   standalone: true,
+  imports: [
+    RouterLink,
+    NgStyle,
+    FormsModule,
+    RouterOutlet,
+    NgIf,
+    NgForOf
+  ],
   styleUrls: ['./event-details.component.css']
 })
 export class EventDetailsComponent implements OnInit {

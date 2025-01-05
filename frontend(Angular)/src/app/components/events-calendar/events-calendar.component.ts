@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {NgClass, NgForOf} from '@angular/common';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 
 interface Event {
@@ -28,7 +28,8 @@ interface Day {
     NgClass,
     NgForOf,
     FormsModule,
-    RouterOutlet
+    RouterOutlet,
+    NgIf
   ],
   styleUrls: ['./events-calendar.component.css']
 })
