@@ -1,8 +1,6 @@
 package com.example.TFG_WebApp.Models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-
 
 @Entity
 public class Results {
@@ -11,27 +9,18 @@ public class Results {
     private Long id;
 
     @ManyToOne
-    @JsonIgnoreProperties("results")
+    @JoinColumn(name = "athlete_id")
     private Athlete athlete;
 
     @ManyToOne
-    @JsonIgnoreProperties("results")
+    @JoinColumn(name = "discipline_id")
     private Discipline discipline;
 
     @ManyToOne
-    @JsonIgnoreProperties("results")
+    @JoinColumn(name = "event_id")
     private Event event;
 
-    private String result;
-
-    public Results() {}
-    public Results(Athlete athlete, Discipline discipline, Event event, String Result) {
-        this.athlete = athlete;
-        this.discipline = discipline;
-        this.event = event;
-        this.result = Result;
-    }
-    // Getters and setters
+    private double value; // For storing the result value (e.g., time or distance)
 
     public Long getId() {
         return id;
@@ -63,5 +52,13 @@ public class Results {
 
     public void setEvent(Event event) {
         this.event = event;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
     }
 }

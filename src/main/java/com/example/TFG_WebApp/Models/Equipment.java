@@ -3,27 +3,22 @@ package com.example.TFG_WebApp.Models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Equipment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String description;
     private String imageLink;
 
     @ManyToMany(mappedBy = "equipment")
-    @JsonIgnoreProperties("equipment")
-    private List<Discipline> disciplines;
-
-    public Equipment() {}
-    public Equipment(String name, String description, String imageLink) {
-        this.name = name;
-        this.description = description;
-        this.imageLink = imageLink;
-    }
+    private Set<Discipline> disciplines = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -57,13 +52,11 @@ public class Equipment {
         this.imageLink = imageLink;
     }
 
-    public List<Discipline> getDisciplines() {
+    public Set<Discipline> getDisciplines() {
         return disciplines;
     }
 
-    public void setDisciplines(List<Discipline> disciplines) {
+    public void setDisciplines(Set<Discipline> disciplines) {
         this.disciplines = disciplines;
     }
-
-    // Getters and setters
 }

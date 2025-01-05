@@ -1,67 +1,64 @@
 package com.example.TFG_WebApp.Models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
-
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Athlete {
     @Id
-    private String licenseNumber;
+    private String licenseNumber; // Unique identifier
+
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
 
     @ManyToOne
-    @JsonIgnoreProperties("athletes")
+    @JoinColumn(name = "coach_id")
     private Coach coach;
 
-    @ManyToMany
-    @JsonIgnoreProperties("athletes")
-    private List<Discipline> disciplines;
+    @ManyToMany(mappedBy = "athletes")
+    private Set<Discipline> disciplines = new HashSet<>();
 
-    @OneToMany(mappedBy = "athlete", cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<Results> results;
+    @OneToMany(mappedBy = "athlete")
+    private List<Results> results = new ArrayList<>();
 
-    public Athlete() {}
 
-    public Athlete(String licenseNumber, String firstName, String lastName, LocalDate birthDate, Coach coach){
-        this.licenseNumber = licenseNumber;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = birthDate;
-        this.coach = coach;
-    }
-    // Getters and setters
     public String getLicenseNumber() {
         return licenseNumber;
     }
+
     public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
+
     public String getFirstName() {
         return firstName;
     }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
     public String getLastName() {
         return lastName;
     }
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
     public LocalDate getBirthDate() {
         return birthDate;
     }
+
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
+
     public Coach getCoach() {
         return coach;
     }
@@ -69,15 +66,19 @@ public class Athlete {
     public void setCoach(Coach coach) {
         this.coach = coach;
     }
-    public List<Discipline> getDisciplines() {
+
+    public Set<Discipline> getDisciplines() {
         return disciplines;
     }
-    public void setDisciplines(List<Discipline> disciplines) {
+
+    public void setDisciplines(Set<Discipline> disciplines) {
         this.disciplines = disciplines;
     }
+
     public List<Results> getResults() {
         return results;
     }
+
     public void setResults(List<Results> results) {
         this.results = results;
     }

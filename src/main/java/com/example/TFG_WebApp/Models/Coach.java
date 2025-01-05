@@ -1,35 +1,23 @@
 package com.example.TFG_WebApp.Models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-
+import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 public class Coach {
     @Id
     private String licenseNumber;
+
     private String firstName;
     private String lastName;
 
     @ManyToOne
-    @JsonIgnoreProperties("coaches")
+    @JoinColumn(name = "discipline_id")
     private Discipline discipline;
 
-    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Athlete> athletes;
-
-    public Coach() {}
-    public Coach(String firstName, String lastName, Discipline discipline) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.discipline = discipline;
-    }
-
-    // Getters and setters
+    @OneToMany(mappedBy = "coach")
+    private List<Athlete> athletes = new ArrayList<>();
 
     public String getLicenseNumber() {
         return licenseNumber;

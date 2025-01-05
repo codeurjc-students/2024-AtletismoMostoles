@@ -1,43 +1,38 @@
 package com.example.TFG_WebApp.Models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Discipline {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
-    private String category;
-    private String link_img;
+    private String description;
+    private String imageLink;
+
+    @ManyToMany
+    @JoinTable(
+            name = "discipline_equipment",
+            joinColumns = @JoinColumn(name = "discipline_id"),
+            inverseJoinColumns = @JoinColumn(name = "equipment_id")
+    )
+    private Set<Equipment> equipment = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "discipline_athlete",
+            joinColumns = @JoinColumn(name = "discipline_id"),
+            inverseJoinColumns = @JoinColumn(name = "athlete_id")
+    )
+    private Set<Athlete> athletes = new HashSet<>();
 
     @ManyToMany(mappedBy = "disciplines")
-    @JsonManagedReference
-    private List<Athlete> athletes;
-
-    @OneToMany(mappedBy = "discipline")
-    @JsonIgnoreProperties("discipline")
-    private List<Coach> coaches;
-
-    @ManyToMany
-    @JsonIgnoreProperties("disciplines")
-    private List<Equipment> equipment;
-
-    @ManyToMany
-    @JsonIgnoreProperties("disciplines")
-    private List<Event> events;
-
-    public Discipline() {}
-    public Discipline(String name, String category, String link_img) {
-        this.name = name;
-        this.category = category;
-    }
-
-    // Getters and setters
+    private Set<Event> events = new HashSet<>();
     public Long getId() {
         return id;
     }
@@ -54,43 +49,43 @@ public class Discipline {
         this.name = name;
     }
 
-    public String getCategory() {
-        return category;
+    public String getDescription() {
+        return description;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public List<Athlete> getAthletes() {
-        return athletes;
+    public String getImageLink() {
+        return imageLink;
     }
 
-    public void setAthletes(List<Athlete> athletes) {
-        this.athletes = athletes;
+    public void setImageLink(String image) {
+        this.imageLink = image;
     }
 
-    public List<Coach> getCoaches() {
-        return coaches;
-    }
-
-    public void setCoaches(List<Coach> coaches) {
-        this.coaches = coaches;
-    }
-
-    public List<Equipment> getEquipment() {
+    public Set<Equipment> getEquipment() {
         return equipment;
     }
 
-    public void setEquipment(List<Equipment> equipment) {
+    public void setEquipment(Set<Equipment> equipment) {
         this.equipment = equipment;
     }
 
-    public List<Event> getEvents() {
+    public Set<Athlete> getAthletes() {
+        return athletes;
+    }
+
+    public void setAthletes(Set<Athlete> athletes) {
+        this.athletes = athletes;
+    }
+
+    public Set<Event> getEvents() {
         return events;
     }
 
-    public void setEvents(List<Event> events) {
+    public void setEvents(Set<Event> events) {
         this.events = events;
     }
 }

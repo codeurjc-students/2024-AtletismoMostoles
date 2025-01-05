@@ -1,47 +1,35 @@
 package com.example.TFG_WebApp.Models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 @Entity
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private LocalDate date;
-    private String locationLink;
-    private boolean organizedByClub;
+    private String mapLink;
+    private boolean isOrganizedByClub;
     private String imageLink;
 
-    @ManyToMany(mappedBy = "events")
-    @JsonIgnoreProperties("events")
-    private List<Discipline> disciplines;
+    @ManyToMany
+    @JoinTable(
+            name = "event_discipline",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "discipline_id")
+    )
+    private Set<Discipline> disciplines = new HashSet<>();
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<Results> results;
-
-
-    public Event(String name, LocalDate date, boolean organizedByClub, Optional<String> imageLink, String locationLink) {
-        this.name = name;
-        this.date = date;
-        this.organizedByClub = organizedByClub;
-        imageLink.ifPresent(s -> this.imageLink = s);
-        this.locationLink = locationLink;
-    }
-
-    public Event() {
-
-    }
-
-    // Getters and setters
+    @OneToMany(mappedBy = "event")
+    private List<Results> results = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -67,20 +55,20 @@ public class Event {
         this.date = date;
     }
 
-    public String getLocationLink() {
-        return locationLink;
+    public String getMapLink() {
+        return mapLink;
     }
 
-    public void setLocationLink(String locationLink) {
-        this.locationLink = locationLink;
+    public void setMapLink(String mapLink) {
+        this.mapLink = mapLink;
     }
 
     public boolean isOrganizedByClub() {
-        return organizedByClub;
+        return isOrganizedByClub;
     }
 
     public void setOrganizedByClub(boolean organizedByClub) {
-        this.organizedByClub = organizedByClub;
+        isOrganizedByClub = organizedByClub;
     }
 
     public String getImageLink() {
@@ -91,11 +79,11 @@ public class Event {
         this.imageLink = imageLink;
     }
 
-    public List<Discipline> getDisciplines() {
+    public Set<Discipline> getDisciplines() {
         return disciplines;
     }
 
-    public void setDisciplines(List<Discipline> disciplines) {
+    public void setDisciplines(Set<Discipline> disciplines) {
         this.disciplines = disciplines;
     }
 
