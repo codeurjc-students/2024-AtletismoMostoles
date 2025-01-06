@@ -1,30 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
 import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
-import {FormsModule} from '@angular/forms';
-import {NgForOf, NgIf} from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-discipline-details',
   templateUrl: './discipline-details.component.html',
+  styleUrls: ['./discipline-details.component.css'],
+  standalone: true,
   imports: [
     FormsModule,
-    RouterLink,
     NgForOf,
+    NgIf,
     RouterOutlet,
-    NgIf
-  ],
-  standalone: true,
-  styleUrls: ['./discipline-details.component.css']
+    RouterLink,
+    HttpClientModule
+  ]
 })
 export class DisciplineDetailsComponent implements OnInit {
+  isModalOpen: boolean = false;
   discipline: { id: number; name: string; description: string; image: string; coaches: string[] } = { id: 0, name: '', description: '', image: '', coaches: [] };
   equipmentList: { id: number; name: string }[] = [];
   allEquipment: { id: number; name: string; selected: boolean }[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 5;
-  isModalOpen: boolean = false;
-  isEditMode: boolean = false;
+  totalPages: number = 1;
   private disciplineApiUrl: string = 'http://localhost:8080/api/disciplines';
   private equipmentApiUrl: string = 'http://localhost:8080/api/equipment';
 
@@ -49,9 +50,14 @@ export class DisciplineDetailsComponent implements OnInit {
   }
 
   loadEquipment(disciplineId: number): void {
-    this.http.get<{ id: number; name: string }[]>(`${this.disciplineApiUrl}/${disciplineId}/equipment`).subscribe(
-      (data) => {
-        this.equipmentList = data;
+    const params = new HttpParams()
+      .set('page', (this.currentPage - 1).toString())
+      .set('size', this.itemsPerPage.toString());
+
+    this.http.get<any>(`${this.disciplineApiUrl}/${disciplineId}/equipment`, { params }).subscribe(
+      (response) => {
+        this.equipmentList = response.content;
+        this.totalPages = response.totalPages;
       },
       (error) => {
         console.error('Error al cargar el equipamiento:', error);
@@ -70,24 +76,17 @@ export class DisciplineDetailsComponent implements OnInit {
     );
   }
 
-  paginatedEquipment(): { id: number; name: string }[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.equipmentList.slice(startIndex, startIndex + this.itemsPerPage);
-  }
-
-  totalPages(): number {
-    return Math.ceil(this.equipmentList.length / this.itemsPerPage);
-  }
-
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.loadEquipment(this.discipline.id);
     }
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages()) {
+    if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.loadEquipment(this.discipline.id);
     }
   }
 
@@ -99,10 +98,10 @@ export class DisciplineDetailsComponent implements OnInit {
     this.isModalOpen = false;
   }
 
-  addEquipment(allEquipment: { id: number; name: string; selected: boolean }[]): void {
+  addEquipment(): void {
     const disciplineId = this.discipline?.id;
     if (disciplineId) {
-      const equipmentToAdd = allEquipment.filter(e => e.selected);
+      const equipmentToAdd = this.allEquipment.filter(e => e.selected);
       this.http.post(`${this.disciplineApiUrl}/${disciplineId}/equipment`, equipmentToAdd).subscribe(
         () => {
           alert('Equipamiento agregado correctamente');
@@ -115,7 +114,6 @@ export class DisciplineDetailsComponent implements OnInit {
       );
     }
   }
-
 
   toggleEditMode(): void {
     this.isEditMode = !this.isEditMode;
@@ -134,6 +132,8 @@ export class DisciplineDetailsComponent implements OnInit {
       );
     }
   }
+
+  isEditMode: boolean = false;
 
   toggleMenu() {
     const menu = document.getElementById('dropdown-menu');

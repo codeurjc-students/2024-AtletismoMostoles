@@ -1,1 +1,86 @@
-<p>new-event-form works!</p>
+<header>
+  <div class="logo">
+    <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
+  </div>
+  <nav>
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/miembros">Miembros del Club</a>
+    <a routerLink="/ranking">Ranking</a>
+    <a routerLink="/eventos">Eventos</a>
+    <a routerLink="/calendario">Calendario</a>
+  </nav>
+</header>
+
+<div class="new-event-form">
+  <h2>Create New Event</h2>
+
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Event Name</label>
+      <input id="name" type="text" formControlName="name" />
+      <div *ngIf="eventForm.get('name')?.invalid && (eventForm.get('name')?.touched || eventForm.get('name')?.dirty)" class="error">
+        Event name is required and must be at least 3 characters.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="imageUrl">Image URL</label>
+      <input id="imageUrl" type="url" formControlName="imageUrl" />
+      <div *ngIf="eventForm.get('imageUrl')?.invalid && (eventForm.get('imageUrl')?.touched || eventForm.get('imageUrl')?.dirty)" class="error">
+        Please enter a valid image URL.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="mapUrl">Map URL</label>
+      <input id="mapUrl" type="url" formControlName="mapUrl" />
+      <div *ngIf="eventForm.get('mapUrl')?.invalid && (eventForm.get('mapUrl')?.touched || eventForm.get('mapUrl')?.dirty)" class="error">
+        Please enter a valid map URL.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="date">Date</label>
+      <input id="date" type="date" formControlName="date" />
+      <div *ngIf="eventForm.get('date')?.invalid && (eventForm.get('date')?.touched || eventForm.get('date')?.dirty)" class="error">
+        Please enter a valid date in the format YYYY-MM-DD.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" formControlName="organizedByClub" /> Organized by Club
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="disciplines">Select Disciplines</label>
+      <select id="disciplines" formControlName="disciplines" multiple>
+        <option *ngFor="let discipline of disciplines" [value]="discipline">{{ discipline }}</option>
+      </select>
+      <div *ngIf="eventForm.get('disciplines')?.invalid && (eventForm.get('disciplines')?.touched || eventForm.get('disciplines')?.dirty)" class="error">
+        Please select at least one discipline.
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="eventForm.invalid">Save Event</button>
+      <button type="button" (click)="onCancel()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<footer>
+  <div class="contact-info">
+    <p><i class="fas fa-phone"></i> +34 600 123 456
+      <i class="fab fa-instagram"></i> &#64;aam_mostoles
+      <i class="fab fa-facebook"></i> AAM Club
+    </p>
+  </div>
+</footer>
+<router-outlet></router-outlet>
+

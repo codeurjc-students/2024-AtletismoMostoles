@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import {NgForOf, NgIf, NgStyle} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
+import { NgForOf, NgIf, NgStyle } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 interface Event {
   id: number;
@@ -25,12 +25,13 @@ interface Result {
   templateUrl: './event-details.component.html',
   standalone: true,
   imports: [
-    RouterLink,
     NgStyle,
     FormsModule,
-    RouterOutlet,
     NgIf,
-    NgForOf
+    NgForOf,
+    RouterLink,
+    RouterOutlet,
+    HttpClientModule
   ],
   styleUrls: ['./event-details.component.css']
 })
@@ -45,7 +46,6 @@ export class EventDetailsComponent implements OnInit {
   };
 
   results: Result[] = [];
-  paginatedResults: Result[] = [];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
@@ -75,11 +75,14 @@ export class EventDetailsComponent implements OnInit {
   }
 
   loadResults(eventId: number): void {
-    this.http.get<Result[]>(`${this.apiUrl}/${eventId}/results`).subscribe(
+    const params = new HttpParams()
+      .set('page', (this.currentPage - 1).toString())
+      .set('size', this.itemsPerPage.toString());
+
+    this.http.get<any>(`${this.apiUrl}/${eventId}/results`, { params }).subscribe(
       (response) => {
-        this.results = response;
-        this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
-        this.updatePagination();
+        this.results = response.content;
+        this.totalPages = response.totalPages;
       },
       (error) => {
         console.error('Error al cargar los resultados:', error);
@@ -106,34 +109,27 @@ export class EventDetailsComponent implements OnInit {
 
   cancelEdit(): void {
     this.isEditing = false;
-    this.loadEvent(this.event.id); // Recargar el evento para descartar cambios
+    this.loadEvent(this.event.id);
   }
 
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.updatePagination();
+      this.loadResults(this.event.id);
     }
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.updatePagination();
+      this.loadResults(this.event.id);
     }
   }
 
-  updatePagination(): void {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = this.currentPage * this.itemsPerPage;
-    this.paginatedResults = this.results.slice(start, end);
-  }
-
-  toggleMenu() {
+  toggleMenu(): void {
     const menu = document.getElementById('dropdown-menu');
     if (menu) {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
   }
-
 }

@@ -133,6 +133,30 @@ button:last-child:hover {
   margin: 20px 0;
 }
 
+.modal {
+  background-color: #4d4d4d;
+  font-size: 25px;
+}
+
+.modal .modal-content h2{
+  color: #02bd12;
+  margin: 30px 20px 10px 20px;
+}
+
+.modal-content .form-group label{
+  color: #FFFFFF;
+  margin: 10px 10px;
+}
+
+.modal-content .form-group textarea{
+  width: 80%;
+  height: 10%;
+}
+
+.modal-content .modal-actions button{
+  font-size: 20px;
+  margin: 10px 10px 10px 10px
+}
 footer {
   background-color: #007f00;
   color: white;

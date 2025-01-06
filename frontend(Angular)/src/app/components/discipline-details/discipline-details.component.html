@@ -8,9 +8,7 @@
     <a routerLink="/ranking">Ranking</a>
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
-    <a routerLink="/disciplinas">Disciplinas</a>
-    <a routerLink="/login">Inicio de Sesión</a>
-  </nav>
+    </nav>
   <div class="menu-icon" (click)="toggleMenu()">
     <span></span>
     <span></span>
@@ -22,8 +20,8 @@
     <a routerLink="/ranking">Ranking</a>
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
-    <a routerLink="/disciplinas">Disciplinas</a>
-    <a routerLink="/login">Inicio de Sesión</a>
+    <a routerLink="/disciplines">Disciplinas</a>
+    <a routerLink="">Inicio de Sesión</a>
   </div>
 </header>
 
@@ -51,13 +49,13 @@
 
   <div class="equipment-list">
     <h2>Equipamiento</h2>
-    <div *ngFor="let item of paginatedEquipment()" class="equipment-item">
+    <div *ngFor="let item of equipmentList" class="equipment-item">
       <p>{{ item.name }}</p>
     </div>
     <div class="pagination-controls">
       <button (click)="previousPage()" [disabled]="currentPage === 1">Anterior</button>
-      <span>Página {{ currentPage }} de {{ totalPages() }}</span>
-      <button (click)="nextPage()" [disabled]="currentPage === totalPages()">Siguiente</button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
     </div>
     <button (click)="openModal()">Agregar Equipamiento</button>
   </div>
@@ -74,7 +72,7 @@
       </div>
     </div>
     <div class="modal-actions">
-      <button (click)="addEquipment(allEquipment)">Guardar</button>
+      <button (click)="addEquipment()">Guardar</button>
       <button (click)="closeModal()">Cancelar</button>
     </div>
   </div>

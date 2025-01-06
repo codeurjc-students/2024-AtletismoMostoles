@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {FormsModule} from '@angular/forms';
-import {NgForOf, NgIf} from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgForOf, NgIf } from '@angular/common';
 
 interface Event {
   id: number;
@@ -20,20 +20,20 @@ interface Event {
     FormsModule,
     NgForOf,
     NgIf,
+    RouterOutlet,
     RouterLink,
-    RouterOutlet
+    HttpClientModule
   ],
   styleUrls: ['./events.component.css']
 })
 export class EventsComponent implements OnInit {
   events: Event[] = [];
-  paginatedEvents: Event[] = [];
-  currentPage = 1;
-  itemsPerPage = 6;
-  totalPages = 1;
-  selectedFilter = 'upcoming';
+  currentPage: number = 1;
+  itemsPerPage: number = 6;
+  totalPages: number = 1;
+  selectedFilter: string = 'upcoming';
 
-  private apiUrl = 'http://localhost:8080/api/events';
+  private apiUrl: string = 'http://localhost:8080/api/events';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -42,19 +42,18 @@ export class EventsComponent implements OnInit {
   }
 
   loadEvents(): void {
-    const params: any = {
-      page: this.currentPage - 1,
-      size: this.itemsPerPage,
-      filter: this.selectedFilter
-    };
+    const params = new HttpParams()
+      .set('page', (this.currentPage - 1).toString())
+      .set('size', this.itemsPerPage.toString())
+      .set('sortBy', 'date')
+      .set('organizer', this.selectedFilter);
 
     this.http.get<any>(this.apiUrl, { params }).subscribe(
-      response => {
+      (response) => {
         this.events = response.content;
         this.totalPages = response.totalPages;
-        this.updatePagination();
       },
-      error => {
+      (error) => {
         console.error('Error al cargar eventos:', error);
       }
     );
@@ -83,13 +82,7 @@ export class EventsComponent implements OnInit {
     }
   }
 
-  updatePagination(): void {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = this.currentPage * this.itemsPerPage;
-    this.paginatedEvents = this.events.slice(start, end);
-  }
-
-  toggleMenu() {
+  toggleMenu(): void {
     const menu = document.getElementById('dropdown-menu');
     if (menu) {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';

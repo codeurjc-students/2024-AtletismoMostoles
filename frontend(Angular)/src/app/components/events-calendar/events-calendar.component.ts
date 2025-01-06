@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {NgClass, NgForOf, NgIf} from '@angular/common';
-import {FormsModule} from '@angular/forms';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 interface Event {
   id: number;
@@ -24,17 +24,19 @@ interface Day {
   templateUrl: './events-calendar.component.html',
   standalone: true,
   imports: [
-    RouterLink,
     NgClass,
     NgForOf,
     FormsModule,
+    NgIf,
+    RouterLink,
     RouterOutlet,
-    NgIf
+    HttpClientModule
   ],
   styleUrls: ['./events-calendar.component.css']
 })
 export class EventsCalendarComponent implements OnInit {
   events: Event[] = [];
+  filteredEvents: Event[] = [];
   days: Day[] = [];
   currentMonth: string = '';
   currentYear: number = 0;
@@ -58,12 +60,24 @@ export class EventsCalendarComponent implements OnInit {
   }
 
   loadEvents(): void {
-    this.http.get<Event[]>(`${this.apiUrl}?month=${this.today.getMonth() + 1}&year=${this.today.getFullYear()}`).subscribe(
-      response => {
-        this.events = response;
+    const startDate = new Date(this.currentYear, this.today.getMonth(), 1).toISOString().split('T')[0];
+    const endDate = new Date(this.currentYear, this.today.getMonth() + 1, 0).toISOString().split('T')[0];
+
+    const params = new HttpParams()
+      .set('startDate', startDate)
+      .set('endDate', endDate)
+      .set('page', '0')
+      .set('size', '100')
+      .set('sortBy', 'date');
+
+    this.http.get<{ content: Event[] }>(this.apiUrl, { params }).subscribe(
+      (response) => {
+        this.events = response.content || [];
+        console.log('Eventos cargados:', this.events);
         this.initCalendar();
+        this.filterEventsByDay();
       },
-      error => {
+      (error) => {
         console.error('Error al cargar eventos:', error);
       }
     );
@@ -74,9 +88,28 @@ export class EventsCalendarComponent implements OnInit {
     const lastDate = new Date(this.currentYear, this.today.getMonth() + 1, 0).getDate();
 
     this.days = [];
+
+    for (let i = 0; i < firstDay; i++) {
+      this.days.push({ date: 0, prev: false, next: false, today: false, hasEvent: false });
+    }
+
     for (let i = 1; i <= lastDate; i++) {
-      const hasEvent = this.events.some(event => new Date(event.date).getDate() === i);
+      const hasEvent = Array.isArray(this.events) && this.events.some((event) => new Date(event.date).getDate() === i);
       this.days.push({ date: i, prev: false, next: false, today: i === this.today.getDate(), hasEvent });
+    }
+    console.log('Days:', this.days); // Depuración
+  }
+
+  filterEventsByDay(): void {
+    if (this.selectedDay) {
+      this.filteredEvents = this.events.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate.getDate() === this.selectedDay &&
+          eventDate.getMonth() === this.today.getMonth() &&
+          eventDate.getFullYear() === this.currentYear;
+      });
+    } else {
+      this.filteredEvents = [];
     }
   }
 
@@ -97,6 +130,7 @@ export class EventsCalendarComponent implements OnInit {
   selectDay(day: Day): void {
     this.selectedDay = day.date;
     this.selectedDayName = new Date(this.currentYear, this.today.getMonth(), day.date).toLocaleDateString('es-ES', { weekday: 'long' });
+    this.filterEventsByDay();
   }
 
   gotoDate(): void {
@@ -123,11 +157,10 @@ export class EventsCalendarComponent implements OnInit {
     this.router.navigate([`/eventos/${eventId}`]);
   }
 
-  toggleMenu() {
+  toggleMenu(): void {
     const menu = document.getElementById('dropdown-menu');
     if (menu) {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
   }
 }
-

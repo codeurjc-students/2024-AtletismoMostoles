@@ -8,8 +8,6 @@
     <a routerLink="/ranking">Ranking</a>
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
-    <a routerLink="/disciplinas">Disciplinas</a>
-    <a routerLink="/login">Inicio de Sesión</a>
   </nav>
   <div class="menu-icon" (click)="toggleMenu()">
     <span></span>
@@ -22,14 +20,14 @@
     <a routerLink="/ranking">Ranking</a>
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
-    <a routerLink="/disciplinas">Disciplinas</a>
+    <a routerLink="/disciplines">Disciplinas</a>
     <a routerLink="/login">Inicio de Sesión</a>
   </div>
 </header>
 
 <div class="discipline-list">
-  <div *ngFor="let discipline of paginatedDisciplines()" class="discipline-item">
-    <img [src]="discipline.image" alt="{{discipline.name}}">
+  <div *ngFor="let discipline of disciplines" class="discipline-item">
+    <img src="{{discipline.image}}" alt="{{discipline.name}}">
     <div class="discipline-info">
       <h3>{{ discipline.name }}</h3>
       <p>Entrenadores: {{ discipline.coaches.join(', ') }}</p>
@@ -41,8 +39,8 @@
 
 <div class="pagination-controls">
   <button (click)="previousPage()" [disabled]="currentPage === 1">Anterior</button>
-  <span>Página {{ currentPage }} de {{ totalPages() }}</span>
-  <button (click)="nextPage()" [disabled]="currentPage === totalPages()">Siguiente</button>
+  <span>Página {{ currentPage }} de {{ totalPages }}</span>
+  <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
 </div>
 
 <div class="add-discipline">

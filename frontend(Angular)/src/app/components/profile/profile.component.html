@@ -26,69 +26,56 @@
 </header>
 
 <main>
-  <!-- First Section: Profile title -->
+  <!-- Profile title -->
   <section class="profile-header">
     <h1>{{ isAthlete ? 'Atleta' : 'Entrenador' }}</h1>
   </section>
 
-  <!-- Second Section: Profile details -->
+  <!-- Profile details -->
   <section class="profile-details">
-    <!-- Athlete details -->
-    <div *ngIf="isAthlete; else trainerDetails">
-      <p><strong>License Number:</strong> {{ profile.numeroLicencia }}</p>
-      <p><strong>First Name:</strong> {{ profile.nombre }}</p>
-      <p><strong>Last Name:</strong> {{ profile.apellido }}</p>
-      <p><strong>Coach:</strong> <a [routerLink]="['/profile/coach/', profile.entrenadorId]">{{ profile.entrenador }}</a></p>
-      <p><strong>Date of Birth:</strong> {{ profile.fechaNacimiento }}</p>
-      <p><strong>Disciplines:</strong></p>
-      <ul>
-        <li *ngFor="let disciplina of profile.disciplinas">{{ disciplina }}</li>
-      </ul>
+    <p><strong>License Number:</strong> {{ profile.numeroLicencia }}</p>
+    <p><strong>First Name:</strong> {{ profile.nombre }}</p>
+    <p><strong>Last Name:</strong> {{ profile.apellido }}</p>
+    <p *ngIf="isAthlete">
+      <strong>Coach:</strong>
+      <a [routerLink]="['/profile/coach/', profile.entrenadorId]">{{ profile.entrenador }}</a>
+    </p>
+    <p><strong>Date of Birth:</strong> {{ profile.fechaNacimiento }}</p>
+    <p><strong>Disciplines:</strong></p>
+    <ul>
+      <li *ngFor="let disciplina of profile.disciplinas">{{ disciplina }}</li>
+    </ul>
 
-      <h2>Results</h2>
-      <table>
-        <thead>
-        <tr>
-          <th>Event</th>
-          <th>Discipline</th>
-          <th>Result</th>
+    <!-- Results or Athletes Table -->
+    <h2>{{ isAthlete ? 'Results' : 'Athletes' }}</h2>
+    <table>
+      <thead>
+      <tr>
+        <th *ngIf="isAthlete">Event</th>
+        <th>Discipline</th>
+        <th>{{ isAthlete ? 'Result' : 'Date of Birth' }}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- Bloque para atletas -->
+      <ng-container *ngIf="!isAthlete">
+        <tr *ngFor="let item of paginatedAthletes">
+          <td>{{ item.nombre }}</td>
+          <td>{{ item.apellido }}</td>
+          <td>{{ item.fechaNacimiento }}</td>
         </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let result of paginatedResults">
-          <td>{{ result.evento }}</td>
-          <td>{{ result.disciplina }}</td>
-          <td>{{ result.valor }}</td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+      </ng-container>
 
-    <!-- Trainer details -->
-    <ng-template #trainerDetails>
-      <p><strong>License Number:</strong> {{ profile.numeroLicencia }}</p>
-      <p><strong>First Name:</strong> {{ profile.nombre }}</p>
-      <p><strong>Last Name:</strong> {{ profile.apellido }}</p>
-      <p><strong>Discipline:</strong> {{ profile.disciplina }}</p>
-
-      <h2>Athletes</h2>
-      <table>
-        <thead>
-        <tr>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Date of Birth</th>
+      <!-- Bloque para resultados -->
+      <ng-container *ngIf="isAthlete">
+        <tr *ngFor="let item of paginatedResults">
+          <td>{{ item.evento }}</td>
+          <td>{{ item.disciplina }}</td>
+          <td>{{ item.valor }}</td>
         </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let atleta of paginatedAthletes">
-          <td>{{ atleta.nombre }}</td>
-          <td>{{ atleta.apellido }}</td>
-          <td>{{ atleta.fechaNacimiento }}</td>
-        </tr>
-        </tbody>
-      </table>
-    </ng-template>
+      </ng-container>
+      </tbody>
+    </table>
   </section>
 
   <!-- Action buttons -->
@@ -96,6 +83,11 @@
     <button (click)="goBack()" class="btn-secondary">Back</button>
     <button (click)="editProfile()" class="btn-primary">Edit</button>
     <button (click)="deleteProfile()" class="btn-danger">Delete</button>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
   </div>
 </main>
 

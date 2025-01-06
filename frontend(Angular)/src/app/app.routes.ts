@@ -9,6 +9,7 @@ import {EventDetailsComponent} from './components/event-details/event-details.co
 import {ProfileComponent} from './components/profile/profile.component';
 import {AssociationAtlComponent} from './components/association-atl/association-atl.component';
 import {DisciplineDetailsComponent} from './components/discipline-details/discipline-details.component';
+import {NewEventFormComponent} from './components/new-event-form/new-event-form.component';
 
 export const routes: Routes = [
   { path: '', component: IndexComponent },
@@ -19,7 +20,8 @@ export const routes: Routes = [
   { path: 'eventos/:id', component: EventDetailsComponent},
   { path: 'profile/:type/:id', component: ProfileComponent},
   { path: 'disciplines', component: AssociationAtlComponent},
-  { path: 'discipline-details/:id', component: DisciplineDetailsComponent}
+  { path: 'discipline-details/:id', component: DisciplineDetailsComponent},
+  { path: 'events/new', component: NewEventFormComponent}
 ];
 
 @NgModule({

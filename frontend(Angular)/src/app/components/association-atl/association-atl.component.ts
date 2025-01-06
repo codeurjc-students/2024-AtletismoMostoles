@@ -1,34 +1,30 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {FormsModule} from '@angular/forms';
-import {NgForOf, NgIf} from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-association-atl',
   templateUrl: './association-atl.component.html',
+  styleUrls: ['./association-atl.component.css'],
   standalone: true,
   imports: [
-    RouterOutlet,
     FormsModule,
     NgIf,
     NgForOf,
-    RouterLink
-  ],
-  styleUrls: ['./association-atl.component.css']
+    RouterOutlet,
+    RouterLink,
+    HttpClientModule
+  ]
 })
 export class AssociationAtlComponent implements OnInit {
+  isModalOpen: boolean = false;
   disciplines: { id: number; name: string; image: string; coaches: string[] }[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 5;
-  private apiUrl: string = 'http://localhost:8080/api/disciplines'; // URL del backend
-
-  isModalOpen: boolean = false;
-  newDiscipline: { name: string; description: string; image: string } = {
-    name: '',
-    description: '',
-    image: ''
-  };
+  totalPages: number = 1;
+  private apiUrl: string = 'http://localhost:8080/api/disciplines';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -37,9 +33,15 @@ export class AssociationAtlComponent implements OnInit {
   }
 
   loadDisciplines(): void {
-    this.http.get<{ id: number; name: string; image: string; coaches: string[] }[]>(this.apiUrl).subscribe(
-      (data) => {
-        this.disciplines = data;
+    const params = new HttpParams()
+      .set('page', (this.currentPage - 1).toString())
+      .set('size', this.itemsPerPage.toString())
+      .set('sortBy', 'name');
+
+    this.http.get<any>(this.apiUrl, { params }).subscribe(
+      (response) => {
+        this.disciplines = response.content;
+        this.totalPages = response.totalPages;
       },
       (error) => {
         console.error('Error al cargar las disciplinas:', error);
@@ -47,24 +49,17 @@ export class AssociationAtlComponent implements OnInit {
     );
   }
 
-  paginatedDisciplines(): { id: number; name: string; image: string; coaches: string[] }[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.disciplines.slice(startIndex, startIndex + this.itemsPerPage);
-  }
-
-  totalPages(): number {
-    return Math.ceil(this.disciplines.length / this.itemsPerPage);
-  }
-
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.loadDisciplines();
     }
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages()) {
+    if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.loadDisciplines();
     }
   }
 
@@ -90,17 +85,12 @@ export class AssociationAtlComponent implements OnInit {
     this.router.navigate(['/discipline-details', disciplineId]);
   }
 
-  addNewDiscipline(): void {
-    this.router.navigate(['/new-discipline']);
-  }
-
   openModal(): void {
     this.isModalOpen = true;
   }
 
   closeModal(): void {
     this.isModalOpen = false;
-    this.newDiscipline = { name: '', description: '', image: '' };
   }
 
   saveDiscipline(): void {
@@ -119,6 +109,12 @@ export class AssociationAtlComponent implements OnInit {
       alert('Por favor, complete todos los campos antes de guardar.');
     }
   }
+
+  newDiscipline: { name: string; description: string; image: string } = {
+    name: '',
+    description: '',
+    image: ''
+  };
 
   toggleMenu() {
     const menu = document.getElementById('dropdown-menu');

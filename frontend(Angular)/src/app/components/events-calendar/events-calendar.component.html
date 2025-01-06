@@ -22,12 +22,18 @@
     <a routerLink="/ranking">Ranking</a>
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
-    <a routerLink="">Disciplinas</a>
+    <a routerLink="/disciplines">Disciplinas</a>
     <a routerLink="">Inicio de Sesión</a>
   </div>
 </header>
 
 <main>
+  <section class="section-1">
+    <div class="overlay">
+      <h1>Calendario De Eventos</h1>
+    </div>
+  </section>
+
   <section class="calendar-section">
     <div class="calendar-container">
       <div class="calendar">
@@ -46,8 +52,11 @@
           <div>Sáb</div>
         </div>
         <div class="days">
-          <div *ngFor="let day of days" [ngClass]="{'prev-date': day.prev, 'next-date': day.next, 'today': day.today, 'event': day.hasEvent}" (click)="selectDay(day)">
-            {{ day.date }}
+          <div
+            *ngFor="let day of days"
+            [ngClass]="{'today': day.today, 'event-day': day.hasEvent}"
+            (click)="day.date ? selectDay(day) : null">
+            {{ day.date !== 0 ? day.date : '' }}
           </div>
         </div>
         <div class="goto-today">
@@ -77,7 +86,7 @@
       </div>
     </div>
     <div class="actions">
-      <button routerLink="/eventos/nuevo" class="btn-primary">Añadir Evento</button>
+      <button routerLink="/events/new" class="btn-primary">Añadir Evento</button>
       <button routerLink="/eventos" class="btn-secondary">Volver a la lista de Eventos</button>
     </div>
   </section>

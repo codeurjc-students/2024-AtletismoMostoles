@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import {NgForOf, NgIf} from '@angular/common';
+import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NgForOf, NgIf } from '@angular/common';
+import { AthleteService } from '../../services/athlete.service';
+import { CoachService } from '../../services/coach.service';
 
 interface Profile {
   id: number;
@@ -47,19 +48,21 @@ export class ProfileComponent implements OnInit {
     apellido: '',
     fechaNacimiento: ''
   };
-
   results: Result[] = [];
   paginatedResults: Result[] = [];
-  athletes: Athlete[] = [];
   paginatedAthletes: Athlete[] = [];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
   isAthlete = true;
+  errorMessage: string = '';
 
-  private apiUrl = 'http://localhost:8080/api';
-
-  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private athleteService: AthleteService,
+    private coachService: CoachService
+  ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.params['id'];
@@ -74,39 +77,42 @@ export class ProfileComponent implements OnInit {
   }
 
   loadProfile(id: number): void {
-    const endpoint = this.isAthlete ? 'athletes' : 'coaches';
-    this.http.get<Profile>(`${this.apiUrl}/${endpoint}/${id}`).subscribe(
+    const service = this.isAthlete ? this.athleteService : this.coachService;
+    service.getById(id.toString()).subscribe(
       (response) => {
         this.profile = response;
       },
       (error) => {
         console.error('Error loading profile:', error);
+        this.errorMessage = 'Error loading profile. Please try again later.';
       }
     );
   }
 
   loadResults(id: number): void {
-    this.http.get<Result[]>(`${this.apiUrl}/athletes/${id}/results`).subscribe(
+    this.athleteService.getById(id.toString()).subscribe(
       (response) => {
-        this.results = response;
+        this.results = response.results || [];
         this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
         this.updatePagination('results');
       },
       (error) => {
         console.error('Error loading results:', error);
+        this.errorMessage = 'Error loading results. Please try again later.';
       }
     );
   }
 
   loadAthletes(id: number): void {
-    this.http.get<Athlete[]>(`${this.apiUrl}/coaches/${id}/athletes`).subscribe(
+    this.coachService.getById(id.toString()).subscribe(
       (response) => {
-        this.athletes = response;
-        this.totalPages = Math.ceil(this.athletes.length / this.itemsPerPage);
+        this.paginatedAthletes = response.athletes || [];
+        this.totalPages = Math.ceil(this.paginatedAthletes.length / this.itemsPerPage);
         this.updatePagination('athletes');
       },
       (error) => {
         console.error('Error loading athletes:', error);
+        this.errorMessage = 'Error loading athletes. Please try again later.';
       }
     );
   }
@@ -117,7 +123,7 @@ export class ProfileComponent implements OnInit {
     if (type === 'results') {
       this.paginatedResults = this.results.slice(start, end);
     } else {
-      this.paginatedAthletes = this.athletes.slice(start, end);
+      this.paginatedAthletes = this.paginatedAthletes.slice(start, end);
     }
   }
 
@@ -145,8 +151,8 @@ export class ProfileComponent implements OnInit {
 
   deleteProfile(): void {
     if (confirm('Are you sure you want to delete this profile?')) {
-      const endpoint = this.isAthlete ? 'athletes' : 'coaches';
-      this.http.delete(`${this.apiUrl}/${endpoint}/${this.profile.id}`).subscribe(
+      const service = this.isAthlete ? this.athleteService : this.coachService;
+      service.delete(this.profile.id.toString()).subscribe(
         () => {
           alert('Profile deleted successfully.');
           this.goBack();

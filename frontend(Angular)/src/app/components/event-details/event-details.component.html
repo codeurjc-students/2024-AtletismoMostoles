@@ -1,5 +1,4 @@
 <header>
-
   <div class="logo">
     <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
   </div>
@@ -16,25 +15,24 @@
     <span></span>
   </div>
   <div class="dropdown" id="dropdown-menu">
-
     <a routerLink="/">Inicio</a>
     <a routerLink="/miembros">Miembros del Club</a>
     <a routerLink="/ranking">Ranking</a>
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
-    <a routerLink="">Disciplinas</a>
+    <a routerLink="/disciplines">Disciplinas</a>
     <a routerLink="">Inicio de Sesión</a>
   </div>
 </header>
 
 <main>
-  <!-- Primera Sección: Imagen de fondo y nombre del evento -->
+
   <section class="event-header" [ngStyle]="{'background-image': 'url(' + event.image + ')'}">
     <h1 *ngIf="!isEditing">{{ event.name }}</h1>
     <input *ngIf="isEditing" type="text" [(ngModel)]="event.name" class="edit-input" />
   </section>
 
-  <!-- Segunda Sección: Detalles del evento y mapa -->
+
   <section class="event-details">
     <div class="details-left">
       <p><strong>Fecha:</strong> <span *ngIf="!isEditing">{{ event.date }}</span>
@@ -48,7 +46,7 @@
     </div>
   </section>
 
-  <!-- Tercera Sección: Resultados -->
+
   <section class="event-results">
     <h2>Resultados</h2>
     <table>
@@ -61,7 +59,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let result of paginatedResults">
+      <tr *ngFor="let result of results">
         <td>{{ result.nombre }}</td>
         <td>{{ result.apellido }}</td>
         <td>{{ result.disciplina }}</td>
@@ -95,4 +93,3 @@
   </div>
 </footer>
 <router-outlet></router-outlet>
-
