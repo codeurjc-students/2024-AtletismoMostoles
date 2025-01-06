@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
-import {RouterLink, RouterOutlet} from '@angular/router';
-import {NgForOf} from '@angular/common';
+import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { NgForOf } from '@angular/common';
 
-interface Coaches {
+interface Coach {
   nombre: string;
   apellido: string;
   numeroLicencia: string;
@@ -19,85 +19,70 @@ interface Coaches {
     FormsModule,
     RouterLink,
     NgForOf,
-    RouterOutlet
+    RouterOutlet,
+    HttpClientModule
   ],
   styleUrls: ['./clubmembers.component.css']
 })
 export class ClubMembersComponent implements OnInit {
-
   filters = {
     nombre: '',
     apellido: '',
     numeroLicencia: '',
     disciplina: ''
   };
-  coaches: Coaches[] = [];
-  paginatedCoaches: Coaches[] = [];
+  coaches: Coach[] = [];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
 
-  constructor() {
-    this.updatePagination(); // Llamada inicial para llenar paginatedAtletas
-  }
-  /*
   private apiUrl = 'http://localhost:8080/api/coaches';
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.loadEntrenadores();
+    this.loadCoaches();
   }
 
-  loadEntrenadores(): void {
-    const params: any = {
-      page: this.currentPage - 1,
-      size: 10,
-      ...this.filters
-    };
+  loadCoaches(): void {
+    const params = new HttpParams()
+      .set('page', (this.currentPage - 1).toString())
+      .set('size', this.itemsPerPage.toString());
 
     this.http.get<any>(this.apiUrl, { params }).subscribe(
       response => {
-        this.entrenadores = response.content;
+        this.coaches = response.content;
         this.totalPages = response.totalPages;
       },
       error => {
         console.error('Error al cargar entrenadores:', error);
       }
     );
-  }*/
+  }
 
   applyFilters(): void {
     this.currentPage = 1;
-    //this.loadEntrenadores();
-  }
-
-  updatePagination() {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = this.currentPage * this.itemsPerPage;
-    this.paginatedCoaches = this.coaches.slice(start, end);
+    this.loadCoaches();
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      //this.loadEntrenadores();
+      this.loadCoaches();
     }
   }
 
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      //this.loadEntrenadores();
+      this.loadCoaches();
     }
   }
 
-  toggleMenu() {
+  toggleMenu(): void {
     const menu = document.getElementById('dropdown-menu');
     if (menu) {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
-  }
-  ngOnInit(): void {
   }
 }
