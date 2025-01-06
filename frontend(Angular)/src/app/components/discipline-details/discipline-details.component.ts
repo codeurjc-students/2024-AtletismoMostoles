@@ -4,6 +4,8 @@ import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router'
 import { FormsModule } from '@angular/forms';
 import { NgForOf, NgIf } from '@angular/common';
 
+
+
 @Component({
   selector: 'app-discipline-details',
   templateUrl: './discipline-details.component.html',
@@ -13,14 +15,14 @@ import { NgForOf, NgIf } from '@angular/common';
     FormsModule,
     NgForOf,
     NgIf,
-    RouterOutlet,
     RouterLink,
+    RouterOutlet,
     HttpClientModule
   ]
 })
 export class DisciplineDetailsComponent implements OnInit {
   isModalOpen: boolean = false;
-  discipline: { id: number; name: string; description: string; image: string; coaches: string[] } = { id: 0, name: '', description: '', image: '', coaches: [] };
+  discipline: { id: number; name: string; description: string; image: string; coaches: { licenseNumber: string; firstName: string; lastName: string }[] } = { id: 0, name: '', description: '', image: '', coaches: [] };
   equipmentList: { id: number; name: string }[] = [];
   allEquipment: { id: number; name: string; selected: boolean }[] = [];
   currentPage: number = 1;
@@ -38,7 +40,7 @@ export class DisciplineDetailsComponent implements OnInit {
   }
 
   loadDisciplineDetails(disciplineId: number): void {
-    this.http.get<{ id: number; name: string; description: string; image: string; coaches: string[] }>(`${this.disciplineApiUrl}/${disciplineId}`).subscribe(
+    this.http.get<{ id: number; name: string; description: string; image: string; coaches: { licenseNumber: string; firstName: string; lastName: string }[] }>(`${this.disciplineApiUrl}/${disciplineId}`).subscribe(
       (data) => {
         this.discipline = data;
         this.loadEquipment(disciplineId);

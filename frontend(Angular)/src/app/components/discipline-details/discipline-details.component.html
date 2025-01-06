@@ -8,7 +8,7 @@
     <a routerLink="/ranking">Ranking</a>
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
-    </nav>
+  </nav>
   <div class="menu-icon" (click)="toggleMenu()">
     <span></span>
     <span></span>
@@ -33,7 +33,12 @@
   <div class="discipline-info">
     <div *ngIf="!isEditMode">
       <p>{{ discipline.description }}</p>
-      <p><strong>Entrenadores:</strong> {{ discipline.coaches.join(', ') }}</p>
+      <h3>Entrenadores</h3>
+      <ul>
+        <li *ngFor="let coach of discipline.coaches">
+          {{ coach.firstName }} {{ coach.lastName }}
+        </li>
+      </ul>
       <button (click)="toggleEditMode()">Editar</button>
     </div>
 

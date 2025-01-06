@@ -1,8 +1,9 @@
 package com.example.TFG_WebApp.RESTControllers;
 
 import com.example.TFG_WebApp.Models.Discipline;
+import com.example.TFG_WebApp.Models.Coach;
 import com.example.TFG_WebApp.Services.DisciplineService;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.example.TFG_WebApp.Services.CoachService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,12 +13,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/disciplines")
 public class DisciplineRestController {
+
     @Autowired
     private DisciplineService disciplineService;
+
+    @Autowired
+    private CoachService coachService;
 
     @GetMapping
     public ResponseEntity<Page<Discipline>> getAllDisciplines(
@@ -37,12 +43,26 @@ public class DisciplineRestController {
 
     @PostMapping
     public ResponseEntity<Discipline> createDiscipline(@RequestBody Discipline discipline) {
+        Set<Coach> coaches = discipline.getCoaches();
+        if (coaches != null && !coaches.isEmpty()) {
+            coaches.forEach(coach -> {
+                Coach existingCoach = coachService.getCoachById(coach.getLicenseNumber());
+                discipline.getCoaches().add(existingCoach);
+            });
+        }
         Discipline createdDiscipline = disciplineService.createDiscipline(discipline);
         return new ResponseEntity<>(createdDiscipline, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Discipline> updateDiscipline(@PathVariable Long id, @RequestBody Discipline discipline) {
+        Set<Coach> coaches = discipline.getCoaches();
+        if (coaches != null && !coaches.isEmpty()) {
+            coaches.forEach(coach -> {
+                Coach existingCoach = coachService.getCoachById(coach.getLicenseNumber());
+                discipline.getCoaches().add(existingCoach);
+            });
+        }
         Discipline updatedDiscipline = disciplineService.updateDiscipline(id, discipline);
         return ResponseEntity.ok(updatedDiscipline);
     }

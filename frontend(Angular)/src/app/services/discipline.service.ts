@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {Discipline} from '../models/discipline.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,18 +22,18 @@ export class DisciplineService {
   }
 
   // Get discipline by ID
-  getById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<Discipline> {
+    return this.http.get<Discipline>(`${this.apiUrl}/${id}`);
   }
 
   // Create a new discipline
-  create(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+  create(data: Discipline): Observable<Discipline> {
+    return this.http.post<Discipline>(this.apiUrl, data);
   }
 
   // Update a discipline by ID
-  update(id: number, data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+  update(id: number, data: Discipline): Observable<Discipline> {
+    return this.http.put<Discipline>(`${this.apiUrl}/${id}`, data);
   }
 
   // Delete a discipline by ID

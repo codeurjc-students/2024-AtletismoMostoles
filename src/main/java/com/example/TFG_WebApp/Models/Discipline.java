@@ -7,6 +7,7 @@ import java.util.Set;
 
 @Entity
 public class Discipline {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,6 +34,15 @@ public class Discipline {
 
     @ManyToMany(mappedBy = "disciplines")
     private Set<Event> events = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "discipline_coach",
+            joinColumns = @JoinColumn(name = "discipline_id"),
+            inverseJoinColumns = @JoinColumn(name = "coach_id")
+    )
+    private Set<Coach> coaches = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -61,8 +71,8 @@ public class Discipline {
         return imageLink;
     }
 
-    public void setImageLink(String image) {
-        this.imageLink = image;
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 
     public Set<Equipment> getEquipment() {
@@ -87,5 +97,13 @@ public class Discipline {
 
     public void setEvents(Set<Event> events) {
         this.events = events;
+    }
+
+    public Set<Coach> getCoaches() {
+        return coaches;
+    }
+
+    public void setCoaches(Set<Coach> coaches) {
+        this.coaches = coaches;
     }
 }

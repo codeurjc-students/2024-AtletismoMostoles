@@ -1,23 +1,24 @@
 package com.example.TFG_WebApp.Models;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Coach {
+
     @Id
     private String licenseNumber;
 
     private String firstName;
     private String lastName;
 
-    @ManyToOne
-    @JoinColumn(name = "discipline_id")
-    private Discipline discipline;
+    @ManyToMany(mappedBy = "coaches")
+    private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "coach")
-    private List<Athlete> athletes = new ArrayList<>();
+    private Set<Athlete> athletes = new HashSet<>();
 
     public String getLicenseNumber() {
         return licenseNumber;
@@ -43,19 +44,19 @@ public class Coach {
         this.lastName = lastName;
     }
 
-    public Discipline getDiscipline() {
-        return discipline;
+    public Set<Discipline> getDisciplines() {
+        return disciplines;
     }
 
-    public void setDiscipline(Discipline discipline) {
-        this.discipline = discipline;
+    public void setDisciplines(Set<Discipline> disciplines) {
+        this.disciplines = disciplines;
     }
 
-    public List<Athlete> getAthletes() {
+    public Set<Athlete> getAthletes() {
         return athletes;
     }
 
-    public void setAthletes(List<Athlete> athletes) {
+    public void setAthletes(Set<Athlete> athletes) {
         this.athletes = athletes;
     }
 }

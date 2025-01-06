@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Coach } from '../models/coach.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,33 +11,28 @@ export class CoachService {
 
   constructor(private http: HttpClient) {}
 
-  // Get coaches with pagination
-  getAll(page: number = 0, size: number = 10, sortBy: string = 'lastName'): Observable<any> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString())
-      .set('sortBy', sortBy);
-
-    return this.http.get<any>(this.apiUrl, { params });
+  // Obtener todos los entrenadores
+  getAll(): Observable<Coach[]> {
+    return this.http.get<Coach[]>(this.apiUrl);
   }
 
-  // Get coach by ID
-  getById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  // Obtener un entrenador por ID
+  getById(licenseNumber: string): Observable<Coach> {
+    return this.http.get<Coach>(`${this.apiUrl}/${licenseNumber}`);
   }
 
-  // Create a new coach
-  create(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+  // Crear un nuevo entrenador
+  create(data: Coach): Observable<Coach> {
+    return this.http.post<Coach>(this.apiUrl, data);
   }
 
-  // Update a coach by ID
-  update(id: string, data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+  // Actualizar un entrenador por ID
+  update(licenseNumber: string, data: Coach): Observable<Coach> {
+    return this.http.put<Coach>(`${this.apiUrl}/${licenseNumber}`, data);
   }
 
-  // Delete a coach by ID
-  delete(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  // Eliminar un entrenador por ID
+  delete(licenseNumber: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${licenseNumber}`);
   }
 }
