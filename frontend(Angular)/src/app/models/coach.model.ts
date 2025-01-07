@@ -1,8 +1,10 @@
-import {Athlete} from './athlete.model';
+import { Athlete } from './athlete.model';
+import { Discipline } from './discipline.model';
 
-export interface Coach{
+export interface Coach {
   licenseNumber: string;
   firstName: string;
   lastName: string;
-  athletes: Athlete[];
-};
+  disciplines?: Discipline[];
+  athletes?: Athlete[];
+}

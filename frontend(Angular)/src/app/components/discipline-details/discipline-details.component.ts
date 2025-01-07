@@ -1,10 +1,13 @@
+// discipline-details.component.ts
 import { Component, OnInit } from '@angular/core';
-import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
 import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgForOf, NgIf } from '@angular/common';
-
-
+import { DisciplineService } from '../../services/discipline.service';
+import { EquipmentService } from '../../services/equipment.service';
+import { Discipline } from '../../models/discipline.model';
+import { Equipment } from '../../models/equipment.model';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-discipline-details',
@@ -22,16 +25,19 @@ import { NgForOf, NgIf } from '@angular/common';
 })
 export class DisciplineDetailsComponent implements OnInit {
   isModalOpen: boolean = false;
-  discipline: { id: number; name: string; description: string; image: string; coaches: { licenseNumber: string; firstName: string; lastName: string }[] } = { id: 0, name: '', description: '', image: '', coaches: [] };
-  equipmentList: { id: number; name: string }[] = [];
-  allEquipment: { id: number; name: string; selected: boolean }[] = [];
+  discipline: Discipline = { id: 0, name: '', description: '', imageLink: '', equipment: [], athletes: [], events: [], coaches: [] };
+  allEquipment: (Equipment & { selected: boolean })[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
-  private disciplineApiUrl: string = 'http://localhost:8080/api/disciplines';
-  private equipmentApiUrl: string = 'http://localhost:8080/api/equipment';
+  isEditMode: boolean = false;
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private disciplineService: DisciplineService,
+    private equipmentService: EquipmentService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     const disciplineId = this.route.snapshot.params['id'];
@@ -40,10 +46,9 @@ export class DisciplineDetailsComponent implements OnInit {
   }
 
   loadDisciplineDetails(disciplineId: number): void {
-    this.http.get<{ id: number; name: string; description: string; image: string; coaches: { licenseNumber: string; firstName: string; lastName: string }[] }>(`${this.disciplineApiUrl}/${disciplineId}`).subscribe(
+    this.disciplineService.getById(disciplineId).subscribe(
       (data) => {
         this.discipline = data;
-        this.loadEquipment(disciplineId);
       },
       (error) => {
         console.error('Error al cargar los detalles de la disciplina:', error);
@@ -51,44 +56,27 @@ export class DisciplineDetailsComponent implements OnInit {
     );
   }
 
-  loadEquipment(disciplineId: number): void {
-    const params = new HttpParams()
-      .set('page', (this.currentPage - 1).toString())
-      .set('size', this.itemsPerPage.toString());
-
-    this.http.get<any>(`${this.disciplineApiUrl}/${disciplineId}/equipment`, { params }).subscribe(
-      (response) => {
-        this.equipmentList = response.content;
-        this.totalPages = response.totalPages;
-      },
-      (error) => {
-        console.error('Error al cargar el equipamiento:', error);
-      }
-    );
-  }
-
   loadAllEquipment(): void {
-    this.http.get<{ id: number; name: string }[]>(this.equipmentApiUrl).subscribe(
-      (data) => {
-        this.allEquipment = data.map(item => ({ ...item, selected: false }));
+    this.equipmentService.getAll().subscribe(
+      (response) => {
+        this.allEquipment = response.content.map(item => ({ ...item, selected: false }));
       },
       (error) => {
         console.error('Error al cargar la lista de equipamiento:', error);
       }
     );
   }
-
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.loadEquipment(this.discipline.id);
+      this.loadAllEquipment();
     }
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.loadEquipment(this.discipline.id);
+      this.loadAllEquipment();
     }
   }
 
@@ -101,19 +89,20 @@ export class DisciplineDetailsComponent implements OnInit {
   }
 
   addEquipment(): void {
-    const disciplineId = this.discipline?.id;
-    if (disciplineId) {
-      const equipmentToAdd = this.allEquipment.filter(e => e.selected);
-      this.http.post(`${this.disciplineApiUrl}/${disciplineId}/equipment`, equipmentToAdd).subscribe(
+    const selectedEquipment = this.allEquipment.filter(e => e.selected);
+    if (selectedEquipment.length > 0) {
+      this.discipline.equipment = [...(this.discipline.equipment || []), ...selectedEquipment];
+      this.disciplineService.update(this.discipline.id, this.discipline).subscribe(
         () => {
           alert('Equipamiento agregado correctamente');
           this.closeModal();
-          this.loadEquipment(disciplineId);
         },
         (error) => {
           console.error('Error al agregar equipamiento:', error);
         }
       );
+    } else {
+      alert('Seleccione al menos un equipamiento.');
     }
   }
 
@@ -123,7 +112,7 @@ export class DisciplineDetailsComponent implements OnInit {
 
   saveDiscipline(): void {
     if (this.discipline) {
-      this.http.put(`${this.disciplineApiUrl}/${this.discipline.id}`, this.discipline).subscribe(
+      this.disciplineService.update(this.discipline.id, this.discipline).subscribe(
         () => {
           alert('Disciplina actualizada correctamente');
           this.isEditMode = false;
@@ -135,9 +124,7 @@ export class DisciplineDetailsComponent implements OnInit {
     }
   }
 
-  isEditMode: boolean = false;
-
-  toggleMenu() {
+  toggleMenu(): void {
     const menu = document.getElementById('dropdown-menu');
     if (menu) {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';

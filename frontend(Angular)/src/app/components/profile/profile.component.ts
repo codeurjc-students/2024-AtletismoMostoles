@@ -1,55 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { NgForOf, NgIf } from '@angular/common';
+import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import { AthleteService } from '../../services/athlete.service';
 import { CoachService } from '../../services/coach.service';
-
-interface Profile {
-  id: number;
-  numeroLicencia: string;
-  nombre: string;
-  apellido: string;
-  entrenador?: string;
-  entrenadorId?: number;
-  fechaNacimiento: string;
-  disciplinas?: string[];
-  disciplina?: string;
-}
-
-interface Result {
-  evento: string;
-  disciplina: string;
-  valor: string;
-}
-
-interface Athlete {
-  firstName: string;
-  lastName: string;
-  fechaNacimiento: string;
-}
+import { Athlete } from '../../models/athlete.model';
+import { Coach } from '../../models/coach.model';
+import { Results } from '../../models/results.model';
+import {Observable} from 'rxjs';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   standalone: true,
   imports: [
-    RouterLink,
     NgIf,
     NgForOf,
-    RouterOutlet
+    RouterLink,
+    RouterOutlet,
+    DatePipe,
+    HttpClientModule
   ],
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  profile: Profile = {
-    id: 0,
-    numeroLicencia: '',
-    nombre: '',
-    apellido: '',
-    fechaNacimiento: ''
-  };
-  results: Result[] = [];
-  paginatedResults: Result[] = [];
+  profile!: Athlete | Coach;
+  results: Results[] = [];
+  paginatedResults: Results[] = [];
   paginatedAthletes: Athlete[] = [];
   currentPage = 1;
   itemsPerPage = 10;
@@ -69,50 +46,26 @@ export class ProfileComponent implements OnInit {
     const type = this.route.snapshot.queryParams['type'];
     this.isAthlete = type === 'athlete';
     this.loadProfile(id);
-    if (this.isAthlete) {
-      this.loadResults(id);
-    } else {
-      this.loadAthletes(id);
-    }
   }
 
   loadProfile(id: number): void {
     const service = this.isAthlete ? this.athleteService : this.coachService;
-    service.getById(id.toString()).subscribe(
+    (service.getById(id.toString()) as Observable<Athlete | Coach>).subscribe(
       (response) => {
         this.profile = response;
+        if (this.isAthlete) {
+          this.results = (response as Athlete).results || [];
+          this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
+          this.updatePagination('results');
+        } else {
+          this.paginatedAthletes = (response as Coach).athletes || [];
+          this.totalPages = Math.ceil(this.paginatedAthletes.length / this.itemsPerPage);
+          this.updatePagination('athletes');
+        }
       },
-      (error) => {
+      (error: any) => {
         console.error('Error loading profile:', error);
         this.errorMessage = 'Error loading profile. Please try again later.';
-      }
-    );
-  }
-
-  loadResults(id: number): void {
-    this.athleteService.getById(id.toString()).subscribe(
-      (response) => {
-        this.results = response.results || [];
-        this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
-        this.updatePagination('results');
-      },
-      (error) => {
-        console.error('Error loading results:', error);
-        this.errorMessage = 'Error loading results. Please try again later.';
-      }
-    );
-  }
-
-  loadAthletes(id: number): void {
-    this.coachService.getById(id.toString()).subscribe(
-      (response) => {
-        this.paginatedAthletes = response.athletes || [];
-        this.totalPages = Math.ceil(this.paginatedAthletes.length / this.itemsPerPage);
-        this.updatePagination('athletes');
-      },
-      (error) => {
-        console.error('Error loading athletes:', error);
-        this.errorMessage = 'Error loading athletes. Please try again later.';
       }
     );
   }
@@ -152,7 +105,7 @@ export class ProfileComponent implements OnInit {
   deleteProfile(): void {
     if (confirm('Are you sure you want to delete this profile?')) {
       const service = this.isAthlete ? this.athleteService : this.coachService;
-      service.delete(this.profile.id.toString()).subscribe(
+      service.delete(this.profile.licenseNumber.toString()).subscribe(
         () => {
           alert('Profile deleted successfully.');
           this.goBack();
@@ -170,5 +123,13 @@ export class ProfileComponent implements OnInit {
     if (menu) {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
+  }
+
+  get coach() {
+    return this.isAthlete ? (this.profile as Athlete).coach : undefined;
+  }
+
+  get birthDate() {
+    return this.isAthlete ? (this.profile as Athlete).birthDate : undefined;
   }
 }

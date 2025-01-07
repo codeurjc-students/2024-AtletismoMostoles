@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import {Discipline} from '../models/discipline.model';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Discipline } from '../models/discipline.model';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,33 +13,58 @@ export class DisciplineService {
 
   constructor(private http: HttpClient) {}
 
-  // Get disciplines with pagination
-  getAll(page: number = 0, size: number = 10, sortBy: string = 'name'): Observable<any> {
+  // Obtener disciplinas con paginación
+  getAll(page: number = 0, size: number = 10, sortBy: string = 'name'): Observable<Page<Discipline>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
       .set('sortBy', sortBy);
 
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<Page<Discipline>>(this.apiUrl, { params }).pipe(
+      catchError(err => {
+        console.error('Error fetching disciplines', err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Get discipline by ID
+  // Obtener una disciplina por ID
   getById(id: number): Observable<Discipline> {
-    return this.http.get<Discipline>(`${this.apiUrl}/${id}`);
+    return this.http.get<Discipline>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error(`Error fetching discipline with ID: ${id}`, err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Create a new discipline
+  // Crear una nueva disciplina
   create(data: Discipline): Observable<Discipline> {
-    return this.http.post<Discipline>(this.apiUrl, data);
+    return this.http.post<Discipline>(this.apiUrl, data).pipe(
+      catchError(err => {
+        console.error('Error creating discipline', err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Update a discipline by ID
+  // Actualizar una disciplina por ID
   update(id: number, data: Discipline): Observable<Discipline> {
-    return this.http.put<Discipline>(`${this.apiUrl}/${id}`, data);
+    return this.http.put<Discipline>(`${this.apiUrl}/${id}`, data).pipe(
+      catchError(err => {
+        console.error(`Error updating discipline with ID: ${id}`, err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Delete a discipline by ID
-  delete(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  // Eliminar una disciplina por ID
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error(`Error deleting discipline with ID: ${id}`, err);
+        return throwError(err);
+      })
+    );
   }
 }

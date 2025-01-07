@@ -21,12 +21,12 @@
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
     <a routerLink="/disciplines">Disciplinas</a>
-    <a routerLink="">Inicio de Sesión</a>
+    <a routerLink="/login">Inicio de Sesión</a>
   </div>
 </header>
 
 <div class="discipline-details">
-  <div class="discipline-header" [style.background]="'url(' + discipline.image + ')'">
+  <div class="discipline-header" [style.background]="'url(' + discipline.imageLink + ')'">
     <h1>{{ discipline.name }}</h1>
   </div>
 
@@ -54,7 +54,7 @@
 
   <div class="equipment-list">
     <h2>Equipamiento</h2>
-    <div *ngFor="let item of equipmentList" class="equipment-item">
+    <div *ngFor="let item of discipline.equipment" class="equipment-item">
       <p>{{ item.name }}</p>
     </div>
     <div class="pagination-controls">

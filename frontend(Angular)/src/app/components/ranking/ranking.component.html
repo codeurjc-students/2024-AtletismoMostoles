@@ -53,6 +53,7 @@
   </div>
   <div class="list-section">
     <h2>Lista de Atletas</h2>
+    <button (click)="openNewAthleteModal(newAthleteModal)" class="button">Nuevo Atleta</button>
     <table>
       <thead>
       <tr>
@@ -65,11 +66,11 @@
       </thead>
       <tbody>
       <tr *ngFor="let atleta of paginatedAtletas">
-        <td>{{ atleta.numeroLicencia }}</td>
-        <td>{{ atleta.nombre }}</td>
-        <td>{{ atleta.apellido }}</td>
-        <td>{{ atleta.disciplina }}</td>
-        <td>{{ atleta.entrenador }}</td>
+        <td>{{ atleta.licenseNumber }}</td>
+        <td>{{ atleta.firstName }}</td>
+        <td>{{ atleta.lastName }}</td>
+        <td>{{ formatDisciplines(atleta.disciplines) }}</td>
+        <td>{{ atleta.coach?.firstName }} {{ atleta.coach?.lastName }}</td>
       </tr>
       </tbody>
     </table>
@@ -80,6 +81,52 @@
   </div>
 </section>
 
+<ng-template #newAthleteModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="modal-basic-title">Nuevo Atleta</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="athleteForm">
+      <div class="mb-3">
+        <label for="licenseNumber" class="form-label">Número de Licencia</label>
+        <input type="text" id="licenseNumber" formControlName="licenseNumber" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="firstName" class="form-label">Nombre</label>
+        <input type="text" id="firstName" formControlName="firstName" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="lastName" class="form-label">Apellido</label>
+        <input type="text" id="lastName" formControlName="lastName" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="birthDate" class="form-label">Fecha de Nacimiento</label>
+        <input type="date" id="birthDate" formControlName="birthDate" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="coach" class="form-label">Entrenador</label>
+        <select id="coach" formControlName="coach" class="form-select">
+          <option *ngFor="let coach of coaches" [value]="coach.licenseNumber">
+            {{ coach.firstName }} {{ coach.lastName }}
+          </option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="disciplines" class="form-label">Disciplinas</label>
+        <select id="disciplines" formControlName="disciplines" class="form-select" multiple>
+          <option *ngFor="let discipline of disciplines" [value]="discipline.id">
+            {{ discipline.name }}
+          </option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="modal.close('Save')">Guardar</button>
+  </div>
+</ng-template>
 
 <footer style="background-color: #007f00; color: white; padding: 20px; text-align: center;">
   <p><i class="fas fa-phone"></i> +34 600 123 456</p>

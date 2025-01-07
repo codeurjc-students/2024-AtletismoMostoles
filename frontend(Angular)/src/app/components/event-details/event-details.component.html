@@ -21,31 +21,28 @@
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
     <a routerLink="/disciplines">Disciplinas</a>
-    <a routerLink="">Inicio de Sesión</a>
+    <a routerLink="/login">Inicio de Sesión</a>
   </div>
 </header>
 
 <main>
-
-  <section class="event-header" [ngStyle]="{'background-image': 'url(' + event.image + ')'}">
+  <section class="event-header" [ngStyle]="{'background-image': 'url(' + event.imageLink + ')'}">
     <h1 *ngIf="!isEditing">{{ event.name }}</h1>
     <input *ngIf="isEditing" type="text" [(ngModel)]="event.name" class="edit-input" />
   </section>
-
 
   <section class="event-details">
     <div class="details-left">
       <p><strong>Fecha:</strong> <span *ngIf="!isEditing">{{ event.date }}</span>
         <input *ngIf="isEditing" type="date" [(ngModel)]="event.date" class="edit-input" /></p>
-      <p *ngIf="event.organizedByClub"><strong>Organizado por el club</strong></p>
-      <p *ngIf="!event.organizedByClub"><strong>No organizado por el club</strong></p>
-      <label *ngIf="isEditing"><input type="checkbox" [(ngModel)]="event.organizedByClub" /> Organizado por el club</label>
+      <p *ngIf="event.isOrganizedByClub"><strong>Organizado por el club</strong></p>
+      <p *ngIf="!event.isOrganizedByClub"><strong>No organizado por el club</strong></p>
+      <label *ngIf="isEditing"><input type="checkbox" [(ngModel)]="event.isOrganizedByClub" /> Organizado por el club</label>
     </div>
     <div class="details-right">
       <iframe [src]="mapUrl" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
     </div>
   </section>
-
 
   <section class="event-results">
     <h2>Resultados</h2>
@@ -60,10 +57,10 @@
       </thead>
       <tbody>
       <tr *ngFor="let result of results">
-        <td>{{ result.nombre }}</td>
-        <td>{{ result.apellido }}</td>
-        <td>{{ result.disciplina }}</td>
-        <td>{{ result.valor }}</td>
+        <td>{{ result.athlete.firstName }}</td>
+        <td>{{ result.athlete.lastName }}</td>
+        <td>{{ result.discipline.name }}</td>
+        <td>{{ result.value }}</td>
       </tr>
       </tbody>
     </table>

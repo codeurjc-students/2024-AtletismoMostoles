@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Coach } from '../models/coach.model';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,28 +13,48 @@ export class CoachService {
 
   constructor(private http: HttpClient) {}
 
-  // Obtener todos los entrenadores
-  getAll(): Observable<Coach[]> {
-    return this.http.get<Coach[]>(this.apiUrl);
+  getAll(page: number = 0, size: number = 10, sortBy: string = 'lastName'): Observable<Page<Coach>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sortBy', sortBy);
+
+    return this.http.get<Page<Coach>>(this.apiUrl, { params }).pipe(
+      catchError(err => {
+        console.error('Error fetching coaches', err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Obtener un entrenador por ID
-  getById(licenseNumber: string): Observable<Coach> {
-    return this.http.get<Coach>(`${this.apiUrl}/${licenseNumber}`);
+  getById(id: string): Observable<Coach> {
+    return this.http.get<Coach>(`${this.apiUrl}/${id}`);
   }
 
-  // Crear un nuevo entrenador
   create(data: Coach): Observable<Coach> {
-    return this.http.post<Coach>(this.apiUrl, data);
+    return this.http.post<Coach>(this.apiUrl, data).pipe(
+      catchError(err => {
+        console.error('Error creating coach', err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Actualizar un entrenador por ID
   update(licenseNumber: string, data: Coach): Observable<Coach> {
-    return this.http.put<Coach>(`${this.apiUrl}/${licenseNumber}`, data);
+    return this.http.put<Coach>(`${this.apiUrl}/${licenseNumber}`, data).pipe(
+      catchError(err => {
+        console.error(`Error updating coach with ID: ${licenseNumber}`, err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Eliminar un entrenador por ID
-  delete(licenseNumber: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${licenseNumber}`);
+  delete(licenseNumber: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${licenseNumber}`).pipe(
+      catchError(err => {
+        console.error(`Error deleting coach with ID: ${licenseNumber}`, err);
+        return throwError(err);
+      })
+    );
   }
 }

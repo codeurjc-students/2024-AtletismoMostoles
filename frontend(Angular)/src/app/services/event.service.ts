@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Event } from '../models/event.model';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,41 +13,41 @@ export class EventService {
 
   constructor(private http: HttpClient) {}
 
-  // Get events with pagination and optional filters
-  getAll(page: number = 0, size: number = 10, sortBy: string = 'date', organizer?: string, startDate?: string, endDate?: string): Observable<any> {
+  getAll(page: number = 0, size: number = 10, sortBy: string = 'date', startDate?: string, endDate?: string): Observable<Page<Event>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
       .set('sortBy', sortBy);
 
-    if (organizer) {
-      params = params.set('organizer', organizer);
-    }
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
 
-    if (startDate && endDate) {
-      params = params.set('startDate', startDate).set('endDate', endDate);
-    }
-
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<Page<Event>>(this.apiUrl, { params }).pipe(
+      catchError(err => throwError(() => new Error(`Error fetching events: ${err.message}`)))
+    );
   }
 
-  // Get event by ID
-  getById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<Event> {
+    return this.http.get<Event>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => throwError(() => new Error(`Error fetching event with ID ${id}: ${err.message}`)))
+    );
   }
 
-  // Create a new event
-  create(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+  create(data: Event): Observable<Event> {
+    return this.http.post<Event>(this.apiUrl, data).pipe(
+      catchError(err => throwError(() => new Error(`Error creating event: ${err.message}`)))
+    );
   }
 
-  // Update an event by ID
-  update(id: number, data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+  update(id: number, data: Event): Observable<Event> {
+    return this.http.put<Event>(`${this.apiUrl}/${id}`, data).pipe(
+      catchError(err => throwError(() => new Error(`Error updating event with ID ${id}: ${err.message}`)))
+    );
   }
 
-  // Delete an event by ID
-  delete(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => throwError(() => new Error(`Error deleting event with ID ${id}: ${err.message}`)))
+    );
   }
 }

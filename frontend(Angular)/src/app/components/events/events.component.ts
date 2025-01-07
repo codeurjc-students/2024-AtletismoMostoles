@@ -1,16 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgForOf, NgIf } from '@angular/common';
-
-interface Event {
-  id: number;
-  name: string;
-  date: string;
-  image: string;
-  organizedByClub: boolean;
-}
+import { EventService } from '../../services/event.service';
+import { Event } from '../../models/event.model';
+import { Page } from '../../models/page.model';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-events',
@@ -20,8 +15,8 @@ interface Event {
     FormsModule,
     NgForOf,
     NgIf,
-    RouterOutlet,
     RouterLink,
+    RouterOutlet,
     HttpClientModule
   ],
   styleUrls: ['./events.component.css']
@@ -33,23 +28,18 @@ export class EventsComponent implements OnInit {
   totalPages: number = 1;
   selectedFilter: string = 'upcoming';
 
-  private apiUrl: string = 'http://localhost:8080/api/events';
-
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private eventService: EventService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadEvents();
   }
 
   loadEvents(): void {
-    const params = new HttpParams()
-      .set('page', (this.currentPage - 1).toString())
-      .set('size', this.itemsPerPage.toString())
-      .set('sortBy', 'date')
-      .set('organizer', this.selectedFilter);
-
-    this.http.get<any>(this.apiUrl, { params }).subscribe(
-      (response) => {
+    this.eventService.getAll(this.currentPage - 1, this.itemsPerPage, 'date').subscribe(
+      (response: Page<Event>) => {
         this.events = response.content;
         this.totalPages = response.totalPages;
       },

@@ -20,8 +20,8 @@
     <a routerLink="/ranking">Ranking</a>
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
-    <a routerLink="">Disciplinas</a>
-    <a routerLink="">Inicio de Sesión</a>
+    <a routerLink="/disciplines">Disciplinas</a>
+    <a routerLink="/login">Inicio de Sesión</a>
   </div>
 </header>
 
@@ -33,45 +33,49 @@
 
   <!-- Profile details -->
   <section class="profile-details">
-    <p><strong>License Number:</strong> {{ profile.numeroLicencia }}</p>
-    <p><strong>First Name:</strong> {{ profile.nombre }}</p>
-    <p><strong>Last Name:</strong> {{ profile.apellido }}</p>
-    <p *ngIf="isAthlete">
-      <strong>Coach:</strong>
-      <a [routerLink]="['/profile/coach/', profile.entrenadorId]">{{ profile.entrenador }}</a>
+    <p><strong>Número de Licencia:</strong> {{ profile.licenseNumber }}</p>
+    <p><strong>Nombre:</strong> {{ profile.firstName }}</p>
+    <p><strong>Apellido:</strong> {{ profile.lastName }}</p>
+    <p *ngIf="coach">
+      <strong>Entrenador:</strong>
+      <a [routerLink]="['/profile/coach/', coach.licenseNumber]">
+        {{ coach.firstName }} {{ coach.lastName }}
+      </a>
     </p>
-    <p><strong>Date of Birth:</strong> {{ profile.fechaNacimiento }}</p>
-    <p><strong>Disciplines:</strong></p>
+    <p *ngIf="birthDate">
+      <strong>Fecha de Nacimiento:</strong> {{ birthDate | date }}
+    </p>
+    <p><strong>Disciplinas:</strong></p>
     <ul>
-      <li *ngFor="let disciplina of profile.disciplinas">{{ disciplina }}</li>
+      <li *ngFor="let discipline of profile.disciplines">{{ discipline.name }}</li>
     </ul>
 
     <!-- Results or Athletes Table -->
-    <h2>{{ isAthlete ? 'Results' : 'Athletes' }}</h2>
+    <h2>{{ isAthlete ? 'Resultados' : 'Atletas' }}</h2>
     <table>
       <thead>
       <tr>
-        <th *ngIf="isAthlete">Event</th>
-        <th>Discipline</th>
-        <th>{{ isAthlete ? 'Result' : 'Date of Birth' }}</th>
+        <th *ngIf="isAthlete">Evento</th>
+        <th>Disciplina</th>
+        <th>{{ isAthlete ? 'Resultado' : 'Fecha de Nacimiento' }}</th>
       </tr>
       </thead>
       <tbody>
       <!-- Bloque para atletas -->
       <ng-container *ngIf="!isAthlete">
-        <tr *ngFor="let item of paginatedAthletes">
-          <td>{{ item.firstName }}</td>
-          <td>{{ item.lastName}}</td>
-          <td>{{ item.fechaNacimiento }}</td>
+        <tr *ngFor="let athlete of paginatedAthletes">
+          <td>{{ athlete.firstName }}</td>
+          <td>{{ athlete.lastName }}</td>
+          <td>{{ athlete.birthDate | date }}</td>
         </tr>
       </ng-container>
 
       <!-- Bloque para resultados -->
       <ng-container *ngIf="isAthlete">
-        <tr *ngFor="let item of paginatedResults">
-          <td>{{ item.evento }}</td>
-          <td>{{ item.disciplina }}</td>
-          <td>{{ item.valor }}</td>
+        <tr *ngFor="let result of paginatedResults">
+          <td>{{ result.event.name }}</td>
+          <td>{{ result.discipline.name }}</td>
+          <td>{{ result.value }}</td>
         </tr>
       </ng-container>
       </tbody>
@@ -80,9 +84,9 @@
 
   <!-- Action buttons -->
   <div class="actions">
-    <button (click)="goBack()" class="btn-secondary">Back</button>
-    <button (click)="editProfile()" class="btn-primary">Edit</button>
-    <button (click)="deleteProfile()" class="btn-danger">Delete</button>
+    <button (click)="goBack()" class="btn-secondary">Volver</button>
+    <button (click)="editProfile()" class="btn-primary">Editar</button>
+    <button (click)="deleteProfile()" class="btn-danger">Eliminar</button>
   </div>
 
   <!-- Error message -->

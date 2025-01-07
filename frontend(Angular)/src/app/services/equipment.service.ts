@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Equipment } from '../models/equipment.model';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,33 +13,53 @@ export class EquipmentService {
 
   constructor(private http: HttpClient) {}
 
-  // Get equipment with pagination
-  getAll(page: number = 0, size: number = 10, sortBy: string = 'name'): Observable<any> {
+  getAll(page: number = 0, size: number = 10, sortBy: string = 'name'): Observable<Page<Equipment>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
       .set('sortBy', sortBy);
 
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.http.get<Page<Equipment>>(this.apiUrl, { params }).pipe(
+      catchError(err => {
+        console.error('Error fetching equipment', err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Get equipment by ID
-  getById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getById(id: number): Observable<Equipment> {
+    return this.http.get<Equipment>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error(`Error fetching equipment with ID: ${id}`, err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Create a new equipment
-  create(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+  create(data: Equipment): Observable<Equipment> {
+    return this.http.post<Equipment>(this.apiUrl, data).pipe(
+      catchError(err => {
+        console.error('Error creating equipment', err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Update an equipment by ID
-  update(id: number, data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+  update(id: number, data: Equipment): Observable<Equipment> {
+    return this.http.put<Equipment>(`${this.apiUrl}/${id}`, data).pipe(
+      catchError(err => {
+        console.error(`Error updating equipment with ID: ${id}`, err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Delete an equipment by ID
-  delete(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error(`Error deleting equipment with ID: ${id}`, err);
+        return throwError(err);
+      })
+    );
   }
 }
