@@ -19,15 +19,20 @@ public class Athlete {
 
     @ManyToOne
     @JoinColumn(name = "coach_id")
-    @JsonIgnoreProperties("athletes")
+    @JsonIgnoreProperties({"athletes", "disciplines"})
     private Coach coach;
 
-    @ManyToMany(mappedBy = "athletes")
-    @JsonIgnoreProperties("athletes")
+    @ManyToMany
+    @JoinTable(
+            name = "athlete_discipline",
+            joinColumns = @JoinColumn(name = "athlete_id"),
+            inverseJoinColumns = @JoinColumn(name = "discipline_id")
+    )
+    @JsonIgnoreProperties({"athletes", "coaches", "equipment", "events"})
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "athlete")
-    @JsonIgnoreProperties("athlete")
+    @JsonIgnoreProperties({"athlete", "event"})
     private List<Results> results = new ArrayList<>();
 
 

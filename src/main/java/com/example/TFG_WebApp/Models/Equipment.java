@@ -18,7 +18,7 @@ public class Equipment {
     private String imageLink;
 
     @ManyToMany(mappedBy = "equipment")
-    @JsonIgnoreProperties("equipment")
+    @JsonIgnoreProperties({"equipment", "coaches", "athletes", "events"})
     private Set<Discipline> disciplines = new HashSet<>();
 
     public Long getId() {

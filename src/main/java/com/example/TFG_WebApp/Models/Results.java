@@ -11,16 +11,17 @@ public class Results {
 
     @ManyToOne
     @JoinColumn(name = "athlete_id")
-    @JsonIgnoreProperties("results")
+    @JsonIgnoreProperties({"coach", "results", "disciplines"})
     private Athlete athlete;
 
     @ManyToOne
     @JoinColumn(name = "discipline_id")
+    @JsonIgnoreProperties({"equipment", "coaches", "athletes", "events"})
     private Discipline discipline;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
-    @JsonIgnoreProperties("results")
+    @JsonIgnoreProperties({"results", "disciplines"})
     private Event event;
 
     private double value; // For storing the result value (e.g., time or distance)

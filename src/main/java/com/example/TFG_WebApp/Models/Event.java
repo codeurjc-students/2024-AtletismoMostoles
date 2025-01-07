@@ -27,11 +27,11 @@ public class Event {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "discipline_id")
     )
-    @JsonIgnoreProperties("events")
+    @JsonIgnoreProperties({"equipment", "coaches", "athletes", "events"})
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "event")
-    @JsonIgnoreProperties("event")
+    @JsonIgnoreProperties({"discipline", "athlete", "event"})
     private List<Results> results = new ArrayList<>();
 
     public Long getId() {

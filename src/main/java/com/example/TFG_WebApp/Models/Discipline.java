@@ -26,26 +26,16 @@ public class Discipline {
     @JsonIgnoreProperties("disciplines")
     private Set<Equipment> equipment = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "discipline_athlete",
-            joinColumns = @JoinColumn(name = "discipline_id"),
-            inverseJoinColumns = @JoinColumn(name = "athlete_id")
-    )
-    @JsonIgnoreProperties("disciplines")
+    @ManyToMany(mappedBy = "disciplines")
+    @JsonIgnoreProperties({"disciplines", "coach", "results"})
     private Set<Athlete> athletes = new HashSet<>();
 
     @ManyToMany(mappedBy = "disciplines")
-    @JsonIgnoreProperties("disciplines")
+    @JsonIgnoreProperties({"disciplines", "results"})
     private Set<Event> events = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "discipline_coach",
-            joinColumns = @JoinColumn(name = "discipline_id"),
-            inverseJoinColumns = @JoinColumn(name = "coach_id")
-    )
-    @JsonIgnoreProperties("disciplines")
+    @ManyToMany(mappedBy = "disciplines")
+    @JsonIgnoreProperties({"disciplines", "athletes"})
     private Set<Coach> coaches = new HashSet<>();
 
     public Long getId() {

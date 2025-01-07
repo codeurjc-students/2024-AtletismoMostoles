@@ -15,12 +15,17 @@ public class Coach {
     private String firstName;
     private String lastName;
 
-    @ManyToMany(mappedBy = "coaches")
-    @JsonIgnoreProperties("coaches")
+    @ManyToMany
+    @JoinTable(
+            name = "coach_disciplines",
+            joinColumns = @JoinColumn(name = "coach_id"),
+            inverseJoinColumns = @JoinColumn(name = "discipline_id")
+    )
+    @JsonIgnoreProperties({"coaches", "events", "athletes", "equipment"} )
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "coach")
-    @JsonIgnoreProperties("coach")
+    @JsonIgnoreProperties({"coach", "results", "disciplines"})
     private Set<Athlete> athletes = new HashSet<>();
 
     public String getLicenseNumber() {
