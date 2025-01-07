@@ -58,6 +58,7 @@ export class ClubMembersComponent implements OnInit {
         console.error('Error al cargar entrenadores:', error);
       }
     );
+    console.log(this.coaches);
   }
 
   applyFilters(): void {

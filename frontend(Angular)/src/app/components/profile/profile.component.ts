@@ -23,8 +23,8 @@ interface Result {
 }
 
 interface Athlete {
-  nombre: string;
-  apellido: string;
+  firstName: string;
+  lastName: string;
   fechaNacimiento: string;
 }
 

@@ -1,5 +1,6 @@
 package com.example.TFG_WebApp.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -26,9 +27,11 @@ public class Event {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "discipline_id")
     )
+    @JsonIgnoreProperties("events")
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "event")
+    @JsonIgnoreProperties("event")
     private List<Results> results = new ArrayList<>();
 
     public Long getId() {

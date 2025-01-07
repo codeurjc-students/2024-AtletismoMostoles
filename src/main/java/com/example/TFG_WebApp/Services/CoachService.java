@@ -35,7 +35,7 @@ public class CoachService {
         Coach existingCoach = getCoachById(licenseNumber);
         existingCoach.setFirstName(updatedCoach.getFirstName());
         existingCoach.setLastName(updatedCoach.getLastName());
-        existingCoach.setDiscipline(updatedCoach.getDiscipline());
+        existingCoach.setDisciplines(updatedCoach.getDisciplines());
         return coachRepository.save(existingCoach);
     }
 

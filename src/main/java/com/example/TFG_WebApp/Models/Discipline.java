@@ -1,5 +1,6 @@
 package com.example.TFG_WebApp.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -22,6 +23,7 @@ public class Discipline {
             joinColumns = @JoinColumn(name = "discipline_id"),
             inverseJoinColumns = @JoinColumn(name = "equipment_id")
     )
+    @JsonIgnoreProperties("disciplines")
     private Set<Equipment> equipment = new HashSet<>();
 
     @ManyToMany
@@ -30,9 +32,11 @@ public class Discipline {
             joinColumns = @JoinColumn(name = "discipline_id"),
             inverseJoinColumns = @JoinColumn(name = "athlete_id")
     )
+    @JsonIgnoreProperties("disciplines")
     private Set<Athlete> athletes = new HashSet<>();
 
     @ManyToMany(mappedBy = "disciplines")
+    @JsonIgnoreProperties("disciplines")
     private Set<Event> events = new HashSet<>();
 
     @ManyToMany
@@ -41,6 +45,7 @@ public class Discipline {
             joinColumns = @JoinColumn(name = "discipline_id"),
             inverseJoinColumns = @JoinColumn(name = "coach_id")
     )
+    @JsonIgnoreProperties("disciplines")
     private Set<Coach> coaches = new HashSet<>();
 
     public Long getId() {

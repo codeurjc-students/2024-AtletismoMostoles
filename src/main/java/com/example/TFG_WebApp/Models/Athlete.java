@@ -1,5 +1,6 @@
 package com.example.TFG_WebApp.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,12 +19,15 @@ public class Athlete {
 
     @ManyToOne
     @JoinColumn(name = "coach_id")
+    @JsonIgnoreProperties("athletes")
     private Coach coach;
 
     @ManyToMany(mappedBy = "athletes")
+    @JsonIgnoreProperties("athletes")
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "athlete")
+    @JsonIgnoreProperties("athlete")
     private List<Results> results = new ArrayList<>();
 
 

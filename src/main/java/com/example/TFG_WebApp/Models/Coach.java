@@ -1,5 +1,6 @@
 package com.example.TFG_WebApp.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.List;
@@ -15,9 +16,11 @@ public class Coach {
     private String lastName;
 
     @ManyToMany(mappedBy = "coaches")
+    @JsonIgnoreProperties("coaches")
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "coach")
+    @JsonIgnoreProperties("coach")
     private Set<Athlete> athletes = new HashSet<>();
 
     public String getLicenseNumber() {

@@ -1,5 +1,6 @@
 package com.example.TFG_WebApp.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,6 +11,7 @@ public class Results {
 
     @ManyToOne
     @JoinColumn(name = "athlete_id")
+    @JsonIgnoreProperties("results")
     private Athlete athlete;
 
     @ManyToOne
@@ -18,6 +20,7 @@ public class Results {
 
     @ManyToOne
     @JoinColumn(name = "event_id")
+    @JsonIgnoreProperties("results")
     private Event event;
 
     private double value; // For storing the result value (e.g., time or distance)
