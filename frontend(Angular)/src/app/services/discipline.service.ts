@@ -9,7 +9,7 @@ import { Page } from '../models/page.model';
   providedIn: 'root'
 })
 export class DisciplineService {
-  private apiUrl = 'http://localhost:8080/api/disciplines';
+  private apiUrl = '/api/disciplines';
 
   constructor(private http: HttpClient) {}
 

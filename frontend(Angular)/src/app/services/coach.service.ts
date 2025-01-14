@@ -9,7 +9,7 @@ import { Page } from '../models/page.model';
   providedIn: 'root'
 })
 export class CoachService {
-  private apiUrl = 'http://localhost:8080/api/coaches';
+  private apiUrl = '/api/coaches';
 
   constructor(private http: HttpClient) {}
 

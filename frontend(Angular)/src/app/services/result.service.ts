@@ -9,7 +9,7 @@ import { Page } from '../models/page.model';
   providedIn: 'root'
 })
 export class ResultService {
-  private apiUrl = 'http://localhost:8080/api/results';
+  private apiUrl = '/api/results';
 
   constructor(private http: HttpClient) {}
 

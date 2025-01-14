@@ -1,0 +1,562 @@
+{
+	"info": {
+		"_postman_id": "10be2be2-8127-44e4-9b77-64a98490ff5c",
+		"name": "TFG WebApp API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "25893666"
+	},
+	"item": [
+		{
+			"name": "Athletes",
+			"item": [
+				{
+					"name": "Get All Athletes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost/api/athletes?page=0&size=10&sortBy=lastName",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"athletes"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "lastName"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Athlete by License Number",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost/api/athletes/{licenseNumber}"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Athlete",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"licenseNumber\": \"A12345\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"birthDate\": \"2000-01-01\",\n  \"coach\": { \"licenseNumber\": \"C54321\" }\n}"
+						},
+						"url": "https://localhost/api/athletes"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Athlete",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"licenseNumber\": \"A12345\",\n  \"firstName\": \"John Updated\",\n  \"lastName\": \"Doe\",\n  \"birthDate\": \"2000-01-01\",\n  \"coach\": { \"licenseNumber\": \"C54321\" }\n}"
+						},
+						"url": "https://localhost/api/athletes/{licenseNumber}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Athlete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "https://localhost/api/athletes/{licenseNumber}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Coaches",
+			"item": [
+				{
+					"name": "Get All Coaches",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost/api/coaches?page=0&size=10&sortBy=lastName",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"coaches"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "lastName"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Coach by License Number",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost/api/coaches/{licenseNumber}"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Coach",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"licenseNumber\": \"C54321\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\"\n}"
+						},
+						"url": "https://localhost/api/coaches"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Coach",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"licenseNumber\": \"C54321\",\n  \"firstName\": \"Jane Updated\",\n  \"lastName\": \"Smith\"\n}"
+						},
+						"url": "https://localhost/api/coaches/{licenseNumber}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Coach",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "https://localhost/api/coaches/{licenseNumber}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Disciplines",
+			"item": [
+				{
+					"name": "Get All Disciplines",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost/api/disciplines?page=0&size=10&sortBy=name",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"disciplines"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "name"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Discipline by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost/api/disciplines/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Discipline",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"High Jump\",\n  \"description\": \"Jump discipline description\"\n}"
+						},
+						"url": "https://localhost/api/disciplines"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Discipline",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Discipline\",\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": "https://localhost/api/disciplines/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Discipline",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "https://localhost/api/disciplines/{id}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Equipment",
+			"item": [
+				{
+					"name": "Get All Equipment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost/api/equipment?page=0&size=10&sortBy=name",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"equipment"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "name"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Equipment by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost/api/equipment/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Equipment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Hurdles\",\n  \"description\": \"Hurdles description\"\n}"
+						},
+						"url": "https://localhost/api/equipment"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Equipment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Equipment\",\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": "https://localhost/api/equipment/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Equipment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "https://localhost/api/equipment/{id}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Events",
+			"item": [
+				{
+					"name": "Get All Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost/api/events?page=0&size=10&sortBy=date",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"events"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "date"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost/api/events/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"City Marathon\",\n  \"date\": \"2025-05-01\",\n  \"isOrganizedByClub\": true\n}"
+						},
+						"url": "https://localhost/api/events"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Marathon\",\n  \"date\": \"2025-06-01\",\n  \"isOrganizedByClub\": false\n}"
+						},
+						"url": "https://localhost/api/events/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Event",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "https://localhost/api/events/{id}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Results",
+			"item": [
+				{
+					"name": "Get All Results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://localhost/api/results?page=0&size=10&sortBy=value",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"results"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "value"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Result by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost/api/results/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Result",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"value\": 12.5,\n  \"athlete\": { \"licenseNumber\": \"A12345\" },\n  \"discipline\": { \"id\": 1 },\n  \"event\": { \"id\": 1 }\n}"
+						},
+						"url": "https://localhost/api/results"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Result",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"value\": 14.2,\n  \"athlete\": { \"licenseNumber\": \"A12345\" },\n  \"discipline\": { \"id\": 1 },\n  \"event\": { \"id\": 1 }\n}"
+						},
+						"url": "https://localhost/api/results/{id}"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Result",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "https://localhost/api/results/{id}"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
