@@ -24,7 +24,7 @@ import {HttpClientModule} from '@angular/common/http';
   styleUrls: ['./clubmembers.component.css']
 })
 export class ClubMembersComponent implements OnInit {
-  filters = { nombre: '', apellido: '', numeroLicencia: '', disciplina: '' };
+  filters = { firstName: '', lastName: '', licenseNumber:'', discipline:'' };
   coaches: Coach[] = [];
   disciplines: Discipline[] = [];
   currentPage = 1;
@@ -76,7 +76,15 @@ export class ClubMembersComponent implements OnInit {
 
   applyFilters(): void {
     this.currentPage = 1;
-    this.loadCoaches();
+    this.coachService.getFiltered(this.filters, this.currentPage - 1, this.itemsPerPage).subscribe(
+      response => {
+        this.coaches = response.content;
+        this.totalPages = response.totalPages;
+      },
+      error => {
+        console.error('Error al filtrar entrenadores:', error);
+      }
+    );
   }
 
   prevPage(): void {
@@ -113,7 +121,14 @@ export class ClubMembersComponent implements OnInit {
 
   createCoach(): void {
     if (this.coachForm.valid) {
-      const newCoach: Coach = this.coachForm.value;
+      const formValue = this.coachForm.value;
+      const disciplines = formValue.disciplines.map((id: number) => ({ id }));
+
+      const newCoach: Coach = {
+        ...formValue,
+        disciplines: disciplines
+      };
+
       this.coachService.create(newCoach).subscribe(
         response => {
           alert('Entrenador creado exitosamente');

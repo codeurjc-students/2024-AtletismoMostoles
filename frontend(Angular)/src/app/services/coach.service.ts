@@ -57,4 +57,31 @@ export class CoachService {
       })
     );
   }
+
+  getFiltered(filters: any, page: number = 0, size: number = 10): Observable<Page<Coach>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (filters.nombre) {
+      params = params.set('firstName', filters.nombre);
+    }
+    if (filters.apellido) {
+      params = params.set('lastName', filters.apellido);
+    }
+    if (filters.numeroLicencia) {
+      params = params.set('licenseNumber', filters.numeroLicencia);
+    }
+    if (filters.disciplina) {
+      params = params.set('discipline', filters.disciplina);
+    }
+
+    return this.http.get<Page<Coach>>(`${this.apiUrl}/filter`, { params }).pipe(
+      catchError(err => {
+        console.error('Error fetching filtered coaches', err);
+        return throwError(err);
+      })
+    );
+  }
+
 }

@@ -95,7 +95,11 @@ export class ProfileComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/eventos']);
+    if(this.isAthlete){
+      this.router.navigate(['/ranking']);
+    }else {
+      this.router.navigate(['/miembros']);
+    }
   }
 
   editProfile(): void {

@@ -31,18 +31,18 @@
     - [x] Número de licencia.
     - [x] Entrenador.
 - [ ] Para usuarios registrados (entrenadores y el presidente del club), permite:
-    - [ ] Agregar nuevos atletas.
+    - [x] Agregar nuevos atletas.
 - [x] Acceso a la página de información (perfil) de un atleta desde el ranking.
 
 ## Página de Miembros del Club
 - [x] Listado de los entrenadores que trabajan dentro del club.
-- [ ] Filtro para buscar entrenadores por:
-    - [ ] Nombre.
-    - [ ] Disciplina.
-    - [ ] Número de licencia.
+- [x] Filtro para buscar entrenadores por:
+    - [x] Nombre.
+    - [x] Disciplina.
+    - [x] Número de licencia.
 - [x] Acceso a los datos de un entrenador desde la lista.
 - [ ] Para usuarios registrados (solo el presidente del club), permite:
-    - [ ] Agregar nuevos entrenadores.
+    - [x] Agregar nuevos entrenadores.
 
 ## Página de Disciplinas
 - [x] Listado de las disciplinas que imparte el club con información básica de cada una:

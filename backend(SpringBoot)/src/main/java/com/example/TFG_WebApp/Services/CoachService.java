@@ -7,6 +7,7 @@ import com.example.TFG_WebApp.Repositories.CoachRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 
@@ -43,4 +44,29 @@ public class CoachService {
         Coach coach = getCoachById(licenseNumber);
         coachRepository.delete(coach);
     }
+
+    public Page<Coach> getFilteredCoaches(String firstName, String lastName, String licenseNumber,
+                                          String discipline, Pageable pageable) {
+        Specification<Coach> spec = Specification.where(null);
+
+        if (firstName != null && !firstName.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%"));
+        }
+        if (lastName != null && !lastName.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%"));
+        }
+        if (licenseNumber != null && !licenseNumber.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("licenseNumber"), licenseNumber));
+        }
+        if (discipline != null && !discipline.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.join("disciplines").get("name"), "%" + discipline + "%"));
+        }
+
+        return coachRepository.findAll(spec, pageable);
+    }
+
 }

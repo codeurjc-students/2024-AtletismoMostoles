@@ -51,4 +51,19 @@ public class CoachRestController {
         coachService.deleteCoach(licenseNumber);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<Coach>> getFilteredCoaches(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String licenseNumber,
+            @RequestParam(required = false) String discipline,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Coach> filteredCoaches = coachService.getFilteredCoaches(firstName, lastName, licenseNumber, discipline, pageable);
+        return ResponseEntity.ok(filteredCoaches);
+    }
+
 }
