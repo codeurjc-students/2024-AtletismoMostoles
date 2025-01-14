@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/coaches")
+@CrossOrigin(origins = "https://localhost:4200")
 public class CoachRestController {
     @Autowired
     private CoachService coachService;

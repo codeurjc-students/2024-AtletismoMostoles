@@ -15,6 +15,7 @@ import javax.xml.transform.Result;
 
 @RestController
 @RequestMapping("/api/results")
+@CrossOrigin(origins = "https://localhost:4200")
 public class ResultRestController {
     @Autowired
     private ResultService resultService;

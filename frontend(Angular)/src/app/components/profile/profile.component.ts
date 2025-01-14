@@ -42,11 +42,10 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const type = this.route.snapshot.queryParams['type'];
+    const type = this.route.snapshot.params['type'];
     const id = this.route.snapshot.params['id'];
     this.isAthlete = type === 'athlete';
     this.loadProfile(id);
-    console.log("Valor de type", this.route.snapshot.queryParams['type']);
   }
 
   loadProfile(id: number): void {

@@ -16,6 +16,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/events")
+@CrossOrigin(origins = "https://localhost:4200")
 public class EventRestController {
     @Autowired
     private EventService eventService;

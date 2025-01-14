@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/athletes")
+@CrossOrigin(origins = "https://localhost:4200")
 public class AthleteRestController {
     @Autowired
     private AthleteService athleteService;

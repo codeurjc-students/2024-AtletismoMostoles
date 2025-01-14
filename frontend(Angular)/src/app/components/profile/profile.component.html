@@ -38,7 +38,7 @@
     <p><strong>Apellido:</strong> {{ profile.lastName }}</p>
     <p *ngIf="coach">
       <strong>Entrenador:</strong>
-      <a [routerLink]="['/profile/coach/', coach.licenseNumber]">
+      <a [routerLink]="['/profile', 'coach', coach.licenseNumber]">
         {{ coach.firstName }} {{ coach.lastName }}
       </a>
     </p>

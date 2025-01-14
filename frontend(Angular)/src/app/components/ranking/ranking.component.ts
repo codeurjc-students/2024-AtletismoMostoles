@@ -140,7 +140,15 @@ export class RankingComponent implements OnInit {
 
   createAthlete(): void {
     if (this.athleteForm.valid) {
-      const newAthlete: Athlete = this.athleteForm.value;
+      const formValue = this.athleteForm.value;
+      const disciplines = formValue.disciplines.map((id: number) => ({ id }));
+
+      const newAthlete: Athlete = {
+        ...formValue,
+        coach: { licenseNumber: formValue.coach },
+        disciplines: disciplines
+      };
+
       this.athleteService.create(newAthlete).subscribe(
         response => {
           alert('Atleta creado exitosamente');
@@ -155,6 +163,7 @@ export class RankingComponent implements OnInit {
       alert('Por favor, complete todos los campos requeridos');
     }
   }
+
 
   toggleMenu(): void {
     const menu = document.getElementById('dropdown-menu');

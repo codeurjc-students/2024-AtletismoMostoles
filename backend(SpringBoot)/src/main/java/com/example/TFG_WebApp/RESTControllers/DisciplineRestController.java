@@ -17,6 +17,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/disciplines")
+@CrossOrigin(origins = "https://localhost:4200")
 public class DisciplineRestController {
 
     @Autowired
