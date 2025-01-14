@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { DisciplineService } from '../../services/discipline.service';
-import {NgForOf, NgIf} from '@angular/common';
-
+import { Discipline } from '../../models/discipline.model';
+import { NgForOf, NgIf } from '@angular/common';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-new-event-form',
@@ -14,14 +15,15 @@ import {NgForOf, NgIf} from '@angular/common';
     NgIf,
     ReactiveFormsModule,
     NgForOf,
-    RouterOutlet,
     RouterLink,
+    RouterOutlet,
+    HttpClientModule
   ],
   styleUrls: ['./new-event-form.component.css']
 })
 export class NewEventFormComponent implements OnInit {
   eventForm: FormGroup;
-  disciplines: string[] = [];
+  disciplines: Discipline[] = [];
   errorMessage: string = '';
 
   constructor(
@@ -45,9 +47,9 @@ export class NewEventFormComponent implements OnInit {
   }
 
   loadDisciplines(): void {
-    this.disciplineService.getAll().subscribe(
+    this.disciplineService.getAll(0, 100, 'name').subscribe(
       (response) => {
-        this.disciplines = response;
+        this.disciplines = response.content;
       },
       (error) => {
         console.error('Error loading disciplines:', error);
@@ -62,7 +64,13 @@ export class NewEventFormComponent implements OnInit {
       return;
     }
 
-    this.eventService.create(this.eventForm.value).subscribe(
+    const formValue = this.eventForm.value;
+    const newEvent = {
+      ...formValue,
+      disciplines: formValue.disciplines.map((id: number) => ({ id }))
+    };
+
+    this.eventService.create(newEvent).subscribe(
       () => {
         alert('Event created successfully!');
         this.router.navigate(['/events']);
@@ -80,11 +88,9 @@ export class NewEventFormComponent implements OnInit {
     }
   }
 
-  toggleMenu(): void {
-    const menu = document.getElementById('dropdown-menu');
-    if (menu) {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    }
+  isInvalid(controlName: string): boolean {
+    const control = this.eventForm.get(controlName);
+    return control ? control.invalid && control.dirty : false;
   }
 
   // Helper methods to get form controls

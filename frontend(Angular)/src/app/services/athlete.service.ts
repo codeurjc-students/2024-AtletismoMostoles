@@ -1,42 +1,86 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams} from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Athlete } from '../models/athlete.model';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AthleteService {
-  private apiUrl = 'http://localhost:8080/api/athletes';
+  private apiUrl = '/api/athletes';
 
-  constructor(private http: HttpClient) {}
+  constructor(private https: HttpClient) {}
 
-  // Get athletes with pagination
-  getAll(page: number = 0, size: number = 10, sortBy: string = 'lastName'): Observable<any> {
+  getAll(page: number = 0, size: number = 10, sortBy: string = 'lastName'): Observable<Page<Athlete>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
       .set('sortBy', sortBy);
 
-    return this.http.get<any>(this.apiUrl, { params });
+    return this.https.get<Page<Athlete>>(this.apiUrl, { params }).pipe(
+      catchError(err => {
+        console.error('Error fetching athletes', err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Get athlete by ID
-  getById(id: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  getFiltered(filters: any, page: number, size: number): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (filters.firstName) {
+      params = params.set('firstName', filters.firstName);
+    }
+    if (filters.lastName) {
+      params = params.set('lastName', filters.lastName);
+    }
+    if (filters.discipline) {
+      params = params.set('discipline', filters.discipline);
+    }
+    if (filters.licenseNumber) {
+      params = params.set('licenseNumber', filters.licenseNumber);
+    }
+    if (filters.coach) {
+      params = params.set('coach', filters.coach);
+    }
+
+    return this.https.get<any>(`${this.apiUrl}/filter`, { params });
   }
 
-  // Create a new athlete
-  create(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data);
+  getById(id: string): Observable<Athlete> {
+    return this.https.get<Athlete>(`${this.apiUrl}/${id}`);
   }
 
-  // Update an athlete by ID
-  update(id: string, data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, data);
+
+  create(data: Athlete): Observable<Athlete> {
+    return this.https.post<Athlete>(this.apiUrl, data).pipe(
+      catchError(err => {
+        console.error('Error creating athlete', err);
+        return throwError(err);
+      })
+    );
   }
 
-  // Delete an athlete by ID
-  delete(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+
+  update(id: string, data: Athlete): Observable<Athlete> {
+    return this.https.put<Athlete>(`${this.apiUrl}/${id}`, data).pipe(
+      catchError(err => {
+        console.error(`Error updating athlete with ID: ${id}`, err);
+        return throwError(err);
+      })
+    );
+  }
+
+  delete(id: string): Observable<void> {
+    return this.https.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(err => {
+        console.error(`Error deleting athlete with ID: ${id}`, err);
+        return throwError(err);
+      })
+    );
   }
 }

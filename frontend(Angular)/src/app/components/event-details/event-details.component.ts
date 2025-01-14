@@ -1,24 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
-import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
 import { NgForOf, NgIf, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Event {
-  id: number;
-  name: string;
-  date: string;
-  image: string;
-  organizedByClub: boolean;
-  address: string;
-}
-
-interface Result {
-  nombre: string;
-  apellido: string;
-  disciplina: string;
-  valor: string;
-}
+import { EventService } from '../../services/event.service';
+import { ResultService } from '../../services/result.service';
+import { Event } from '../../models/event.model';
+import { Results } from '../../models/results.model';
+import { Page } from '../../models/page.model';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-event-details',
@@ -40,21 +29,26 @@ export class EventDetailsComponent implements OnInit {
     id: 0,
     name: '',
     date: '',
-    image: '',
-    organizedByClub: false,
-    address: ''
+    imageLink: '',
+    isOrganizedByClub: false,
+    disciplines: [],
+    results: []
   };
 
-  results: Result[] = [];
+  results: Results[] = [];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
 
   isEditing = false;
   mapUrl = '';
-  private apiUrl = 'http://localhost:8080/api/events';
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private eventService: EventService,
+    private resultService: ResultService
+  ) {}
 
   ngOnInit(): void {
     const eventId = this.route.snapshot.params['id'];
@@ -63,10 +57,10 @@ export class EventDetailsComponent implements OnInit {
   }
 
   loadEvent(eventId: number): void {
-    this.http.get<Event>(`${this.apiUrl}/${eventId}`).subscribe(
+    this.eventService.getById(eventId).subscribe(
       (response) => {
         this.event = response;
-        this.mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${encodeURIComponent(response.address)}`;
+        this.mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${encodeURIComponent(response.mapLink || '')}`;
       },
       (error) => {
         console.error('Error al cargar el evento:', error);
@@ -75,12 +69,8 @@ export class EventDetailsComponent implements OnInit {
   }
 
   loadResults(eventId: number): void {
-    const params = new HttpParams()
-      .set('page', (this.currentPage - 1).toString())
-      .set('size', this.itemsPerPage.toString());
-
-    this.http.get<any>(`${this.apiUrl}/${eventId}/results`, { params }).subscribe(
-      (response) => {
+    this.resultService.getAll(this.currentPage - 1, this.itemsPerPage, 'date', eventId).subscribe(
+      (response: Page<Results>) => {
         this.results = response.content;
         this.totalPages = response.totalPages;
       },
@@ -95,7 +85,7 @@ export class EventDetailsComponent implements OnInit {
   }
 
   saveEvent(): void {
-    this.http.put(`${this.apiUrl}/${this.event.id}`, this.event).subscribe(
+    this.eventService.update(this.event.id, this.event).subscribe(
       () => {
         this.isEditing = false;
         alert('Evento actualizado correctamente');

@@ -1,15 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Event {
-  id: number;
-  name: string;
-  date: string;
-  organizedByClub: boolean;
-}
+import { EventService } from '../../services/event.service';
+import { Event } from '../../models/event.model';
+import { Page } from '../../models/page.model';
+import {HttpClientModule} from '@angular/common/http';
 
 interface Day {
   date: number;
@@ -28,8 +24,8 @@ interface Day {
     NgForOf,
     FormsModule,
     NgIf,
-    RouterLink,
     RouterOutlet,
+    RouterLink,
     HttpClientModule
   ],
   styleUrls: ['./events-calendar.component.css']
@@ -44,14 +40,16 @@ export class EventsCalendarComponent implements OnInit {
   selectedDayName: string = '';
   inputDate: string = '';
 
-  private apiUrl = 'http://localhost:8080/api/events';
   private today = new Date();
   private months = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
     'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ];
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private eventService: EventService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.currentMonth = this.months[this.today.getMonth()];
@@ -63,17 +61,9 @@ export class EventsCalendarComponent implements OnInit {
     const startDate = new Date(this.currentYear, this.today.getMonth(), 1).toISOString().split('T')[0];
     const endDate = new Date(this.currentYear, this.today.getMonth() + 1, 0).toISOString().split('T')[0];
 
-    const params = new HttpParams()
-      .set('startDate', startDate)
-      .set('endDate', endDate)
-      .set('page', '0')
-      .set('size', '100')
-      .set('sortBy', 'date');
-
-    this.http.get<{ content: Event[] }>(this.apiUrl, { params }).subscribe(
-      (response) => {
-        this.events = response.content || [];
-        console.log('Eventos cargados:', this.events);
+    this.eventService.getAll(0, 100, 'date', startDate, endDate).subscribe(
+      (response: Page<Event>) => {
+        this.events = response.content;
         this.initCalendar();
         this.filterEventsByDay();
       },
@@ -97,7 +87,6 @@ export class EventsCalendarComponent implements OnInit {
       const hasEvent = Array.isArray(this.events) && this.events.some((event) => new Date(event.date).getDate() === i);
       this.days.push({ date: i, prev: false, next: false, today: i === this.today.getDate(), hasEvent });
     }
-    console.log('Days:', this.days); // Depuración
   }
 
   filterEventsByDay(): void {

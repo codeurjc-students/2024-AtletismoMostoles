@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient, HttpClientModule, HttpParams} from '@angular/common/http';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgForOf, NgIf } from '@angular/common';
+import { DisciplineService } from '../../services/discipline.service';
+import { Discipline } from '../../models/discipline.model';
+import { Page } from '../../models/page.model';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-association-atl',
@@ -13,33 +16,32 @@ import { NgForOf, NgIf } from '@angular/common';
     FormsModule,
     NgIf,
     NgForOf,
-    RouterOutlet,
     RouterLink,
+    RouterOutlet,
     HttpClientModule
   ]
 })
 export class AssociationAtlComponent implements OnInit {
   isModalOpen: boolean = false;
-  disciplines: { id: number; name: string; image: string; coaches: string[] }[] = [];
+  disciplines: Discipline[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
-  private apiUrl: string = 'http://localhost:8080/api/disciplines';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  newDiscipline: Discipline = { id: 0, name: '', description: '', imageLink: '', coaches: [] };
+
+  constructor(
+    private disciplineService: DisciplineService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadDisciplines();
   }
 
   loadDisciplines(): void {
-    const params = new HttpParams()
-      .set('page', (this.currentPage - 1).toString())
-      .set('size', this.itemsPerPage.toString())
-      .set('sortBy', 'name');
-
-    this.http.get<any>(this.apiUrl, { params }).subscribe(
-      (response) => {
+    this.disciplineService.getAll(this.currentPage - 1, this.itemsPerPage).subscribe(
+      (response: Page<Discipline>) => {
         this.disciplines = response.content;
         this.totalPages = response.totalPages;
       },
@@ -70,7 +72,7 @@ export class AssociationAtlComponent implements OnInit {
   }
 
   deleteDiscipline(disciplineId: number): void {
-    this.http.delete(`${this.apiUrl}/${disciplineId}`).subscribe(
+    this.disciplineService.delete(disciplineId).subscribe(
       () => {
         alert('Disciplina eliminada correctamente');
         this.loadDisciplines();
@@ -94,8 +96,8 @@ export class AssociationAtlComponent implements OnInit {
   }
 
   saveDiscipline(): void {
-    if (this.newDiscipline.name && this.newDiscipline.description && this.newDiscipline.image) {
-      this.http.post(this.apiUrl, this.newDiscipline).subscribe(
+    if (this.newDiscipline.name && this.newDiscipline.description && this.newDiscipline.imageLink) {
+      this.disciplineService.create(this.newDiscipline).subscribe(
         () => {
           alert('Nueva disciplina agregada correctamente');
           this.closeModal();
@@ -109,14 +111,11 @@ export class AssociationAtlComponent implements OnInit {
       alert('Por favor, complete todos los campos antes de guardar.');
     }
   }
+  formatCoaches(coaches: { firstName: string; lastName: string }[] | undefined): string {
+    return coaches ? coaches.map(coach => `${coach.firstName} ${coach.lastName}`).join(', ') : 'Sin entrenadores';
+  }
 
-  newDiscipline: { name: string; description: string; image: string } = {
-    name: '',
-    description: '',
-    image: ''
-  };
-
-  toggleMenu() {
+  toggleMenu(): void {
     const menu = document.getElementById('dropdown-menu');
     if (menu) {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';

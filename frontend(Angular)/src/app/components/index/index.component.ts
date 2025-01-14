@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {RouterLink, RouterOutlet} from '@angular/router';
+import {HttpClientModule} from '@angular/common/http';
 
 @Component({
   selector: 'app-index',
@@ -7,7 +8,8 @@ import {RouterLink, RouterOutlet} from '@angular/router';
   standalone: true,
   imports: [
     RouterLink,
-    RouterOutlet
+    RouterOutlet,
+    HttpClientModule
   ],
   styleUrls: ['./index.component.css']
 })

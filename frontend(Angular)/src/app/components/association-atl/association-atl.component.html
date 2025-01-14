@@ -27,10 +27,10 @@
 
 <div class="discipline-list">
   <div *ngFor="let discipline of disciplines" class="discipline-item">
-    <img src="{{discipline.image}}" alt="{{discipline.name}}">
+    <img [src]="discipline.imageLink" [alt]="discipline.name">
     <div class="discipline-info">
       <h3>{{ discipline.name }}</h3>
-      <p>Entrenadores: {{ discipline.coaches.join(', ') }}</p>
+      <p>Entrenadores: {{ formatCoaches(discipline.coaches) }}</p>
       <button (click)="goToDetails(discipline.id)">Detalles</button>
       <button (click)="confirmDelete(discipline.id)">Eliminar</button>
     </div>
@@ -61,8 +61,8 @@
         <textarea id="description" [(ngModel)]="newDiscipline.description" name="description" required></textarea>
       </div>
       <div class="form-group">
-        <label for="image">Link de la Imagen:</label>
-        <input id="image" [(ngModel)]="newDiscipline.image" name="image" required />
+        <label for="imageLink">Link de la Imagen:</label>
+        <input id="imageLink" [(ngModel)]="newDiscipline.imageLink" name="imageLink" required />
       </div>
       <div class="modal-actions">
         <button type="submit">Guardar</button>
