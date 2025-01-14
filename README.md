@@ -25,16 +25,14 @@
 
 ## Página de Ranking
 - [x] Listado con todos los atletas que compiten y están inscritos en el club.
-- [ ] Filtro para buscar atletas por:
-    - [ ] Nombre.
-    - [ ] Disciplina.
-    - [ ] Número de licencia.
-    - [ ] Entrenador.
+- [x] Filtro para buscar atletas por:
+    - [x] Nombre.
+    - [x] Disciplina.
+    - [x] Número de licencia.
+    - [x] Entrenador.
 - [ ] Para usuarios registrados (entrenadores y el presidente del club), permite:
-    - [ ] Editar el ranking agregando nuevos resultados.
     - [ ] Agregar nuevos atletas.
-    - [ ] Eliminar atletas que dejen el club.
-- [ ] Acceso a la página de información (perfil) de un atleta desde el ranking.
+- [x] Acceso a la página de información (perfil) de un atleta desde el ranking.
 
 ## Página de Miembros del Club
 - [x] Listado de los entrenadores que trabajan dentro del club.
@@ -42,10 +40,9 @@
     - [ ] Nombre.
     - [ ] Disciplina.
     - [ ] Número de licencia.
-- [ ] Acceso a los datos de un entrenador desde la lista.
+- [x] Acceso a los datos de un entrenador desde la lista.
 - [ ] Para usuarios registrados (solo el presidente del club), permite:
     - [ ] Agregar nuevos entrenadores.
-    - [ ] Eliminar entrenadores de la lista.
 
 ## Página de Disciplinas
 - [x] Listado de las disciplinas que imparte el club con información básica de cada una:

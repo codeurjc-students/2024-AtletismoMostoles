@@ -52,4 +52,19 @@ public class AthleteRestController {
         athleteService.deleteAthlete(licenseNumber);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<Athlete>> getFilteredAthletes(
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String discipline,
+            @RequestParam(required = false) String licenseNumber,
+            @RequestParam(required = false) String coach,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Athlete> filteredAthletes = athleteService.getFilteredAthletes(firstName, lastName, discipline, licenseNumber, coach, pageable);
+        return ResponseEntity.ok(filteredAthletes);
+    }
 }

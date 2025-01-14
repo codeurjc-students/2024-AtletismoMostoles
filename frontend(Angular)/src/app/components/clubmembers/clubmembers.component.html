@@ -45,7 +45,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let entrenador of coaches">
+    <tr *ngFor="let entrenador of coaches" [routerLink]="['/profile', 'coach', entrenador.licenseNumber]">
       <td>{{ entrenador.firstName }}</td>
       <td>{{ entrenador.lastName }}</td>
       <td>{{ entrenador.licenseNumber }}</td>

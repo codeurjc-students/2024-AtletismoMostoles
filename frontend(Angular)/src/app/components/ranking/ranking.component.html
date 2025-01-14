@@ -39,15 +39,15 @@
     <h2>Filtrar Atletas</h2>
     <form (submit)="applyFilter()">
       <label>Nombre:</label>
-      <input type="text" [(ngModel)]="filters.nombre" [ngModelOptions]="{standalone: true}">
+      <input type="text" [(ngModel)]="filters.firstName" [ngModelOptions]="{standalone: true}">
       <label>Apellido:</label>
-      <input type="text" [(ngModel)]="filters.apellido" [ngModelOptions]="{standalone: true}">
+      <input type="text" [(ngModel)]="filters.lastName" [ngModelOptions]="{standalone: true}">
       <label>Disciplina:</label>
-      <input type="text" [(ngModel)]="filters.disciplina" [ngModelOptions]="{standalone: true}">
+      <input type="text" [(ngModel)]="filters.discipline" [ngModelOptions]="{standalone: true}">
       <label>Número de Licencia:</label>
-      <input type="text" [(ngModel)]="filters.numeroLicencia" [ngModelOptions]="{standalone: true}">
+      <input type="text" [(ngModel)]="filters.licenseNumber" [ngModelOptions]="{standalone: true}">
       <label>Entrenador:</label>
-      <input type="text" [(ngModel)]="filters.entrenador" [ngModelOptions]="{standalone: true}">
+      <input type="text" [(ngModel)]="filters.coach" [ngModelOptions]="{standalone: true}">
       <button type="submit" class="button">Filtrar</button>
     </form>
   </div>
@@ -65,7 +65,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let atleta of paginatedAtletas">
+      <tr *ngFor="let atleta of paginatedAtletas" [routerLink]="['/profile', 'athlete', atleta.licenseNumber]">
         <td>{{ atleta.licenseNumber }}</td>
         <td>{{ atleta.firstName }}</td>
         <td>{{ atleta.lastName }}</td>

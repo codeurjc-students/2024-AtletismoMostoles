@@ -50,4 +50,33 @@ public class AthleteService {
         Athlete athlete = getAthleteById(licenseNumber);
         athleteRepository.delete(athlete);
     }
+
+    public Page<Athlete> getFilteredAthletes(String nombre, String apellido, String disciplina,
+                                             String numeroLicencia, String entrenador, Pageable pageable) {
+        Specification<Athlete> spec = Specification.where(null);
+
+        if (nombre != null && !nombre.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("firstName"), "%" + nombre + "%"));
+        }
+        if (apellido != null && !apellido.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("lastName"), "%" + apellido + "%"));
+        }
+        if (disciplina != null && !disciplina.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.join("disciplines").get("name"), "%" + disciplina + "%"));
+        }
+        if (numeroLicencia != null && !numeroLicencia.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("licenseNumber"), numeroLicencia));
+        }
+        if (entrenador != null && !entrenador.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.join("coach").get("firstName"), "%" + entrenador + "%"));
+        }
+
+        return athleteRepository.findAll(spec, pageable);
+    }
+
 }

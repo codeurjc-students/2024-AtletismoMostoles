@@ -27,6 +27,30 @@ export class AthleteService {
     );
   }
 
+  getFiltered(filters: any, page: number, size: number): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (filters.firstName) {
+      params = params.set('firstName', filters.firstName);
+    }
+    if (filters.lastName) {
+      params = params.set('lastName', filters.lastName);
+    }
+    if (filters.discipline) {
+      params = params.set('discipline', filters.discipline);
+    }
+    if (filters.licenseNumber) {
+      params = params.set('licenseNumber', filters.licenseNumber);
+    }
+    if (filters.coach) {
+      params = params.set('coach', filters.coach);
+    }
+
+    return this.https.get<any>(`${this.apiUrl}/filter`, { params });
+  }
+
   getById(id: string): Observable<Athlete> {
     return this.https.get<Athlete>(`${this.apiUrl}/${id}`);
   }

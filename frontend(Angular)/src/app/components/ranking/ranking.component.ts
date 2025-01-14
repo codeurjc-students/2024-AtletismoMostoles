@@ -26,7 +26,7 @@ import {HttpClientModule} from '@angular/common/http';
   styleUrls: ['./ranking.component.css']
 })
 export class RankingComponent implements OnInit {
-  filters = {nombre: '', apellido: '', disciplina: '', numeroLicencia: '', entrenador: ''};
+  filters = {firstName: '', lastName: '', discipline: '', licenseNumber: '', coach: ''};
   paginatedAtletas: Athlete[] = [];
   currentPage = 1;
   itemsPerPage = 10;
@@ -94,8 +94,17 @@ export class RankingComponent implements OnInit {
 
   applyFilter(): void {
     this.currentPage = 1;
-    this.loadAtletas();
+    this.athleteService.getFiltered(this.filters, this.currentPage - 1, this.itemsPerPage).subscribe(
+      response => {
+        this.paginatedAtletas = response.content;
+        this.totalPages = response.totalPages;
+      },
+      error => {
+        console.error('Error al filtrar atletas:', error);
+      }
+    );
   }
+
 
   prevPage(): void {
     if (this.currentPage > 1) {
