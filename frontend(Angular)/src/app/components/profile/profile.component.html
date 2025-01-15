@@ -26,70 +26,73 @@
 </header>
 
 <main>
-  <!-- Profile title -->
-  <section class="profile-header">
-    <h1>{{ isAthlete ? 'Atleta' : 'Entrenador' }}</h1>
-  </section>
+  <!-- Modo de visualización -->
+  <div *ngIf="!isEditing; else editForm">
+    <section class="profile-header">
+      <h1>{{ isAthlete ? 'Atleta' : 'Entrenador' }}</h1>
+    </section>
 
-  <!-- Profile details -->
-  <section class="profile-details">
-    <p><strong>Número de Licencia:</strong> {{ profile.licenseNumber }}</p>
-    <p><strong>Nombre:</strong> {{ profile.firstName }}</p>
-    <p><strong>Apellido:</strong> {{ profile.lastName }}</p>
-    <p *ngIf="coach">
-      <strong>Entrenador:</strong>
-      <a [routerLink]="['/profile', 'coach', coach.licenseNumber]">
-        {{ coach.firstName }} {{ coach.lastName }}
-      </a>
-    </p>
-    <p *ngIf="birthDate">
-      <strong>Fecha de Nacimiento:</strong> {{ birthDate | date }}
-    </p>
-    <p><strong>Disciplinas:</strong></p>
-    <ul>
-      <li *ngFor="let discipline of profile.disciplines">{{ discipline.name }}</li>
-    </ul>
+    <section class="profile-details">
+      <p><strong>Número de Licencia:</strong> {{ profile.licenseNumber }}</p>
+      <p><strong>Nombre:</strong> {{ profile.firstName }}</p>
+      <p><strong>Apellido:</strong> {{ profile.lastName }}</p>
+      <p *ngIf="coach">
+        <strong>Entrenador:</strong>
+        <a [routerLink]="['/profile', 'coach', coach.licenseNumber]">
+          {{ coach.firstName }} {{ coach.lastName }}
+        </a>
+      </p>
+      <p *ngIf="birthDate">
+        <strong>Fecha de Nacimiento:</strong> {{ birthDate | date }}
+      </p>
+      <p><strong>Disciplinas:</strong></p>
+      <ul>
+        <li *ngFor="let discipline of profile.disciplines">{{ discipline.name }}</li>
+      </ul>
+    </section>
 
-    <!-- Results or Athletes Table -->
-    <h2>{{ isAthlete ? 'Resultados' : 'Atletas' }}</h2>
-    <table>
-      <thead>
-      <tr>
-        <th *ngIf="isAthlete">Evento</th>
-        <th>Disciplina</th>
-        <th>{{ isAthlete ? 'Resultado' : 'Fecha de Nacimiento' }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <!-- Bloque para atletas -->
-      <ng-container *ngIf="!isAthlete">
-        <tr *ngFor="let athlete of paginatedAthletes">
-          <td>{{ athlete.firstName }}</td>
-          <td>{{ athlete.lastName }}</td>
-          <td>{{ athlete.birthDate | date }}</td>
-        </tr>
-      </ng-container>
-
-      <!-- Bloque para resultados -->
-      <ng-container *ngIf="isAthlete">
-        <tr *ngFor="let result of paginatedResults">
-          <td>{{ result.event.name }}</td>
-          <td>{{ result.discipline.name }}</td>
-          <td>{{ result.value }}</td>
-        </tr>
-      </ng-container>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- Action buttons -->
-  <div class="actions">
-    <button (click)="goBack()" class="btn-secondary">Volver</button>
-    <button (click)="editProfile()" class="btn-primary">Editar</button>
-    <button (click)="deleteProfile()" class="btn-danger">Eliminar</button>
+    <div class="actions">
+      <button (click)="enableEdit()" class="btn-primary">Editar</button>
+      <button (click)="deleteProfile()" class="btn-danger">Eliminar</button>
+    </div>
   </div>
 
-  <!-- Error message -->
+  <!-- Modo de edición -->
+  <ng-template #editForm>
+    <form [formGroup]="profileForm">
+      <div class="mb-3">
+        <label for="licenseNumber" class="form-label">Número de Licencia</label>
+        <input type="text" id="licenseNumber" formControlName="licenseNumber" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="firstName" class="form-label">Nombre</label>
+        <input type="text" id="firstName" formControlName="firstName" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="lastName" class="form-label">Apellido</label>
+        <input type="text" id="lastName" formControlName="lastName" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="birthDate" class="form-label">Fecha de Nacimiento</label>
+        <input type="date" id="birthDate" formControlName="birthDate" class="form-control">
+      </div>
+      <div class="mb-3">
+        <label for="disciplines" class="form-label">Disciplinas</label>
+        <select id="disciplines" formControlName="disciplines" class="form-select" multiple>
+          <option *ngFor="let discipline of disciplines" [value]="discipline.id">
+            {{ discipline.name }}
+          </option>
+        </select>
+      </div>
+    </form>
+
+    <div class="actions">
+      <button (click)="saveProfile()" class="btn-primary">Guardar</button>
+      <button (click)="cancelEdit()" class="btn-secondary">Cancelar</button>
+    </div>
+  </ng-template>
+
+  <!-- Mensaje de error -->
   <div *ngIf="errorMessage" class="error-message">
     {{ errorMessage }}
   </div>

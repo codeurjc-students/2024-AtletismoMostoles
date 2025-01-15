@@ -11,9 +11,9 @@
 - [x] Listado de las actividades más próximas a festejarse.
 - [x] Opción de ver la información específica de las actividades: horarios, participantes, descripción, miembros del club.
 - [ ] Para usuarios registrados (entrenadores y el presidente del club), permite:
-    - [ ] Agregar actividades.
-    - [ ] Eliminar actividades.
-    - [ ] Editar actividades.
+    - [x] Agregar actividades.
+    - [x] Eliminar actividades.
+    - [x] Editar actividades.
 
 ## Página Calendario de Eventos
 - [x] Calendario donde se marcan las actividades que organiza el club y en las que participa algún miembro.
@@ -67,4 +67,4 @@
     - [ ] Resultados de las competiciones.
 - [ ] Para administradores, permite:
     - [x] Editar un atleta o entrenador.
-    - [ ] Eliminar un atleta o entrenador.
+    - [x] Eliminar un atleta o entrenador.
