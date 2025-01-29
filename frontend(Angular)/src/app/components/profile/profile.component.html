@@ -52,8 +52,8 @@
     </section>
 
     <div class="actions">
-      <button (click)="enableEdit()" class="btn-primary">Editar</button>
-      <button (click)="deleteProfile()" class="btn-danger">Eliminar</button>
+      <button *ngIf="isAdmin" (click)="enableEdit()" class="btn-primary">Editar</button>
+      <button *ngIf="isAdmin" (click)="deleteProfile()" class="btn-danger">Eliminar</button>
     </div>
   </div>
 

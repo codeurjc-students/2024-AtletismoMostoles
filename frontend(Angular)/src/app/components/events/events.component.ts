@@ -6,6 +6,7 @@ import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { Page } from '../../models/page.model';
 import {HttpClientModule} from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-events',
@@ -27,13 +28,16 @@ export class EventsComponent implements OnInit {
   itemsPerPage: number = 6;
   totalPages: number = 1;
   selectedFilter: string = 'upcoming';
+  isLoggedIn: boolean = false;
 
   constructor(
     private eventService: EventService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.isLoggedIn = this.authService.isAuthenticated();
     this.loadEvents();
   }
 
@@ -78,4 +82,13 @@ export class EventsComponent implements OnInit {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
   }
+
+  navigateToNewEvent(): void {
+    if (!this.isLoggedIn) {
+      alert('Debes iniciar sesión para crear un evento.');
+      return;
+    }
+    this.router.navigate(['/events/new']);
+  }
+
 }

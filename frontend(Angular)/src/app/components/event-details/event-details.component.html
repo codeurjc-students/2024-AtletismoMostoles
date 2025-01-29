@@ -72,10 +72,10 @@
     </div>
 
     <div class="actions">
-      <button *ngIf="!isEditing" (click)="toggleEdit()" class="btn-secondary">Editar Evento</button>
+      <button *ngIf="isLoggedIn && !isEditing" (click)="toggleEdit()" class="btn-secondary">Editar Evento</button>
       <button *ngIf="isEditing" (click)="saveEvent()" class="btn-primary">Guardar</button>
       <button *ngIf="isEditing" (click)="cancelEdit()" class="btn-secondary">Cancelar</button>
-      <button routerLink="/eventos/{{ event.id }}/agregar-resultado" class="btn-primary">Agregar Resultados</button>
+      <button *ngIf="isLoggedIn" routerLink="/eventos/{{ event.id }}/agregar-resultado" class="btn-primary">Agregar Resultados</button>
       <button routerLink="/eventos" class="btn-secondary">Volver</button>
     </div>
   </section>

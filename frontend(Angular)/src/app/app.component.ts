@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {HttpClientModule} from '@angular/common/http';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +10,8 @@ import {HttpClientModule} from '@angular/common/http';
 })
 export class AppComponent {
   title = 'frontend';
+  constructor(public authService: AuthService) {
+    // Exponer el servicio a la ventana global para depuración
+    (window as any).authService = this.authService;
+  }
 }

@@ -5,9 +5,10 @@ import { Coach } from '../../models/coach.model';
 import { Discipline } from '../../models/discipline.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {RouterLink, RouterOutlet} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-clubmembers',
@@ -15,6 +16,7 @@ import {HttpClientModule} from '@angular/common/http';
   standalone: true,
   imports: [
     FormsModule,
+    NgIf,
     NgForOf,
     RouterLink,
     ReactiveFormsModule,
@@ -31,12 +33,14 @@ export class ClubMembersComponent implements OnInit {
   itemsPerPage = 10;
   totalPages = 1;
   coachForm: FormGroup;
+  isAdmin: boolean = false;
 
   constructor(
     private coachService: CoachService,
     private disciplineService: DisciplineService,
     private modalService: NgbModal,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private authService: AuthService
   ) {
     this.coachForm = this.fb.group({
       licenseNumber: ['', Validators.required],
@@ -47,6 +51,7 @@ export class ClubMembersComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.isAdmin();
     this.loadCoaches();
     this.loadDisciplines();
   }
@@ -120,6 +125,10 @@ export class ClubMembersComponent implements OnInit {
   }
 
   createCoach(): void {
+    if (!this.isAdmin) {
+      alert('No tienes permiso para realizar esta acción.');
+      return;
+    }
     if (this.coachForm.valid) {
       const formValue = this.coachForm.value;
       const disciplines = formValue.disciplines.map((id: number) => ({ id }));

@@ -7,14 +7,16 @@ import { Coach } from '../../models/coach.model';
 import { Discipline } from '../../models/discipline.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NgForOf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import {RouterLink, RouterOutlet} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-ranking',
   templateUrl: './ranking.component.html',
   imports: [
+    NgIf,
     NgForOf,
     RouterOutlet,
     ReactiveFormsModule,
@@ -34,13 +36,15 @@ export class RankingComponent implements OnInit {
   coaches: Coach[] = [];
   disciplines: Discipline[] = [];
   athleteForm: FormGroup;
+  isAdmin: boolean = false;
 
   constructor(
     private athleteService: AthleteService,
     private coachService: CoachService,
     private disciplineService: DisciplineService,
     private modalService: NgbModal,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private authService: AuthService
   ) {
     this.athleteForm = this.fb.group({
       licenseNumber: ['', Validators.required],
@@ -53,6 +57,9 @@ export class RankingComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.authService.user.subscribe(user => {
+      this.isAdmin = this.authService.isAdmin();
+    });
     this.loadAtletas();
     this.loadCoaches();
     this.loadDisciplines();
@@ -125,6 +132,10 @@ export class RankingComponent implements OnInit {
   }
 
   openNewAthleteModal(content: any): void {
+    if (!this.isAdmin) {
+      alert('Solo los administradores pueden crear atletas.');
+      return;
+    }
     this.athleteForm.reset();
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(
       result => {
@@ -139,6 +150,10 @@ export class RankingComponent implements OnInit {
   }
 
   createAthlete(): void {
+    if (!this.isAdmin) {
+      alert('Solo los administradores pueden crear atletas.');
+      return;
+    }
     if (this.athleteForm.valid) {
       const formValue = this.athleteForm.value;
       const disciplines = formValue.disciplines.map((id: number) => ({ id }));

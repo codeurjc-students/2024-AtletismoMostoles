@@ -21,7 +21,7 @@
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
     <a routerLink="/disciplines">Disciplinas</a>
-    <a routerLink="">Inicio de Sesión</a>
+    <a routerLink="/login">Inicio de Sesión</a>
   </div>
 </header>
 
@@ -34,7 +34,6 @@
 
 <section class="trainers-list">
   <h2>Lista de Entrenadores</h2>
-  <button (click)="openNewCoachModal(newCoachModal)" class="button">Nuevo Entrenador</button>
   <table>
     <thead>
     <tr>
@@ -53,6 +52,7 @@
     </tr>
     </tbody>
   </table>
+  <button *ngIf="isAdmin" (click)="openNewCoachModal(newCoachModal)" class="button">Nuevo Entrenador</button>
 
   <div class="pagination">
     <button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>

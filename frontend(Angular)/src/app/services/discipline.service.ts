@@ -4,67 +4,58 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Discipline } from '../models/discipline.model';
 import { Page } from '../models/page.model';
+import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DisciplineService {
   private apiUrl = '/api/disciplines';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
-  // Obtener disciplinas con paginación
   getAll(page: number = 0, size: number = 10, sortBy: string = 'name'): Observable<Page<Discipline>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
       .set('sortBy', sortBy);
 
-    return this.http.get<Page<Discipline>>(this.apiUrl, { params }).pipe(
-      catchError(err => {
-        console.error('Error fetching disciplines', err);
-        return throwError(err);
-      })
-    );
+    return this.http
+      .get<Page<Discipline>>(this.apiUrl, { params, withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
-  // Obtener una disciplina por ID
   getById(id: number): Observable<Discipline> {
-    return this.http.get<Discipline>(`${this.apiUrl}/${id}`).pipe(
-      catchError(err => {
-        console.error(`Error fetching discipline with ID: ${id}`, err);
-        return throwError(err);
-      })
-    );
+    return this.http
+      .get<Discipline>(`${this.apiUrl}/${id}`, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
-  // Crear una nueva disciplina
   create(data: Discipline): Observable<Discipline> {
-    return this.http.post<Discipline>(this.apiUrl, data).pipe(
-      catchError(err => {
-        console.error('Error creating discipline', err);
-        return throwError(err);
-      })
-    );
+    return this.http
+      .post<Discipline>(this.apiUrl, data, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
-  // Actualizar una disciplina por ID
   update(id: number, data: Discipline): Observable<Discipline> {
-    return this.http.put<Discipline>(`${this.apiUrl}/${id}`, data).pipe(
-      catchError(err => {
-        console.error(`Error updating discipline with ID: ${id}`, err);
-        return throwError(err);
-      })
-    );
+    return this.http
+      .put<Discipline>(`${this.apiUrl}/${id}`, data, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
-  // Eliminar una disciplina por ID
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      catchError(err => {
-        console.error(`Error deleting discipline with ID: ${id}`, err);
-        return throwError(err);
-      })
-    );
+    return this.http
+      .delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
+  }
+
+  private handleAuthError(error: any): Observable<never> {
+    if (error.status === 401 || error.status === 403) {
+      // Redirigir al login si no está autorizado
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url },
+      });
+    }
+    return throwError(() => error);
   }
 }

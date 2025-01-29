@@ -6,6 +6,7 @@ import { DisciplineService } from '../../services/discipline.service';
 import { Discipline } from '../../models/discipline.model';
 import { Page } from '../../models/page.model';
 import {HttpClientModule} from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-association-atl',
@@ -27,15 +28,18 @@ export class AssociationAtlComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 5;
   totalPages: number = 1;
+  isLoggedIn: boolean = false;
 
   newDiscipline: Discipline = { id: 0, name: '', description: '', imageLink: '', coaches: [] };
 
   constructor(
     private disciplineService: DisciplineService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.isLoggedIn = this.authService.isAdmin();
     this.loadDisciplines();
   }
 
@@ -66,6 +70,10 @@ export class AssociationAtlComponent implements OnInit {
   }
 
   confirmDelete(disciplineId: number): void {
+    if (!this.isLoggedIn) {
+      alert('No tienes permiso para realizar esta acción.');
+      return;
+    }
     if (confirm('¿Estás seguro de que deseas eliminar esta disciplina?')) {
       this.deleteDiscipline(disciplineId);
     }
@@ -96,6 +104,10 @@ export class AssociationAtlComponent implements OnInit {
   }
 
   saveDiscipline(): void {
+    if (!this.isLoggedIn) {
+      alert('No tienes permiso para realizar esta acción.');
+      return;
+    }
     if (this.newDiscipline.name && this.newDiscipline.description && this.newDiscipline.imageLink) {
       this.disciplineService.create(this.newDiscipline).subscribe(
         () => {

@@ -39,7 +39,7 @@
           {{ coach.firstName }} {{ coach.lastName }}
         </li>
       </ul>
-      <button (click)="toggleEditMode()">Editar</button>
+      <button *ngIf="isLoggedIn" (click)="toggleEditMode()">Editar</button>
     </div>
 
     <div *ngIf="isEditMode">
@@ -62,7 +62,7 @@
       <span>Página {{ currentPage }} de {{ totalPages }}</span>
       <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
     </div>
-    <button (click)="openModal()">Agregar Equipamiento</button>
+    <button *ngIf="isLoggedIn" (click)="openModal()">Agregar Equipamiento</button>
   </div>
 </div>
 

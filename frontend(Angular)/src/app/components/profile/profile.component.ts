@@ -11,6 +11,7 @@ import {HttpClientModule} from '@angular/common/http';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Discipline } from '../../models/discipline.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -40,6 +41,7 @@ export class ProfileComponent implements OnInit {
   isEditing: boolean = false;
   isAthlete = true;
   errorMessage: string = '';
+  isAdmin: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -47,13 +49,15 @@ export class ProfileComponent implements OnInit {
     private athleteService: AthleteService,
     private coachService: CoachService,
     private fb: FormBuilder,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     const type = this.route.snapshot.params['type'];
     const id = this.route.snapshot.params['id'];
     this.isAthlete = type === 'athlete';
+    this.isAdmin = this.authService.isAdmin();
     this.loadProfile(id);
   }
 
@@ -111,6 +115,10 @@ export class ProfileComponent implements OnInit {
     }
   }
   enableEdit(): void {
+    if (!this.isAdmin) {
+      alert('Solo los administradores pueden editar perfiles.');
+      return;
+    }
     this.isEditing = true;
 
     const disciplines = this.profile.disciplines?.map(d => d.id); // Extraer IDs de disciplinas
@@ -126,6 +134,10 @@ export class ProfileComponent implements OnInit {
 
 
   deleteProfile(): void {
+    if (!this.isAdmin) {
+      alert('No tienes permiso para eliminar este perfil.');
+      return;
+    }
     if (confirm('Are you sure you want to delete this profile?')) {
       const service = this.isAthlete ? this.athleteService : this.coachService;
       service.delete(this.profile.licenseNumber).subscribe(
@@ -142,6 +154,10 @@ export class ProfileComponent implements OnInit {
   }
 
   saveProfile(): void {
+    if (!this.isAdmin) {
+      alert('No tienes permiso para modificar este perfil.');
+      return;
+    }
     if (this.profileForm.valid) {
       const updatedProfile = {
         ...this.profile,
