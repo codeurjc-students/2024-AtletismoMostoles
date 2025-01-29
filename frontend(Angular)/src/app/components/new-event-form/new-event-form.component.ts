@@ -51,6 +51,7 @@ export class NewEventFormComponent implements OnInit {
       alert('Debes iniciar sesión para crear un evento.');
       this.router.navigate(['/login']);
     }
+    console.log("llegas hasta el new event");
     this.loadDisciplines();
   }
 

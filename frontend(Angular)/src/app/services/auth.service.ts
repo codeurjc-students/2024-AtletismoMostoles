@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -13,26 +13,37 @@ export class AuthService {
   public user: Observable<any | null>;
 
   constructor(private http: HttpClient, private router: Router) {
-    this.userSubject = new BehaviorSubject<any | null>(this.getUserFromToken());
+    this.userSubject = new BehaviorSubject<any | null>(null);
     this.user = this.userSubject.asObservable();
+
+    this.loadAuthenticatedUser();
   }
 
+  private loadAuthenticatedUser(): void {
+    this.http.get<any>(`/api/users/me`, { withCredentials: true }).subscribe(
+      user => {
+        console.log('Usuario autenticado desde backend:', user);
+        this.userSubject.next(user);
+      },
+      error => {
+        console.warn('No hay usuario autenticado.');
+        this.userSubject.next(null);
+      }
+    );
+  }
 
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.authUrl}/login`, { username, password }, { withCredentials: true }).pipe(
       map(response => {
-        const user = this.getUserFromToken();
-        this.userSubject.next(user);
-        console.log('Usuario autenticado:', user); // 👀 Verificar en consola
-        return user;
+        this.loadAuthenticatedUser(); // Cargar usuario desde el backend
+        return response;
       })
     );
   }
 
-
   logout(): void {
     this.http.post(`${this.authUrl}/logout`, {}, { withCredentials: true }).subscribe(() => {
-      this.clearUser();
+      this.userSubject.next(null);
       this.router.navigate(['/']);
     });
   }
@@ -49,27 +60,4 @@ export class AuthService {
     const user = this.getCurrentUser();
     return user && user.roles.includes('ADMIN');
   }
-
-  private getUserFromToken(): any | null {
-    const token = this.getTokenFromCookie('access_token');
-    if (!token) return null;
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1])); // Decodificar payload JWT
-      return { username: payload.sub, roles: payload.auth || [] };
-    } catch (error) {
-      console.error('Error decoding JWT:', error);
-      return null;
-    }
-  }
-
-  private getTokenFromCookie(name: string): string | null {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? match[2] : null;
-  }
-
-  private clearUser(): void {
-    this.userSubject.next(null);
-  }
 }
-

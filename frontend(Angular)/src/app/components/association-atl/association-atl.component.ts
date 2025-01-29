@@ -39,7 +39,7 @@ export class AssociationAtlComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isAdmin();
+    this.isLoggedIn = this.authService.isAuthenticated();
     this.loadDisciplines();
   }
 

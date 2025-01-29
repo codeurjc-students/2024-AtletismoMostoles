@@ -4,15 +4,17 @@ import com.example.TFG_WebApp.Models.User;
 import com.example.TFG_WebApp.Repositories.UserRepository;
 import com.example.TFG_WebApp.Services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.security.Principal;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
@@ -26,37 +28,38 @@ public class UserRestController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @Autowired
     private UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody @JsonView(User.Basic.class) User user) {
-
-        String pass = user.getEncodedPassword();
-        String encoded_pass = passwordEncoder.encode(pass);
-        user.setEncodedPassword(encoded_pass);
+        user.setEncodedPassword(passwordEncoder.encode(user.getEncodedPassword()));
         user.setRoles(Collections.singletonList("USER"));
-
-
-        User user1 = userService.addUser(user);
+        User savedUser = userService.addUser(user);
 
         URI location = fromCurrentRequest().path("/{id}")
-                .buildAndExpand(user1.getId()).toUri();
+                .buildAndExpand(savedUser.getId()).toUri();
 
-        return ResponseEntity.created(location).body(user1);
-
+        return ResponseEntity.created(location).body(savedUser);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> me(HttpServletRequest request) {
-
-        Principal principal = request.getUserPrincipal();
-
-        if (principal != null) {
-            return ResponseEntity.ok(userRepository.findByName(principal.getName()).orElseThrow());
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "No autenticado"));
         }
+
+        Optional<User> user = userRepository.findByName(userDetails.getUsername());
+
+        if (user.isEmpty()) {
+            return ResponseEntity.status(404).body(Map.of("error", "Usuario no encontrado"));
+        }
+
+        User currentUser = user.get();
+
+        return ResponseEntity.ok(Map.of(
+                "username", currentUser.getName(),
+                "roles", currentUser.getRoles()
+        ));
     }
 }

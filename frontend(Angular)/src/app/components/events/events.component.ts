@@ -38,6 +38,7 @@ export class EventsComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isAuthenticated();
+    console.log("esta logeado:", this.isLoggedIn);
     this.loadEvents();
   }
 
