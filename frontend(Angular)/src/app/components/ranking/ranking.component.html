@@ -23,7 +23,7 @@
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
     <a routerLink="/disciplines">Disciplinas</a>
-    <a routerLink="">Inicio de Sesión</a>
+    <a routerLink="/login">Inicio de Sesión</a>
   </div>
 </header>
 
@@ -53,7 +53,7 @@
   </div>
   <div class="list-section">
     <h2>Lista de Atletas</h2>
-    <button (click)="openNewAthleteModal(newAthleteModal)" class="button">Nuevo Atleta</button>
+    <button *ngIf="isAdmin" (click)="openNewAthleteModal(newAthleteModal)" class="button">Nuevo Atleta</button>
     <table>
       <thead>
       <tr>
@@ -79,6 +79,7 @@
       <button (click)="nextPage()">Siguiente</button>
     </div>
   </div>
+
 </section>
 
 <ng-template #newAthleteModal let-modal>

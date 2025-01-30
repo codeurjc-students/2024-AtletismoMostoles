@@ -6,6 +6,7 @@ import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { Page } from '../../models/page.model';
 import {HttpClientModule} from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 interface Day {
   date: number;
@@ -39,6 +40,7 @@ export class EventsCalendarComponent implements OnInit {
   selectedDay: number = 0;
   selectedDayName: string = '';
   inputDate: string = '';
+  isLoggedIn: boolean = false;
 
   private today = new Date();
   private months = [
@@ -46,14 +48,17 @@ export class EventsCalendarComponent implements OnInit {
     'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ];
 
+
   constructor(
     private eventService: EventService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.currentMonth = this.months[this.today.getMonth()];
     this.currentYear = this.today.getFullYear();
+    this.isLoggedIn = this.authService.isAuthenticated();
     this.loadEvents();
   }
 
@@ -145,6 +150,15 @@ export class EventsCalendarComponent implements OnInit {
   viewEvent(eventId: number): void {
     this.router.navigate([`/eventos/${eventId}`]);
   }
+
+  navigateToNewEvent(): void {
+    if (!this.isLoggedIn) {
+      alert('Debes iniciar sesión para crear un evento.');
+      return;
+    }
+    this.router.navigate(['/events/new']);
+  }
+
 
   toggleMenu(): void {
     const menu = document.getElementById('dropdown-menu');

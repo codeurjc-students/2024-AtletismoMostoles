@@ -70,9 +70,10 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" [disabled]="eventForm.invalid">Guardar Evento</button>
+      <button type="submit" [disabled]="!isLoggedIn || eventForm.invalid">Guardar Evento</button>
       <button type="button" (click)="onCancel()">Cancelar</button>
     </div>
+
   </form>
 </div>
 

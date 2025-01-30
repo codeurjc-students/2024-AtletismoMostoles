@@ -86,9 +86,10 @@
     </div>
 
     <div class="actions">
-      <button routerLink="/events/new" class="btn-primary">Añadir Evento</button>
+      <button *ngIf="isLoggedIn" (click)="navigateToNewEvent()" class="btn-primary">Añadir Evento</button>
       <button routerLink="/eventos" class="btn-secondary">Volver a la lista de Eventos</button>
     </div>
+
   </section>
 </main>
 

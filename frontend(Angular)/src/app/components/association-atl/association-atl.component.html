@@ -32,7 +32,7 @@
       <h3>{{ discipline.name }}</h3>
       <p>Entrenadores: {{ formatCoaches(discipline.coaches) }}</p>
       <button (click)="goToDetails(discipline.id)">Detalles</button>
-      <button (click)="confirmDelete(discipline.id)">Eliminar</button>
+      <button *ngIf="isLoggedIn" (click)="confirmDelete(discipline.id)">Eliminar</button>
     </div>
   </div>
 </div>
@@ -43,7 +43,7 @@
   <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
 </div>
 
-<div class="add-discipline">
+<div class="add-discipline" *ngIf="isLoggedIn">
   <button (click)="openModal()">Agregar Nueva Disciplina</button>
 </div>
 

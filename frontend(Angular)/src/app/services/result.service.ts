@@ -4,16 +4,23 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Results } from '../models/results.model';
 import { Page } from '../models/page.model';
+import { Router } from '@angular/router';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ResultService {
   private apiUrl = '/api/results';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
-  getAll(page: number = 0, size: number = 10, sortBy: string = 'date', eventId?: number, disciplineId?: number): Observable<Page<Results>> {
+  getAll(
+    page: number = 0,
+    size: number = 10,
+    sortBy: string = 'date',
+    eventId?: number,
+    disciplineId?: number
+  ): Observable<Page<Results>> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
@@ -22,32 +29,42 @@ export class ResultService {
     if (eventId) params = params.set('eventId', eventId.toString());
     if (disciplineId) params = params.set('disciplineId', disciplineId.toString());
 
-    return this.http.get<Page<Results>>(this.apiUrl, { params }).pipe(
-      catchError(err => throwError(() => new Error(`Error fetching results: ${err.message}`)))
-    );
+    return this.http
+      .get<Page<Results>>(this.apiUrl, { params, withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
   getById(id: number): Observable<Results> {
-    return this.http.get<Results>(`${this.apiUrl}/${id}`).pipe(
-      catchError(err => throwError(() => new Error(`Error fetching result with ID ${id}: ${err.message}`)))
-    );
+    return this.http
+      .get<Results>(`${this.apiUrl}/${id}`, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
   create(data: Results): Observable<Results> {
-    return this.http.post<Results>(this.apiUrl, data).pipe(
-      catchError(err => throwError(() => new Error(`Error creating result: ${err.message}`)))
-    );
+    return this.http
+      .post<Results>(this.apiUrl, data, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
   update(id: number, data: Results): Observable<Results> {
-    return this.http.put<Results>(`${this.apiUrl}/${id}`, data).pipe(
-      catchError(err => throwError(() => new Error(`Error updating result with ID ${id}: ${err.message}`)))
-    );
+    return this.http
+      .put<Results>(`${this.apiUrl}/${id}`, data, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      catchError(err => throwError(() => new Error(`Error deleting result with ID ${id}: ${err.message}`)))
-    );
+    return this.http
+      .delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
+  }
+
+  private handleAuthError(error: any): Observable<never> {
+    if (error.status === 401 || error.status === 403) {
+      // Redirigir al login si no está autorizado
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: this.router.url },
+      });
+    }
+    return throwError(() => error);
   }
 }

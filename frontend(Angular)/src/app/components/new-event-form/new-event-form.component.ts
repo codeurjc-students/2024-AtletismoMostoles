@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import { EventService } from '../../services/event.service';
-import { DisciplineService } from '../../services/discipline.service';
 import { Discipline } from '../../models/discipline.model';
 import { NgForOf, NgIf } from '@angular/common';
 import {HttpClientModule} from '@angular/common/http';
+import { EventService } from '../../services/event.service';
+import { DisciplineService } from '../../services/discipline.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-new-event-form',
@@ -25,12 +26,14 @@ export class NewEventFormComponent implements OnInit {
   eventForm: FormGroup;
   disciplines: Discipline[] = [];
   errorMessage: string = '';
+  isLoggedIn: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private eventService: EventService,
     private disciplineService: DisciplineService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.eventForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -43,6 +46,20 @@ export class NewEventFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.isLoggedIn = this.authService.isAuthenticated();
+    console.log("isLoggedIn:",this.authService.isAuthenticated());
+    if (!this.isLoggedIn) {
+      alert('Debes iniciar sesión para crear un evento.');
+      this.router.navigate(['/login']);
+    }
+
+    if (!this.authService.isAdmin() && !this.authService.getCurrentUser()?.roles.includes('USER')) {
+      alert('No tienes permisos para crear eventos.');
+      this.router.navigate(['/eventos']); // Redirigir a la lista de eventos
+      return;
+    }
+
+    console.log("llegas hasta el new event");
     this.loadDisciplines();
   }
 
@@ -52,15 +69,19 @@ export class NewEventFormComponent implements OnInit {
         this.disciplines = response.content;
       },
       (error) => {
-        console.error('Error loading disciplines:', error);
-        this.errorMessage = 'Error loading disciplines. Please try again later.';
+        console.error('Error al cargar las disciplinas', error);
+        this.errorMessage = 'Error al cargar las disciplinas. Inténtalo de nuevo más tarde.';
       }
     );
   }
 
   onSubmit(): void {
+    if (!this.isLoggedIn) {
+      alert('No tienes permiso para crear eventos.');
+      return;
+    }
     if (this.eventForm.invalid) {
-      this.errorMessage = 'Please fill out the form correctly.';
+      this.errorMessage = 'Por favor, rellene el formulario correctamente.';
       return;
     }
 
@@ -72,18 +93,18 @@ export class NewEventFormComponent implements OnInit {
 
     this.eventService.create(newEvent).subscribe(
       () => {
-        alert('Event created successfully!');
+        alert('Evento creado correctamente!');
         this.router.navigate(['/events']);
       },
       (error) => {
-        console.error('Error creating event:', error);
-        this.errorMessage = 'Error creating event. Please try again.';
+        console.error('Error creando evento:', error);
+        this.errorMessage = 'Error creando evento. Intentalo de nuevo.';
       }
     );
   }
 
   onCancel(): void {
-    if (confirm('Are you sure you want to cancel creating the event?')) {
+    if (confirm('Quieres cancelar la creacion de este evento?')) {
       this.router.navigate(['/events']);
     }
   }

@@ -8,6 +8,7 @@ import { Event } from '../../models/event.model';
 import { Results } from '../../models/results.model';
 import { Page } from '../../models/page.model';
 import {HttpClientModule} from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-event-details',
@@ -41,17 +42,19 @@ export class EventDetailsComponent implements OnInit {
   totalPages = 1;
 
   isEditing = false;
+  isLoggedIn = false;
   mapUrl = '';
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private eventService: EventService,
-    private resultService: ResultService
+    private resultService: ResultService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     const eventId = this.route.snapshot.params['id'];
+    this.isLoggedIn = this.authService.isAuthenticated();
     this.loadEvent(eventId);
     this.loadResults(eventId);
   }
@@ -81,10 +84,18 @@ export class EventDetailsComponent implements OnInit {
   }
 
   toggleEdit(): void {
-    this.isEditing = true;
+    if (!this.isLoggedIn) {
+      alert('Debes iniciar sesión para editar este evento.');
+      return;
+    }
+    this.isEditing = !this.isEditing;
   }
 
   saveEvent(): void {
+    if (!this.isLoggedIn) {
+      alert('No tienes permiso para modificar este evento.');
+      return;
+    }
     this.eventService.update(this.event.id, this.event).subscribe(
       () => {
         this.isEditing = false;

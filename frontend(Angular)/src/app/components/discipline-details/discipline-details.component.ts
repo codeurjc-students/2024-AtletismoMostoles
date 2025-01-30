@@ -8,6 +8,7 @@ import { EquipmentService } from '../../services/equipment.service';
 import { Discipline } from '../../models/discipline.model';
 import { Equipment } from '../../models/equipment.model';
 import {HttpClientModule} from '@angular/common/http';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-discipline-details',
@@ -31,16 +32,18 @@ export class DisciplineDetailsComponent implements OnInit {
   itemsPerPage: number = 5;
   totalPages: number = 1;
   isEditMode: boolean = false;
+  isLoggedIn: boolean = false;
 
   constructor(
     private disciplineService: DisciplineService,
     private equipmentService: EquipmentService,
     private route: ActivatedRoute,
-    private router: Router
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     const disciplineId = this.route.snapshot.params['id'];
+    this.isLoggedIn = this.authService.isAuthenticated();
     this.loadDisciplineDetails(disciplineId);
     this.loadAllEquipment();
   }
@@ -89,6 +92,10 @@ export class DisciplineDetailsComponent implements OnInit {
   }
 
   addEquipment(): void {
+    if (!this.isLoggedIn) {
+      alert('Debes iniciar sesión para editar esta disciplina.');
+      return;
+    }
     const selectedEquipment = this.allEquipment.filter(e => e.selected);
     if (selectedEquipment.length > 0) {
       this.discipline.equipment = [...(this.discipline.equipment || []), ...selectedEquipment];
@@ -107,10 +114,18 @@ export class DisciplineDetailsComponent implements OnInit {
   }
 
   toggleEditMode(): void {
+    if (!this.isLoggedIn) {
+      alert('Debes iniciar sesión para editar esta disciplina.');
+      return;
+    }
     this.isEditMode = !this.isEditMode;
   }
 
   saveDiscipline(): void {
+    if (!this.isLoggedIn) {
+      alert('No tienes permiso para modificar esta disciplina.');
+      return;
+    }
     if (this.discipline) {
       this.disciplineService.update(this.discipline.id, this.discipline).subscribe(
         () => {

@@ -8,6 +8,10 @@ import { Coach } from '../../models/coach.model';
 import { Results } from '../../models/results.model';
 import {Observable} from 'rxjs';
 import {HttpClientModule} from '@angular/common/http';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Discipline } from '../../models/discipline.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -19,7 +23,8 @@ import {HttpClientModule} from '@angular/common/http';
     RouterLink,
     RouterOutlet,
     DatePipe,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   styleUrls: ['./profile.component.css']
 })
@@ -28,23 +33,31 @@ export class ProfileComponent implements OnInit {
   results: Results[] = [];
   paginatedResults: Results[] = [];
   paginatedAthletes: Athlete[] = [];
+  disciplines: Discipline[] = [];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
+  profileForm!: FormGroup;
+  isEditing: boolean = false;
   isAthlete = true;
   errorMessage: string = '';
+  isAdmin: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private athleteService: AthleteService,
-    private coachService: CoachService
+    private coachService: CoachService,
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     const type = this.route.snapshot.params['type'];
     const id = this.route.snapshot.params['id'];
     this.isAthlete = type === 'athlete';
+    this.isAdmin = this.authService.isAdmin();
     this.loadProfile(id);
   }
 
@@ -101,15 +114,33 @@ export class ProfileComponent implements OnInit {
       this.router.navigate(['/miembros']);
     }
   }
+  enableEdit(): void {
+    if (!this.isAdmin) {
+      alert('Solo los administradores pueden editar perfiles.');
+      return;
+    }
+    this.isEditing = true;
 
-  editProfile(): void {
-    alert('Edit functionality not implemented yet.');
+    const disciplines = this.profile.disciplines?.map(d => d.id); // Extraer IDs de disciplinas
+
+    this.profileForm = this.fb.group({
+      licenseNumber: [this.profile.licenseNumber, Validators.required],
+      firstName: [this.profile.firstName, Validators.required],
+      lastName: [this.profile.lastName, Validators.required],
+      birthDate: [this.isAthlete ? (this.profile as Athlete).birthDate : '', Validators.required],
+      disciplines: [disciplines, Validators.required]
+    });
   }
 
+
   deleteProfile(): void {
+    if (!this.isAdmin) {
+      alert('No tienes permiso para eliminar este perfil.');
+      return;
+    }
     if (confirm('Are you sure you want to delete this profile?')) {
       const service = this.isAthlete ? this.athleteService : this.coachService;
-      service.delete(this.profile.licenseNumber.toString()).subscribe(
+      service.delete(this.profile.licenseNumber).subscribe(
         () => {
           alert('Profile deleted successfully.');
           this.goBack();
@@ -122,6 +153,53 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  saveProfile(): void {
+    if (!this.isAdmin) {
+      alert('No tienes permiso para modificar este perfil.');
+      return;
+    }
+    if (this.profileForm.valid) {
+      const updatedProfile = {
+        ...this.profile,
+        ...this.profileForm.value,
+        disciplines: this.profileForm.value.disciplines.map((id: number) => ({ id }))
+      };
+
+      if (this.isAthlete) {
+        this.athleteService.update(updatedProfile.licenseNumber, updatedProfile).subscribe(
+          () => {
+            alert('Profile updated successfully.');
+            this.isEditing = false;
+            this.loadProfile(updatedProfile.licenseNumber);
+          },
+          (error: any) => {
+            console.error('Error updating profile:', error);
+            alert('Error updating profile.');
+          }
+        );
+      } else {
+        this.coachService.update(updatedProfile.licenseNumber, updatedProfile).subscribe(
+          () => {
+            alert('Profile updated successfully.');
+            this.isEditing = false;
+            this.loadProfile(updatedProfile.licenseNumber);
+          },
+          (error: any) => {
+            console.error('Error updating profile:', error);
+            alert('Error updating profile.');
+          }
+        );
+      }
+    } else {
+      alert('Por favor, complete todos los campos requeridos.');
+    }
+  }
+
+
+
+  cancelEdit(): void {
+    this.isEditing = false;
+  }
   toggleMenu(): void {
     const menu = document.getElementById('dropdown-menu');
     if (menu) {

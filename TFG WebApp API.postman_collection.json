@@ -63,7 +63,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"licenseNumber\": \"A12345\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"birthDate\": \"2000-01-01\",\n  \"coach\": { \"licenseNumber\": \"C54321\" }\n}"
+							"raw": "{\n  \"licenseNumber\": \"M12345\",\n  \"firstName\": \"Maria\",\n  \"lastName\": \"Gomez\",\n  \"birthDate\": \"1968-08-15\",\n  \"coach\": { \"licenseNumber\": \"C54321\" },\n  \"disciplines\": [\n    {\"id\": 1}\n    ]\n}"
 						},
 						"url": "https://localhost/api/athletes"
 					},
@@ -139,7 +139,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/coaches/{licenseNumber}"
+						"url": "https://localhost/api/coaches/U20394"
 					},
 					"response": []
 				},
@@ -173,9 +173,9 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"licenseNumber\": \"C54321\",\n  \"firstName\": \"Jane Updated\",\n  \"lastName\": \"Smith\"\n}"
+							"raw": "{\n  \"licenseNumber\": \"U20394\",\n    \"firstName\": \"Alfonso\",\n    \"lastName\": \"Mansilla\",\n    \"disciplines\": [\n        {\n            \"id\": 3\n        },\n        {\n            \"id\": 2\n        }\n    ],\n    \"athletes\": [\n        {\n            \"licenseNumber\": \"P30445\"\n        }\n    ]\n}"
 						},
-						"url": "https://localhost/api/coaches/{licenseNumber}"
+						"url": "https://localhost/api/coaches/U20394"
 					},
 					"response": []
 				},
@@ -553,6 +553,154 @@
 						"method": "DELETE",
 						"header": [],
 						"url": "https://localhost/api/results/{id}"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "User loging",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"passuser1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost/api/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"adminpass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost/api/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "LogOut",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "https://localhost/api/auth/logout"
+					},
+					"response": []
+				},
+				{
+					"name": "User Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"carlos\",\r\n    \"encodedPassword\":\"carlospass\",\r\n    \"roles\":[\r\n        \"USER\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost/api/users/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Actual User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost/api/users/me"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get all Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost/api/admin/users"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "https://localhost/api/admin/user/2"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Random_name\",\r\n    \"encodedPassword\": \"pass\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost/api/admin/users"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Not_A_Random_name\",\r\n    \"encodedPassword\": \"pass1\",\r\n    \"IsPremium\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "https://localhost:8443/api/admin/user/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "https://localhost/api/admin/user/2"
 					},
 					"response": []
 				}
