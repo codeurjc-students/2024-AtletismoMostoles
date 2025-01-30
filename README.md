@@ -10,7 +10,7 @@
 ## Página de Eventos
 - [x] Listado de las actividades más próximas a festejarse.
 - [x] Opción de ver la información específica de las actividades: horarios, participantes, descripción, miembros del club.
-- [ ] Para usuarios registrados (entrenadores y el presidente del club), permite:
+- [x] Para usuarios registrados (entrenadores y el presidente del club), permite:
     - [x] Agregar actividades.
     - [x] Eliminar actividades.
     - [x] Editar actividades.
@@ -30,7 +30,7 @@
     - [x] Disciplina.
     - [x] Número de licencia.
     - [x] Entrenador.
-- [ ] Para usuarios registrados (entrenadores y el presidente del club), permite:
+- [x] Para usuarios registrados (entrenadores y el presidente del club), permite:
     - [x] Agregar nuevos atletas.
 - [x] Acceso a la página de información (perfil) de un atleta desde el ranking.
 
@@ -41,14 +41,14 @@
     - [x] Disciplina.
     - [x] Número de licencia.
 - [x] Acceso a los datos de un entrenador desde la lista.
-- [ ] Para usuarios registrados (solo el presidente del club), permite:
+- [x] Para usuarios registrados (solo el presidente del club), permite:
     - [x] Agregar nuevos entrenadores.
 
 ## Página de Disciplinas
 - [x] Listado de las disciplinas que imparte el club con información básica de cada una:
     - [x] Entrenadores a cargo.
     - [x] Nombre de la disciplina.
-- [] Para usuarios registrados (entrenadores y el presidente del club), permite:
+- [x] Para usuarios registrados (entrenadores y el presidente del club), permite:
     - [x] Crear nuevas disciplinas.
     - [x] Eliminar disciplinas existentes.
 - [x] Acceso a los detalles de una disciplina.
@@ -65,6 +65,6 @@
     - [x] Entrenador a cargo.
     - [x] Competiciones en las que ha participado.
     - [ ] Resultados de las competiciones.
-- [ ] Para administradores, permite:
+- [x] Para administradores, permite:
     - [x] Editar un atleta o entrenador.
     - [x] Eliminar un atleta o entrenador.

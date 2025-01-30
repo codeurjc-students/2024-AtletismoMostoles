@@ -9,14 +9,14 @@
   - [x] Configurar URLs con prefijo `/api/v1`  
   - [x] Usar métodos HTTP adecuados (GET, PUT, POST, DELETE)  
   - [x] Configurar códigos de estado de respuesta correctamente  
-  - [ ] Devolver header `Location` en operaciones de creación  
+  - [x] Devolver header `Location` en operaciones de creación  
   - [x] Implementar filtrado y paginación en listados  
-- [ ] **Gestión de usuarios y seguridad**  
-  - [ ] Configurar Spring Security para gestión de usuarios  
-  - [ ] Mostrar error de acceso si un usuario no tiene permisos  
+- [x] **Gestión de usuarios y seguridad**  
+  - [x] Configurar Spring Security para gestión de usuarios  
+  - [x] Mostrar error de acceso si un usuario no tiene permisos  
 - [x] **Configurar HTTPS en el puerto 443**  
 - [x] **Almacenar imágenes en la base de datos**  
-- [ ] **Desactivar protección contra CSRF**  
+- [x] **Desactivar protección contra CSRF**  
 - [x] **Organización del repositorio:** Guardar código fuente en la carpeta `backend`  
 - [x] **Cargar datos de ejemplo en la base de datos**  
 - [ ] **Documentar la API REST con OpenAPI**  
@@ -32,7 +32,7 @@
 - [x] **Seguir buenas prácticas de diseño Angular**  
   - [x] Separar lógica de gestión del interfaz en componentes  
   - [x] Implementar servicios para la conexión con el backend  
-- [ ] **Implementar páginas de error personalizadas**  
+- [x] **Implementar páginas de error personalizadas**  
 - [x] **Implementar paginación en listados (10 elementos por página)**  
 - [x] **Organización del repositorio:** Guardar código fuente en la carpeta `frontend`
 

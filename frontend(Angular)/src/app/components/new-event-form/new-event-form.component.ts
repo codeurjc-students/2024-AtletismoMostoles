@@ -47,10 +47,18 @@ export class NewEventFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isAuthenticated();
+    console.log("isLoggedIn:",this.authService.isAuthenticated());
     if (!this.isLoggedIn) {
       alert('Debes iniciar sesión para crear un evento.');
       this.router.navigate(['/login']);
     }
+
+    if (!this.authService.isAdmin() && !this.authService.getCurrentUser()?.roles.includes('USER')) {
+      alert('No tienes permisos para crear eventos.');
+      this.router.navigate(['/eventos']); // Redirigir a la lista de eventos
+      return;
+    }
+
     console.log("llegas hasta el new event");
     this.loadDisciplines();
   }

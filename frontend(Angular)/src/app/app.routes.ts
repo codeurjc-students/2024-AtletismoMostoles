@@ -27,7 +27,7 @@ export const routes: Routes = [
     path: 'events/new',
     component: NewEventFormComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['USER', 'ADMIN'] },
+    data: { roles: ['USER'] },
   },
   { path: 'login', component: LoginComponent },
   { path: '**', redirectTo: '' },
