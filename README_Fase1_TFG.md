@@ -19,9 +19,9 @@
 - [x] **Desactivar protección contra CSRF**  
 - [x] **Organización del repositorio:** Guardar código fuente en la carpeta `backend`  
 - [x] **Cargar datos de ejemplo en la base de datos**  
-- [ ] **Documentar la API REST con OpenAPI**  
-  - [ ] Crear el fichero `api-docs.yaml`  
-  - [ ] Generar fichero HTML de la documentación en `backend/api-docs`  
+- [x] **Documentar la API REST con OpenAPI**  
+  - [x] Crear el fichero `api-docs.yaml`  
+  - [x] Generar fichero HTML de la documentación en `backend/api-docs`  
 - [x] **Incluir fichero de pruebas de la API REST (Postman o similar)**
 
 ### **Frontend con tecnología SPA**
