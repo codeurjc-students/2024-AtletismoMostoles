@@ -26,6 +26,15 @@ public class Results {
 
     private double value; // For storing the result value (e.g., time or distance)
 
+    public Results(){}
+
+    public Results(Athlete athlete, Discipline discipline, Event event, double value) {
+        this.athlete = athlete;
+        this.discipline = discipline;
+        this.event = event;
+        this.value = value;
+    }
+
     public Long getId() {
         return id;
     }

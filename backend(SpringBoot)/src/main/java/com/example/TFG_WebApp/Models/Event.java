@@ -34,6 +34,16 @@ public class Event {
     @JsonIgnoreProperties({"discipline", "athlete", "event"})
     private List<Results> results = new ArrayList<>();
 
+    public Event() {}
+    public Event(String name, LocalDate date, String mapLink, String imageLink, boolean isOrganizedByClub, List<Discipline> disciplines) {
+        this.name = name;
+        this.date = date;
+        this.mapLink = mapLink;
+        this.isOrganizedByClub = isOrganizedByClub;
+        this.imageLink = imageLink;
+        this.disciplines = new HashSet<>(disciplines);
+    }
+
     public Long getId() {
         return id;
     }

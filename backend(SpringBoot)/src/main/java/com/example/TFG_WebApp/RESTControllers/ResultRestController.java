@@ -24,7 +24,7 @@ public class ResultRestController {
     public ResponseEntity<Page<Results>> getAllResults(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(required = false) Long eventId,
             @RequestParam(required = false) Long disciplineId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));

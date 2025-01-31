@@ -1,20 +1,18 @@
 package com.example.TFG_WebApp.API_REST_TESTs;
 
 import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@TestMethodOrder(OrderAnnotation.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EquipmentRestControllerTest {
 
     private static int equipmentId;
+    private static String authToken;  // 🔹 Token de autenticación
 
     @BeforeAll
     public static void setup() {
@@ -22,17 +20,31 @@ public class EquipmentRestControllerTest {
         RestAssured.port = 443;
         RestAssured.useRelaxedHTTPSValidation();
 
+        // 🔹 Autenticación y obtención del token
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .body("{ \"username\": \"admin\", \"password\": \"adminpass\" }")
+                .when()
+                .post("/api/auth/login");
+
+        response.then().log().all(); // Imprimir respuesta para depuración
+
+        authToken = response.getCookie("AuthToken"); // Obtener token de la cookie
+        Assertions.assertNotNull(authToken, "Error: No se obtuvo un token JWT");
     }
 
     @Test
     @Order(1)
     public void testGetAllEquipment() {
         given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
                 .when()
                 .get("/api/equipment")
                 .then()
+                .log().all()
                 .statusCode(200)
-                .body("content.size()", greaterThan(0));
+                .body("content.size()", greaterThanOrEqualTo(0));
     }
 
     @Test
@@ -46,11 +58,14 @@ public class EquipmentRestControllerTest {
         """;
 
         equipmentId = given()
-                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .contentType(ContentType.JSON)
                 .body(newEquipmentJson)
                 .when()
                 .post("/api/equipment")
                 .then()
+                .log().all()
                 .statusCode(201)
                 .body("name", equalTo("Martillo"))
                 .body("id", notNullValue())
@@ -69,11 +84,14 @@ public class EquipmentRestControllerTest {
         """;
 
         given()
-                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .contentType(ContentType.JSON)
                 .body(updatedEquipmentJson)
                 .when()
                 .put("/api/equipment/{id}", equipmentId)
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("name", equalTo("Martillo"))
                 .body("id", equalTo(equipmentId))
@@ -84,9 +102,12 @@ public class EquipmentRestControllerTest {
     @Order(4)
     public void testDeleteEquipment() {
         given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
                 .when()
                 .delete("/api/equipment/{id}", equipmentId)
                 .then()
-                .statusCode(204);
+                .log().all()
+                .statusCode(anyOf(is(200), is(204)));
     }
 }

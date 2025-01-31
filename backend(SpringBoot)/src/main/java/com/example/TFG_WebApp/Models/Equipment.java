@@ -21,6 +21,11 @@ public class Equipment {
     @JsonIgnoreProperties({"equipment", "coaches", "athletes", "events"})
     private Set<Discipline> disciplines = new HashSet<>();
 
+    public Equipment() {}
+    public Equipment(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
     public Long getId() {
         return id;
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -38,6 +39,14 @@ public class Discipline {
     @JsonIgnoreProperties({"disciplines", "athletes"})
     private Set<Coach> coaches = new HashSet<>();
 
+    public Discipline() {}
+
+    public Discipline(String name, String description, List<Equipment> equipment) {
+        this.name = name;
+        this.description = description;
+        this.imageLink = imageLink;
+        this.equipment = new HashSet<>(equipment);
+    }
     public Long getId() {
         return id;
     }

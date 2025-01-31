@@ -35,6 +35,18 @@ public class Athlete {
     @JsonIgnoreProperties({"athlete", "event"})
     private List<Results> results = new ArrayList<>();
 
+    public Athlete(String licenseNumber, String firstName, String lastName, LocalDate birthDate, Coach coach, Set<Discipline> disciplines) {
+        this.licenseNumber = licenseNumber;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.coach = coach;
+        this.disciplines = disciplines;
+    }
+
+    public Athlete() {
+
+    }
 
     public String getLicenseNumber() {
         return licenseNumber;

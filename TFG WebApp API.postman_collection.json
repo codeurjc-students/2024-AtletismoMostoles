@@ -155,7 +155,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"licenseNumber\": \"C54321\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\"\n}"
+							"raw": "{\n  \"licenseNumber\": \"C54321\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"disciplines\":[\n    {\"id\":1}\n  ]\n}"
 						},
 						"url": "https://localhost/api/coaches"
 					},
@@ -184,7 +184,7 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "https://localhost/api/coaches/{licenseNumber}"
+						"url": "https://localhost/api/coaches/C54321"
 					},
 					"response": []
 				}
@@ -523,7 +523,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"value\": 12.5,\n  \"athlete\": { \"licenseNumber\": \"A12345\" },\n  \"discipline\": { \"id\": 1 },\n  \"event\": { \"id\": 1 }\n}"
+							"raw": "{\n  \"value\": 12.5,\n  \"athlete\": { \"licenseNumber\": \"M12345\" },\n  \"discipline\": { \"id\": 1 },\n  \"event\": { \"id\": 1 }\n}"
 						},
 						"url": "https://localhost/api/results"
 					},
