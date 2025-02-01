@@ -92,4 +92,14 @@ export class EventsComponent implements OnInit {
     this.router.navigate(['/events/new']);
   }
 
+  login() {
+    this.router.navigate(['/login']);
+  }
+
+  logout() {
+    if(!this.isLoggedIn){
+      this.router.navigate(['/login']);
+    }
+    this.authService.logout();
+  }
 }

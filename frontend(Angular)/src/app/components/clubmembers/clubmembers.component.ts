@@ -6,7 +6,7 @@ import { Discipline } from '../../models/discipline.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
-import {RouterLink, RouterOutlet} from '@angular/router';
+import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 
@@ -34,13 +34,15 @@ export class ClubMembersComponent implements OnInit {
   totalPages = 1;
   coachForm: FormGroup;
   isAdmin: boolean = false;
+  isLoggedIn: boolean = false;
 
   constructor(
     private coachService: CoachService,
     private disciplineService: DisciplineService,
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.coachForm = this.fb.group({
       licenseNumber: ['', Validators.required],
@@ -52,6 +54,7 @@ export class ClubMembersComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAdmin = this.authService.isAdmin();
+    this.isLoggedIn = this.authService.isAuthenticated();
     this.loadCoaches();
     this.loadDisciplines();
   }
@@ -159,4 +162,16 @@ export class ClubMembersComponent implements OnInit {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
   }
+
+  login() {
+    this.router.navigate(['/login']);
+  }
+
+  logout() {
+    if(!this.isLoggedIn){
+      this.router.navigate(['/login']);
+    }
+    this.authService.logout();
+  }
+
 }

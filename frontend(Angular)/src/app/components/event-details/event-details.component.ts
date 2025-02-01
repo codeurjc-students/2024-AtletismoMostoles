@@ -49,7 +49,8 @@ export class EventDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private eventService: EventService,
     private resultService: ResultService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -132,5 +133,16 @@ export class EventDetailsComponent implements OnInit {
     if (menu) {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
+  }
+
+  login() {
+    this.router.navigate(['/login']);
+  }
+
+  logout() {
+    if(!this.isLoggedIn){
+      this.router.navigate(['/login']);
+    }
+    this.authService.logout();
   }
 }

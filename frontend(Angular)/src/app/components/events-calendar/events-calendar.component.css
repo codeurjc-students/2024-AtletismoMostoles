@@ -51,7 +51,22 @@ nav a {
   background-color: white;
   margin: 5px 0;
 }
-
+.LogSection button{
+  padding: 10px 20px;
+  background-color: #26e73f;
+  color: #130002;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 15px;
+}
+.button{
+  padding: 10px 20px;
+  background-color: #e77626;
+  color: #130002;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 15px;
+}
 section {
   padding: 50px 20px;
 }

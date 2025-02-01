@@ -42,6 +42,7 @@ export class ProfileComponent implements OnInit {
   isAthlete = true;
   errorMessage: string = '';
   isAdmin: boolean = false;
+  isLoogedIn: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -58,6 +59,7 @@ export class ProfileComponent implements OnInit {
     const id = this.route.snapshot.params['id'];
     this.isAthlete = type === 'athlete';
     this.isAdmin = this.authService.isAdmin();
+    this.isLoogedIn = this.authService.isAuthenticated();
     this.loadProfile(id);
   }
 
@@ -194,9 +196,6 @@ export class ProfileComponent implements OnInit {
       alert('Por favor, complete todos los campos requeridos.');
     }
   }
-
-
-
   cancelEdit(): void {
     this.isEditing = false;
   }
@@ -213,5 +212,16 @@ export class ProfileComponent implements OnInit {
 
   get birthDate() {
     return this.isAthlete ? (this.profile as Athlete).birthDate : undefined;
+  }
+
+  login() {
+    this.router.navigate(['/login']);
+  }
+
+  logout() {
+    if(!this.isLoogedIn){
+      this.router.navigate(['/login']);
+    }
+    this.authService.logout();
   }
 }

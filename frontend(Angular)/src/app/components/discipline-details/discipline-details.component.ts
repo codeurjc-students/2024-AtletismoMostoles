@@ -1,4 +1,3 @@
-// discipline-details.component.ts
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -38,7 +37,8 @@ export class DisciplineDetailsComponent implements OnInit {
     private disciplineService: DisciplineService,
     private equipmentService: EquipmentService,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -144,5 +144,16 @@ export class DisciplineDetailsComponent implements OnInit {
     if (menu) {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
+  }
+
+  login() {
+    this.router.navigate(['/login']);
+  }
+
+  logout() {
+    if(!this.isLoggedIn){
+      this.router.navigate(['/login']);
+    }
+    this.authService.logout();
   }
 }

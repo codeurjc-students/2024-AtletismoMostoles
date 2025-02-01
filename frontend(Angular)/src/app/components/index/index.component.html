@@ -10,6 +10,11 @@
     <a routerLink="/eventos">Eventos</a>
     <a routerLink="/calendario">Calendario</a>
   </nav>
+
+  <div class="LogSection">
+    <button id="login-button" (click)="login()"> LogIn </button>
+    <button id="logout-button" *ngIf="isLoogedIn" (click)="logout()"> LogOut </button>
+  </div>
   <div class="menu-icon" (click)="toggleMenu()">
     <span></span>
     <span></span>

@@ -133,4 +133,16 @@ export class AssociationAtlComponent implements OnInit {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
   }
+
+  login() {
+    this.router.navigate(['/login']);
+  }
+
+  logout() {
+    if(!this.isLoggedIn){
+      this.router.navigate(['/login']);
+    }
+    this.authService.logout();
+  }
+
 }

@@ -8,7 +8,7 @@ import { Discipline } from '../../models/discipline.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {NgForOf, NgIf} from '@angular/common';
-import {RouterLink, RouterOutlet} from '@angular/router';
+import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import {HttpClientModule} from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 
@@ -37,6 +37,7 @@ export class RankingComponent implements OnInit {
   disciplines: Discipline[] = [];
   athleteForm: FormGroup;
   isAdmin: boolean = false;
+  isLoggedIn: boolean = false;
 
   constructor(
     private athleteService: AthleteService,
@@ -44,7 +45,8 @@ export class RankingComponent implements OnInit {
     private disciplineService: DisciplineService,
     private modalService: NgbModal,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.athleteForm = this.fb.group({
       licenseNumber: ['', Validators.required],
@@ -59,6 +61,7 @@ export class RankingComponent implements OnInit {
   ngOnInit(): void {
     this.authService.user.subscribe(user => {
       this.isAdmin = this.authService.isAdmin();
+      this.isLoggedIn = this.authService.isAuthenticated();
     });
     this.loadAtletas();
     this.loadCoaches();
@@ -186,4 +189,16 @@ export class RankingComponent implements OnInit {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
   }
+
+  login() {
+    this.router.navigate(['/login']);
+  }
+
+  logout() {
+    if(!this.isLoggedIn){
+      this.router.navigate(['/login']);
+    }
+    this.authService.logout();
+  }
+
 }
