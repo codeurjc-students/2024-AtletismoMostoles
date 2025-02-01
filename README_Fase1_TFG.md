@@ -50,13 +50,13 @@
 - [x] **Implementar pruebas de API REST (preferentemente con Rest Assured)**  
 
 ## **Empaquetado con Docker y Docker Compose**
-- [ ] **Crear imagen Docker del backend con soporte HTTPS**  
-- [ ] **Publicar frontend Angular como recurso estático del backend**  
-- [ ] **Subir la imagen a DockerHub**  
-- [ ] **Crear fichero `docker-compose.yml`**  
-  - [ ] Usar imagen MySQL estándar de DockerHub  
-  - [ ] Configurar variables de entorno para la base de datos y la aplicación  
-  - [ ] Configurar healthcheck para el contenedor de la base de datos  
+- [x] **Crear imagen Docker del backend con soporte HTTPS**  
+- [x] **Publicar frontend Angular como recurso estático del backend**  
+- [x] **Subir la imagen a DockerHub**  
+- [x] **Crear fichero `docker-compose.yml`**  
+  - [x] Usar imagen MySQL estándar de DockerHub  
+  - [x] Configurar variables de entorno para la base de datos y la aplicación  
+  - [x] Configurar healthcheck para el contenedor de la base de datos  
 
 ## **Documentación**
 - [ ] **Capturas de pantalla de las páginas principales**  

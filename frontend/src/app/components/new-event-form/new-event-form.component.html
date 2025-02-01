@@ -1,0 +1,88 @@
+<header>
+  <div class="logo">
+    <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
+  </div>
+  <nav>
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/miembros">Miembros del Club</a>
+    <a routerLink="/ranking">Ranking</a>
+    <a routerLink="/eventos">Eventos</a>
+    <a routerLink="/calendario">Calendario</a>
+  </nav>
+</header>
+
+<div class="new-event-form">
+  <h2>Crear Nuevo Evento</h2>
+
+  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Nombre del Evento</label>
+      <input id="name" type="text" formControlName="name" />
+      <div *ngIf="isInvalid('name')" class="error">
+        El nombre del evento es obligatorio y debe tener al menos 3 caracteres.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="imageUrl">URL de la Imagen</label>
+      <input id="imageUrl" type="url" formControlName="imageUrl" />
+      <div *ngIf="isInvalid('imageUrl')" class="error">
+        Por favor, ingresa una URL válida para la imagen.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="mapUrl">URL del Mapa</label>
+      <input id="mapUrl" type="url" formControlName="mapUrl" />
+      <div *ngIf="isInvalid('mapUrl')" class="error">
+        Por favor, ingresa una URL válida para el mapa.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="date">Fecha</label>
+      <input id="date" type="date" formControlName="date" />
+      <div *ngIf="isInvalid('date')" class="error">
+        Por favor, ingresa una fecha válida en el formato YYYY-MM-DD.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" formControlName="organizedByClub" /> Organizado por el Club
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="disciplines">Selecciona Disciplinas</label>
+      <select id="disciplines" formControlName="disciplines" multiple>
+        <option *ngFor="let discipline of disciplines" [value]="discipline.id">
+          {{ discipline.name }}
+        </option>
+      </select>
+      <div *ngIf="isInvalid('disciplines')" class="error">
+        Por favor, selecciona al menos una disciplina.
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="!isLoggedIn || eventForm.invalid">Guardar Evento</button>
+      <button type="button" (click)="onCancel()">Cancelar</button>
+    </div>
+
+  </form>
+</div>
+
+<footer>
+  <div class="contact-info">
+    <p><i class="fas fa-phone"></i> +34 600 123 456
+      <i class="fab fa-instagram"></i> &#64;aam_mostoles
+      <i class="fab fa-facebook"></i> AAM Club
+    </p>
+  </div>
+</footer>
+<router-outlet></router-outlet>

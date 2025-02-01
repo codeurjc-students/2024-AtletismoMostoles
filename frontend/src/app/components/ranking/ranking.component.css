@@ -1,0 +1,154 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+header {
+  background-color: #007f00;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+header .logo {
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+header .logo img {
+  margin-right: 10px;
+}
+nav {
+  display: flex;
+  gap: 22px;
+}
+nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 25px;
+}
+.dropdown {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: #02bd12;
+  padding: 10px;
+  border-radius: 5px;
+}
+.dropdown a {
+  margin-bottom: 10px;
+  color: #FFFFFF;
+}
+.menu-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: pointer;
+}
+.menu-icon span {
+  display: block;
+  height: 4px;
+  width: 25px;
+  background-color: white;
+  margin: 5px 0;
+}
+
+section {
+  padding: 50px 20px;
+}
+
+.section-1 {
+  background: url(/assets/images/ranking-bg.png) no-repeat center center/cover;
+  color: white;
+  text-align: center;
+}
+.section-1 .overlay {
+  background-color: rgba(0, 127, 0, 0.7);
+  padding: 50px;
+  display: inline-block;
+  font-size: 35px;
+}
+footer {
+  background-color: #007f00;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+.section-2{
+  background-color: rgb(37, 128, 150);
+}
+.section-2 .filter-section{
+  width: 30%;
+  padding: 20px;
+  background-color: rgb(37, 128, 150);
+  font-size: 20px;
+}
+.filter-section input {
+  font-size:15px;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  background-color: rgb(103, 197, 227);
+}
+.filter-section button{
+  margin-top: 15px;
+}
+.list-section{
+  margin-left: 30px;
+  font-size: 20px;
+  width: 70%;
+  padding: 20px;
+}
+.list-section ul {
+  list-style: none;
+  padding: 0;
+}
+.pagination-controls {
+  margin-top: 15px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th, td {
+  border: 3px solid #130002;
+  text-align: left;
+  padding: 8px;
+}
+th {
+  background-color: #02bd12;
+  font-weight: bold;
+}
+.pagination-controls {
+  margin-top: 10px;
+  text-align: center;
+}
+.pagination-controls button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.LogSection button{
+  padding: 10px 20px;
+  background-color: #26e73f;
+  color: #130002;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 15px;
+}
+button {
+  margin-top: 20px;
+  margin-left: 20px;
+  padding: 10px 20px;
+  background-color: #02bd12;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 16px;
+}
