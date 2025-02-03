@@ -67,12 +67,16 @@
 
 <section class="filters">
   <h2>Filtrar Entrenadores</h2>
-  <form (ngSubmit)="applyFilters()">
-    <label> Nombre: <input type="text" [(ngModel)]="filters.firstName" name="nombre"> </label>
-    <label> Apellido: <input type="text" [(ngModel)]="filters.lastName" name="apellido"> </label>
-    <label> Número de Licencia: <input type="text" [(ngModel)]="filters.licenseNumber" name="numeroLicencia"> </label>
-    <label> Disciplina: <input type="text" [(ngModel)]="filters.discipline" name="disciplina"> </label>
-    <button type="submit">Aplicar Filtros</button>
+  <form (submit)="applyFilters()">
+    <label> Nombre: </label>
+    <input type="text" [(ngModel)]="filters.firstName" [ngModelOptions]="{standalone: true}">
+    <label> Apellido: </label>
+    <input type="text" [(ngModel)]="filters.lastName" [ngModelOptions]="{standalone: true}">
+    <label> Número de Licencia: </label>
+    <input type="text" [(ngModel)]="filters.licenseNumber" [ngModelOptions]="{standalone: true}">
+    <label> Disciplina: </label>
+    <input type="text" [(ngModel)]="filters.discipline" [ngModelOptions]="{standalone: true}">
+    <button type="submit" class="button">Aplicar Filtros</button>
   </form>
 </section>
 
