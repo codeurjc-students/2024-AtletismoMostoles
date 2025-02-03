@@ -1,70 +1,60 @@
-# 2024-AtletismoMostoles
+# Documentación del Proyecto TFG WebApp
 
-# Funcionalidades de la Web
+## 📌 Introducción
+TFG WebApp es una aplicación desarrollada en Angular y Spring Boot para la gestión de eventos deportivos. La aplicación está contenida en Docker y utiliza MySQL como base de datos.
 
-## Página Principal
-- [x] Muestra al usuario información relevante del club, los grupos de entreno, un resumen de la historia del club y los organismos que le apoyan.
-- [x] Mapa con la dirección donde entrena el club, con un enlace a una aplicación de GPS (Google Maps).
-- [x] Redireccionamiento a las secciones informativas de la web: Eventos, Ranking, Contactos, etc.
+## 📷 Capturas de Pantalla
+Se incluyen capturas de pantalla de las principales páginas de la aplicación, con una breve descripción de cada una.
 
-## Página de Eventos
-- [x] Listado de las actividades más próximas a festejarse.
-- [x] Opción de ver la información específica de las actividades: horarios, participantes, descripción, miembros del club.
-- [x] Para usuarios registrados (entrenadores y el presidente del club), permite:
-    - [x] Agregar actividades.
-    - [x] Eliminar actividades.
-    - [x] Editar actividades.
+- **Inicio**: Pantalla De Inicio con información basica del club y acceso a las demás pantallas
+![index](diagrams/screenshots_pages/index.png)
+- **Login**: Pantalla de autenticación de usuarios.
+![login](diagrams/screenshots_pages/login.png)
+- **Ranking**: Interfaz con un listado de atletas y los filtros sobre la lista.
+![ranking](diagrams/screenshots_pages/ranking.png)
+- **Clubmembers**: Interfaz con un listado de los entrenadores del club, y los filtros aplicables sobre este.
+![clubmembers](diagrams/screenshots_pages/culbmembers.png)
+- **Assosiation-atl**: Interfaz con el listado de disciplinas que se imparten en el club.
+![assosiation-atl](diagrams/screenshots_pages/assosiation-atl.png)
+- **Calendar-Events**: Interfaz con el calendario de enventos interactivo.
+![calendar-events](diagrams/screenshots-pages/calendar-event.png)
 
-## Página Calendario de Eventos
-- [x] Calendario donde se marcan las actividades que organiza el club y en las que participa algún miembro.
-- [x] Opción de ver la información específica de las actividades: horarios, participantes, descripción, miembros del club.
+## 🔗 Diagrama de Navegación
+Se muestra la navegación entre las distintas páginas de la aplicación, con miniaturas de las capturas de pantalla.
+## ![Diagrama de Navegacion](diagrams/Diagrama de Navegacion.png)
 
-## Página de Detalles de Eventos
-- [x] Muestra todos los datos de un evento.
-- [x] Permite editar los datos del evento y actualizarlos.
+## 📊 Diagrama de Entidades de la Base de Datos
+El siguiente diagrama muestra las entidades de la base de datos, sus atributos y relaciones. 
 
-## Página de Ranking
-- [x] Listado con todos los atletas que compiten y están inscritos en el club.
-- [x] Filtro para buscar atletas por:
-    - [x] Nombre.
-    - [x] Disciplina.
-    - [x] Número de licencia.
-    - [x] Entrenador.
-- [x] Para usuarios registrados (entrenadores y el presidente del club), permite:
-    - [x] Agregar nuevos atletas.
-- [x] Acceso a la página de información (perfil) de un atleta desde el ranking.
+## ![Diagrama de Entidades de la BD](diagrams/DiagramaDeEntidades.png)
 
-## Página de Miembros del Club
-- [x] Listado de los entrenadores que trabajan dentro del club.
-- [x] Filtro para buscar entrenadores por:
-    - [x] Nombre.
-    - [x] Disciplina.
-    - [x] Número de licencia.
-- [x] Acceso a los datos de un entrenador desde la lista.
-- [x] Para usuarios registrados (solo el presidente del club), permite:
-    - [x] Agregar nuevos entrenadores.
+## 🖥️ Diagrama de Clases del Backend
+Se presenta un diagrama que describe la estructura del backend, diferenciando **@RestController, @Service, @Repository** y **Entidades**.
+## ![Diagrama de clases Backend](diagrams/Diagrama de Clases del Backend.jpeg)
 
-## Página de Disciplinas
-- [x] Listado de las disciplinas que imparte el club con información básica de cada una:
-    - [x] Entrenadores a cargo.
-    - [x] Nombre de la disciplina.
-- [x] Para usuarios registrados (entrenadores y el presidente del club), permite:
-    - [x] Crear nuevas disciplinas.
-    - [x] Eliminar disciplinas existentes.
-- [x] Acceso a los detalles de una disciplina.
+## 🎨 Diagrama de Clases y Templates del Frontend
+Se muestra la relación entre los componentes Angular, incluyendo **servicios, templates y relaciones padre-hijo**.
+## ![Diagrama de clases Frontend](diagrams/Diagrama de Clases Frontend.jpeg)
 
-## Página de Detalles de Disciplina
-- [x] Muestra todos los datos de una disciplina.
-- [x] Permite editar una disciplina y actualizar sus datos.
+## 🐳 Construcción de la Imagen Docker
+Para construir la imagen Docker del backend, ejecutar el siguiente comando desde el directorio rais del proyecto:
+```sh
+docker build -t saac04/backend:latest -f docker/Dockerfile_backend .
+```
+Esto crea la imagen saac04/backend:latest en docker.
 
-## Página de Atleta/Entrenador (Perfil)
-- [x] Muestra la información de un atleta o entrenador:
-    - [x] Nombre.
-    - [x] Número de licencia.
-    - [x] Disciplina(s) que practica o imparte.
-    - [x] Entrenador a cargo.
-    - [x] Competiciones en las que ha participado.
-    - [ ] Resultados de las competiciones.
-- [x] Para administradores, permite:
-    - [x] Editar un atleta o entrenador.
-    - [x] Eliminar un atleta o entrenador.
+## 🚀 Ejecución de la Aplicación con Docker Compose
+Para ejecutar la aplicación con Docker Compose, ejecutamos el siguiente código desde el directorio rais:
+```sh
+cd docker
+docker-compose up -d
+```
+Esto inicia los contenedores del backend y la base de datos MySQL.
+Una vez iniciado el contenedor la aplicación estara disponible en la url
+```
+https://localhost:443
+```
+
+## 🎥 Vídeo Demostrativo
+Se ha subido un vídeo a YouTube mostrando las funcionalidades de la aplicación. Puedes verlo aquí: [Enlace al vídeo](https://youtube.com/tu-video).
+
