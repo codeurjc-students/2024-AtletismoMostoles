@@ -59,16 +59,16 @@
   - [x] Configurar healthcheck para el contenedor de la base de datos  
 
 ## **Documentación**
-- [ ] **Capturas de pantalla de las páginas principales**  
-  - [ ] Añadir descripción breve de cada página  
-- [ ] **Diagrama de navegación**  
-- [ ] **Diagrama de entidades de la base de datos**  
-- [ ] **Diagrama de clases del backend**  
-- [ ] **Diagrama de clases y templates del frontend SPA**  
-- [ ] **Documentación para la construcción de la imagen Docker**  
-  - [ ] Comando de construcción de la imagen Docker  
+- [x] **Capturas de pantalla de las páginas principales**  
+  - [x] Añadir descripción breve de cada página  
+- [x] **Diagrama de navegación**  
+- [x] **Diagrama de entidades de la base de datos**  
+- [x] **Diagrama de clases del backend**  
+- [x] **Diagrama de clases y templates del frontend SPA**  
+- [x] **Documentación para la construcción de la imagen Docker**  
+  - [x] Comando de construcción de la imagen Docker  
   - [ ] Documentación del repositorio DockerHub  
-- [ ] **Instrucciones para ejecutar la aplicación con `docker-compose`**  
+- [x] **Instrucciones para ejecutar la aplicación con `docker-compose`**  
 - [ ] **Vídeo de presentación (entre 2 y 3 minutos)**  
   - [ ] Subir el vídeo a YouTube  
   - [ ] Enlazar el vídeo en el inicio del README  
