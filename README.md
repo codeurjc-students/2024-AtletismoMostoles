@@ -7,17 +7,17 @@ TFG WebApp es una aplicación desarrollada en Angular y Spring Boot para la gest
 Se incluyen capturas de pantalla de las principales páginas de la aplicación, con una breve descripción de cada una.
 
 - **Inicio**: Pantalla De Inicio con información basica del club y acceso a las demás pantallas
-![index](diagrams/screenshots_pages/index.png)
+![index](diagrams/screenshots/Index.png)
 - **Login**: Pantalla de autenticación de usuarios.
-![login](diagrams/screenshots_pages/login.png)
+![login](diagrams/screenshots/login.png)
 - **Ranking**: Interfaz con un listado de atletas y los filtros sobre la lista.
-![ranking](diagrams/screenshots_pages/ranking.png)
+![ranking](diagrams/screenshots/ranking.png)
 - **Clubmembers**: Interfaz con un listado de los entrenadores del club, y los filtros aplicables sobre este.
-![clubmembers](diagrams/screenshots_pages/culbmembers.png)
+![clubmembers](diagrams/screenshots/clubmembers.png)
 - **Assosiation-atl**: Interfaz con el listado de disciplinas que se imparten en el club.
-![assosiation-atl](diagrams/screenshots_pages/assosiation-atl.png)
+![assosiation-atl](diagrams/screenshots/assosiation-atl.png)
 - **Calendar-Events**: Interfaz con el calendario de enventos interactivo.
-![calendar-events](diagrams/screenshots-pages/calendar-event.png)
+![calendar-events](diagrams/screenshots/calendar_event.png)
 
 ## 🔗 Diagrama de Navegación
 Se muestra la navegación entre las distintas páginas de la aplicación, con miniaturas de las capturas de pantalla.
