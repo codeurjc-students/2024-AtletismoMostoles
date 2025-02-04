@@ -21,7 +21,7 @@ Se incluyen capturas de pantalla de las principales páginas de la aplicación, 
 
 ## 🔗 Diagrama de Navegación
 Se muestra la navegación entre las distintas páginas de la aplicación, con miniaturas de las capturas de pantalla.
-## ![Diagrama de Navegacion](diagrams/Diagrama de Navegacion.png)
+## ![Diagrama de Navegacion](diagrams/DiagramadeNavegacion.png)
 
 ## 📊 Diagrama de Entidades de la Base de Datos
 El siguiente diagrama muestra las entidades de la base de datos, sus atributos y relaciones. 
@@ -30,11 +30,11 @@ El siguiente diagrama muestra las entidades de la base de datos, sus atributos y
 
 ## 🖥️ Diagrama de Clases del Backend
 Se presenta un diagrama que describe la estructura del backend, diferenciando **@RestController, @Service, @Repository** y **Entidades**.
-## ![Diagrama de clases Backend](diagrams/Diagrama de Clases del Backend.jpeg)
+## ![Diagrama de clases Backend](diagrams/DiagramadeClasesBackend.jpeg)
 
 ## 🎨 Diagrama de Clases y Templates del Frontend
 Se muestra la relación entre los componentes Angular, incluyendo **servicios, templates y relaciones padre-hijo**.
-## ![Diagrama de clases Frontend](diagrams/Diagrama de Clases Frontend.jpeg)
+## ![Diagrama de clases Frontend](diagrams/DiagramadeClasesFrontend.jpeg)
 
 ## 🐳 Construcción de la Imagen Docker
 Para construir la imagen Docker del backend, ejecutar el siguiente comando desde el directorio rais del proyecto:
