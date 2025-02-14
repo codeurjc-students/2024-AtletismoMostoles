@@ -58,7 +58,9 @@ export class EventsCalendarComponent implements OnInit {
   ngOnInit(): void {
     this.currentMonth = this.months[this.today.getMonth()];
     this.currentYear = this.today.getFullYear();
-    this.isLoggedIn = this.authService.isAuthenticated();
+    this.authService.user.subscribe(user => {
+      this.isLoggedIn = this.authService.isAuthenticated();
+    });
     this.loadEvents();
   }
 

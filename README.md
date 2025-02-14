@@ -7,21 +7,21 @@ TFG WebApp es una aplicación desarrollada en Angular y Spring Boot para la gest
 Se incluyen capturas de pantalla de las principales páginas de la aplicación, con una breve descripción de cada una.
 
 - **Inicio**: Pantalla De Inicio con información basica del club y acceso a las demás pantallas
-![index](diagrams/screenshots_pages/index.png)
+![index](diagrams/screenshots/Index.png)
 - **Login**: Pantalla de autenticación de usuarios.
-![login](diagrams/screenshots_pages/login.png)
+![login](diagrams/screenshots/login.png)
 - **Ranking**: Interfaz con un listado de atletas y los filtros sobre la lista.
-![ranking](diagrams/screenshots_pages/ranking.png)
+![ranking](diagrams/screenshots/ranking.png)
 - **Clubmembers**: Interfaz con un listado de los entrenadores del club, y los filtros aplicables sobre este.
-![clubmembers](diagrams/screenshots_pages/culbmembers.png)
+![clubmembers](diagrams/screenshots/clubmembers.png)
 - **Assosiation-atl**: Interfaz con el listado de disciplinas que se imparten en el club.
-![assosiation-atl](diagrams/screenshots_pages/assosiation-atl.png)
+![assosiation-atl](diagrams/screenshots/assosiation-atl.png)
 - **Calendar-Events**: Interfaz con el calendario de enventos interactivo.
-![calendar-events](diagrams/screenshots-pages/calendar-event.png)
+![calendar-events](diagrams/screenshots/calendar_event.png)
 
 ## 🔗 Diagrama de Navegación
 Se muestra la navegación entre las distintas páginas de la aplicación, con miniaturas de las capturas de pantalla.
-## ![Diagrama de Navegacion](diagrams/Diagrama de Navegacion.png)
+## ![Diagrama de Navegacion](diagrams/DiagramadeNavegacion.png)
 
 ## 📊 Diagrama de Entidades de la Base de Datos
 El siguiente diagrama muestra las entidades de la base de datos, sus atributos y relaciones. 
@@ -30,11 +30,11 @@ El siguiente diagrama muestra las entidades de la base de datos, sus atributos y
 
 ## 🖥️ Diagrama de Clases del Backend
 Se presenta un diagrama que describe la estructura del backend, diferenciando **@RestController, @Service, @Repository** y **Entidades**.
-## ![Diagrama de clases Backend](diagrams/Diagrama de Clases del Backend.jpeg)
+## ![Diagrama de clases Backend](diagrams/DiagramadeClasesBackend.jpeg)
 
 ## 🎨 Diagrama de Clases y Templates del Frontend
 Se muestra la relación entre los componentes Angular, incluyendo **servicios, templates y relaciones padre-hijo**.
-## ![Diagrama de clases Frontend](diagrams/Diagrama de Clases Frontend.jpeg)
+## ![Diagrama de clases Frontend](diagrams/DiagramadeClasesFrontend.jpeg)
 
 ## 🐳 Construcción de la Imagen Docker
 Para construir la imagen Docker del backend, ejecutar el siguiente comando desde el directorio rais del proyecto:

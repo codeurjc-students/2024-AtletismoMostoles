@@ -6,104 +6,200 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import java.time.Duration;
-import java.util.Set;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+import java.time.Duration;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DisciplinesE2ETest {
-    private static WebDriver driver;
-    private static WebDriverWait wait;
+    private WebDriver driver;
 
     @BeforeAll
-    public static void setup() {
+    public void setup() {
+        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
+
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--ignore-certificate-errors");
-        options.addArguments("--allow-insecure-localhost");
-        options.addArguments("--headless");
-        options.addArguments("--disable-blink-features=BlockCredentialedSubresources");
-        driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-    }
+        options.addArguments("--disable-web-security");
+        options.addArguments("--allow-running-insecure-content");
+        options.setAcceptInsecureCerts(true);
 
+        driver = new ChromeDriver(options);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
 
     @BeforeEach
-    public void loginAsAdmin() {
-        driver.get("https://localhost:4200/login");
-        driver.findElement(By.id("username")).sendKeys("admin");
-        driver.findElement(By.id("password")).sendKeys("adminpass");
-        WebElement button = driver.findElement(By.id("login-button"));
-        button.click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("index_title")));
-
-        Set<Cookie> cookies = driver.manage().getCookies();
-        for (Cookie cookie : cookies) {
-            driver.manage().addCookie(cookie);
-        }
-        driver.navigate().refresh();
-
-    }
-
-    @Test
-    @Order(1)
-    public void testAccessDisciplineList() {
+    public void navigateToPage() {
         driver.get("https://localhost:4200/disciplines");
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("discipline-list")));
-        Assertions.assertTrue(driver.findElement(By.id("discipline-list")).isDisplayed(), "La lista de disciplinas no se muestra");
-    }
-
-    @Test
-    @Order(2)
-    public void testCreateDiscipline() {
-        driver.get("https://localhost:4200/disciplines");
-        Set<Cookie> c = driver.manage().getCookies();
-        System.out.println(c.toString());
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("new-discipline")));
-        driver.findElement(By.id("new-discipline")).click();
-        driver.findElement(By.id("name")).sendKeys("Salto de Longitud");
-        driver.findElement(By.id("description")).sendKeys("Lunes 16:00 - 18:00");
-        driver.findElement(By.id("submit-discipline")).click();
-
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[contains(text(),'Salto de Longitud')]")));
-        Assertions.assertTrue(driver.findElement(By.xpath("//td[contains(text(),'Salto de Longitud')]")).isDisplayed(), "La disciplina no se creó correctamente");
-    }
-
-    @Test
-    @Order(3)
-    public void testEditDiscipline() {
-        driver.get("https://localhost:4200/disciplines");
-        driver.findElement(By.xpath("//td[contains(text(),'Salto de Longitud')]/following-sibling::td/button[@id='edit-discipline']")).click();
-        WebElement descriptionField = driver.findElement(By.id("discipline-description"));
-        descriptionField.clear();
-        descriptionField.sendKeys("Martes 18:00 - 20:00");
-        driver.findElement(By.id("submit-discipline")).click();
-
-        wait.until(ExpectedConditions.textToBe(By.xpath("//td[contains(text(),'Salto de Longitud')]/following-sibling::td[@id='discipline-description']"), "Martes 18:00 - 20:00"));
-        Assertions.assertEquals("Martes 18:00 - 20:00", driver.findElement(By.xpath("//td[contains(text(),'Salto de Longitud')]/following-sibling::td[@id='discipline-description']")).getText(), "La disciplina no se actualizó correctamente");
-    }
-
-    @Test
-    @Order(4)
-    public void testDeleteDiscipline() {
-        driver.findElement(By.xpath("//td[contains(text(),'Salto de Longitud')]/following-sibling::td/button[@id='delete-discipline']")).click();
-        driver.switchTo().alert().accept();
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//td[contains(text(),'Salto de Longitud')]")));
-
-        Assertions.assertEquals(0, driver.findElements(By.xpath("//td[contains(text(),'Salto de Longitud')]")).size(), "La disciplina no fue eliminada correctamente");
-    }
-
-    @Test
-    @Order(5)
-    public void testUnauthorizedAccess() {
-        driver.get("https://localhost:4200/logout");
-        driver.get("https://localhost:4200/disciplines");
-        Assertions.assertNotEquals("https://localhost:4200/disciplines", driver.getCurrentUrl(), "Un usuario no autorizado accedió a la página de disciplinas");
     }
 
     @AfterAll
-    public static void teardown() {
+    public void teardown() {
         if (driver != null) {
             driver.quit();
         }
     }
+
+    @Test
+    public void testPageLoad() {
+        assertTrue(driver.findElement(By.tagName("header")).isDisplayed());
+        assertTrue(driver.findElement(By.id("discipline-list")).isDisplayed());
+        assertTrue(driver.findElement(By.tagName("footer")).isDisplayed());
+    }
+
+    @Test
+    public void testNavigationLinks() {
+        assertEquals(driver.findElement(By.linkText("Inicio")).getAttribute("href"), "https://localhost:4200/");
+        assertEquals(driver.findElement(By.linkText("Miembros del Club")).getAttribute("href"), "https://localhost:4200/miembros");
+        assertEquals(driver.findElement(By.linkText("Ranking")).getAttribute("href"), "https://localhost:4200/ranking");
+        assertEquals(driver.findElement(By.linkText("Eventos")).getAttribute("href"), "https://localhost:4200/eventos");
+        assertEquals(driver.findElement(By.linkText("Calendario")).getAttribute("href"), "https://localhost:4200/calendario");
+    }
+
+    @Test
+    public void testLoginAndCheckUIChanges() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        driver.findElement(By.id("login-button")).click();
+        driver.findElement(By.id("username")).sendKeys("admin");
+        driver.findElement(By.id("password")).sendKeys("adminpass");
+        driver.findElement(By.id("login-button")).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
+        driver.get("https://localhost:4200/disciplines");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
+        assertTrue(driver.findElement(By.id("logout-button")).isDisplayed());
+        assertTrue(driver.findElement(By.id("new-discipline")).isDisplayed());
+    }
+
+    @Test
+    public void testAddAndRemoveDiscipline() {
+        testLoginAndCheckUIChanges();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        // Get initial count of disciplines across all pages
+        int initialCount = countAllDisciplines();
+        System.out.println("🔎 Initial total count: " + initialCount);
+
+        // Open the add discipline modal
+        WebElement addDisciplineButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("new-discipline")));
+        addDisciplineButton.click();
+
+        // Fill the form
+        WebElement nameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("name")));
+        nameField.sendKeys("Test Discipline");
+        driver.findElement(By.id("description")).sendKeys("Test description");
+        driver.findElement(By.id("imageLink")).sendKeys("https://example.com/image.jpg");
+        driver.findElement(By.id("submit-discipline")).click();
+
+        // Handle alert
+        try {
+            Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+            System.out.println("✅ Alert: " + alert.getText());
+            alert.accept();
+        } catch (NoAlertPresentException e) {
+            System.out.println("⚠ No alert detected.");
+        }
+
+        // Wait and count again
+        wait.until(ExpectedConditions.refreshed(ExpectedConditions.presenceOfElementLocated(By.id("discipline-list"))));
+        driver.get("https://localhost:4200/disciplines");
+
+        int updatedCount = countAllDisciplines();
+        System.out.println("✅ Updated total count: " + updatedCount);
+        assertEquals(initialCount + 1, updatedCount, "❌ The discipline was not added correctly.");
+
+        // Delete the newly added discipline
+        deleteDiscipline("Test Discipline");
+
+        driver.get("https://localhost:4200/disciplines");
+        // Final count check
+        int finalCount = countAllDisciplines();
+        System.out.println("✅ Final total count: " + finalCount);
+        assertEquals(initialCount, finalCount, "❌ The discipline was not deleted correctly.");
+    }
+
+    @Test
+    public void testPagination() {
+        WebElement pageIndicator = driver.findElement(By.xpath("//span[contains(text(), 'Página')]"));
+        String initialPage = pageIndicator.getText();
+
+        WebElement nextButton = driver.findElement(By.id("next_btm"));
+        nextButton.click();
+
+        new WebDriverWait(driver, Duration.ofSeconds(3))
+                .until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(pageIndicator, initialPage)));
+
+        assertNotEquals(initialPage, pageIndicator.getText());
+    }
+
+    private int countAllDisciplines() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        int totalDisciplines = 0;
+
+        while (true) {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("discipline-list")));
+
+            // Count disciplines in the current page
+            List<WebElement> disciplines = driver.findElements(By.className("discipline-item"));
+            totalDisciplines += disciplines.size();
+
+            // Check if there's a next page
+            List<WebElement> nextButtons = driver.findElements(By.id("next_btm"));
+            if (nextButtons.isEmpty() || nextButtons.get(0).getAttribute("disabled") != null) {
+                break; // Last page reached
+            } else {
+                nextButtons.get(0).click();
+                wait.until(ExpectedConditions.stalenessOf(disciplines.get(0)));
+            }
+        }
+
+        return totalDisciplines;
+    }
+
+    private void deleteDiscipline(String disciplineName) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+
+        while (true) {
+            List<WebElement> disciplines = driver.findElements(By.className("discipline-item"));
+            for (WebElement discipline : disciplines) {
+                WebElement nameElement = discipline.findElement(By.tagName("h3"));
+                if (nameElement.getText().contains(disciplineName)) {
+                    WebElement deleteButton = discipline.findElement(By.xpath(".//button[contains(text(),'Eliminar')]"));
+                    deleteButton.click();
+
+                    try {
+                        Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+                        System.out.println("✅ Delete Alert: " + alert.getText());
+                        alert.accept();
+                    } catch (NoAlertPresentException e) {
+                        System.out.println("⚠ No delete alert detected.");
+                    }
+
+                    // ✅ Manejar la alerta de confirmación de eliminación después del proceso
+                    try {
+                        Alert confirmationAlert = wait.until(ExpectedConditions.alertIsPresent());
+                        System.out.println("✅ Confirmation Alert: " + confirmationAlert.getText());
+                        confirmationAlert.accept();
+                    } catch (NoAlertPresentException e) {
+                        System.out.println("⚠ No confirmation alert detected.");
+                    }
+
+                    wait.until(ExpectedConditions.refreshed(ExpectedConditions.presenceOfElementLocated(By.id("discipline-list"))));
+                    return;
+                }
+            }
+
+            List<WebElement> nextButtons = driver.findElements(By.id("next_btm"));
+            if (nextButtons.isEmpty() || nextButtons.get(0).getAttribute("disabled") != null) {
+                System.out.println("❌ Discipline not found.");
+                return;
+            } else {
+                nextButtons.get(0).click();
+                wait.until(ExpectedConditions.stalenessOf(disciplines.get(0)));
+            }
+        }
+    }
+
 }

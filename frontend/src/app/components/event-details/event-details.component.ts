@@ -55,8 +55,9 @@ export class EventDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     const eventId = this.route.snapshot.params['id'];
-    this.isLoggedIn = this.authService.isAuthenticated();
-    this.loadEvent(eventId);
+    this.authService.user.subscribe(user => {
+      this.isLoggedIn = this.authService.isAuthenticated();
+    });    this.loadEvent(eventId);
     this.loadResults(eventId);
   }
 
