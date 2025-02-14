@@ -26,7 +26,7 @@ export class AssociationAtlComponent implements OnInit {
   isModalOpen: boolean = false;
   disciplines: Discipline[] = [];
   currentPage: number = 1;
-  itemsPerPage: number = 5;
+  itemsPerPage: number = 6;
   totalPages: number = 1;
   isLoggedIn: boolean = false;
 
@@ -39,7 +39,9 @@ export class AssociationAtlComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isAuthenticated();
+    this.authService.user.subscribe(user => {
+      this.isLoggedIn = this.authService.isAuthenticated();
+    });
     this.loadDisciplines();
   }
 

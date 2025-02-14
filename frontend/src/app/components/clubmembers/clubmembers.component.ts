@@ -53,8 +53,10 @@ export class ClubMembersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isAdmin = this.authService.isAdmin();
-    this.isLoggedIn = this.authService.isAuthenticated();
+    this.authService.user.subscribe(user => {
+      this.isAdmin = this.authService.isAdmin();
+      this.isLoggedIn = this.authService.isAuthenticated();
+    });
     this.loadCoaches();
     this.loadDisciplines();
   }

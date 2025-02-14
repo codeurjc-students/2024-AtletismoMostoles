@@ -48,20 +48,20 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let entrenador of coaches" [routerLink]="['/profile', 'coach', entrenador.licenseNumber]">
+    <tr *ngFor="let entrenador of coaches" [routerLink]="['/profile', 'coach', entrenador.licenseNumber]" id="member-item">
       <td>{{ entrenador.firstName }}</td>
       <td>{{ entrenador.lastName }}</td>
-      <td>{{ entrenador.licenseNumber }}</td>
+      <td id="license">{{ entrenador.licenseNumber }}</td>
       <td>{{ formatDisciplines(entrenador.disciplines) }}</td>
     </tr>
     </tbody>
   </table>
-  <button *ngIf="isAdmin" (click)="openNewCoachModal(newCoachModal)" class="button">Nuevo Entrenador</button>
+  <button *ngIf="isAdmin" (click)="openNewCoachModal(newCoachModal)" id="new-coach" class="button">Nuevo Entrenador</button>
 
   <div class="pagination">
-    <button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+    <button (click)="prevPage()" [disabled]="currentPage === 1" id="prev_btm">Anterior</button>
     <span>Página {{ currentPage }} de {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages" id="next_btm">Siguiente</button>
   </div>
 </section>
 
@@ -69,14 +69,14 @@
   <h2>Filtrar Entrenadores</h2>
   <form (submit)="applyFilters()">
     <label> Nombre: </label>
-    <input type="text" [(ngModel)]="filters.firstName" [ngModelOptions]="{standalone: true}">
+    <input id="name_form" type="text" [(ngModel)]="filters.firstName" [ngModelOptions]="{standalone: true}">
     <label> Apellido: </label>
-    <input type="text" [(ngModel)]="filters.lastName" [ngModelOptions]="{standalone: true}">
+    <input id="lastName_form" type="text" [(ngModel)]="filters.lastName" [ngModelOptions]="{standalone: true}">
     <label> Número de Licencia: </label>
-    <input type="text" [(ngModel)]="filters.licenseNumber" [ngModelOptions]="{standalone: true}">
+    <input id="license_form" type="text" [(ngModel)]="filters.licenseNumber" [ngModelOptions]="{standalone: true}">
     <label> Disciplina: </label>
-    <input type="text" [(ngModel)]="filters.discipline" [ngModelOptions]="{standalone: true}">
-    <button type="submit" class="button">Aplicar Filtros</button>
+    <input id="disciplines_form" type="text" [(ngModel)]="filters.discipline" [ngModelOptions]="{standalone: true}">
+    <button id="filter-btm" type="submit" class="button">Aplicar Filtros</button>
   </form>
 </section>
 
@@ -111,7 +111,7 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancelar</button>
-    <button type="button" class="btn btn-primary" (click)="modal.close('Save')">Guardar</button>
+    <button id="submit-coach" type="button" class="btn btn-primary" (click)="modal.close('Save')">Guardar</button>
   </div>
 </ng-template>
 

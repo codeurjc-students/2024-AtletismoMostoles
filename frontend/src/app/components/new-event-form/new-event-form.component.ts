@@ -46,8 +46,9 @@ export class NewEventFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isAuthenticated();
-    console.log("isLoggedIn:",this.authService.isAuthenticated());
+    this.authService.user.subscribe(user => {
+      this.isLoggedIn = this.authService.isAuthenticated();
+    });    console.log("isLoggedIn:",this.authService.isAuthenticated());
     if (!this.isLoggedIn) {
       alert('Debes iniciar sesión para crear un evento.');
       this.router.navigate(['/login']);

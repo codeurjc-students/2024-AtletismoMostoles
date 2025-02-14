@@ -49,15 +49,15 @@
       <label>Disciplina:</label>
       <input type="text" [(ngModel)]="filters.discipline" [ngModelOptions]="{standalone: true}">
       <label>Número de Licencia:</label>
-      <input type="text" [(ngModel)]="filters.licenseNumber" [ngModelOptions]="{standalone: true}">
+      <input id="licenseNumber_form" type="text" [(ngModel)]="filters.licenseNumber" [ngModelOptions]="{standalone: true}">
       <label>Entrenador:</label>
       <input type="text" [(ngModel)]="filters.coach" [ngModelOptions]="{standalone: true}">
-      <button type="submit" class="button">Filtrar</button>
+      <button id="filter-button" type="submit" class="button">Filtrar</button>
     </form>
   </div>
-  <div class="list-section">
+  <div id="list-section" class="list-section">
     <h2>Lista de Atletas</h2>
-    <button *ngIf="isAdmin" (click)="openNewAthleteModal(newAthleteModal)" class="button">Nuevo Atleta</button>
+    <button id="new_Athlete_btm" *ngIf="isAdmin" (click)="openNewAthleteModal(newAthleteModal)" class="button">Nuevo Atleta</button>
     <table>
       <thead>
       <tr>
@@ -69,8 +69,8 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let atleta of paginatedAtletas" [routerLink]="['/profile', 'athlete', atleta.licenseNumber]">
-        <td>{{ atleta.licenseNumber }}</td>
+      <tr id="athlete-row" *ngFor="let atleta of paginatedAtletas" [routerLink]="['/profile', 'athlete', atleta.licenseNumber]">
+        <td id="license">{{ atleta.licenseNumber }}</td>
         <td>{{ atleta.firstName }}</td>
         <td>{{ atleta.lastName }}</td>
         <td>{{ formatDisciplines(atleta.disciplines) }}</td>
@@ -79,8 +79,9 @@
       </tbody>
     </table>
     <div class="pagination-controls">
-      <button (click)="prevPage()">Anterior</button>
-      <button (click)="nextPage()">Siguiente</button>
+      <button (click)="prevPage()" [disabled]="currentPage === 1" id="prev_btm">Anterior</button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages" id="next_btm">Siguiente</button>
     </div>
   </div>
 
