@@ -41,13 +41,13 @@ public class DataInitializer {
 
             // Initialize Disciplines
             List<Discipline> disciplines = disciplineRepository.saveAll(Arrays.asList(
-                    new Discipline("Salto de Altura", "Lunes 16:00 - 18:00", Collections.singletonList(equipmentList.get(3))),
-                    new Discipline("100m Vallas", "Martes 17:00 - 19:00", Collections.singletonList(equipmentList.get(1))),
-                    new Discipline("Lanzamiento de Disco", "Miércoles 15:00 - 17:00", Collections.singletonList(equipmentList.get(4))),
-                    new Discipline("Jabalina", "Jueves 18:00 - 20:00", Collections.singletonList(equipmentList.get(5))),
-                    new Discipline("Salto con Pértiga", "Viernes 16:00 - 18:00", Collections.singletonList(equipmentList.get(2))),
-                    new Discipline("Resistencia", "Sábado 10:00 - 12:00", Collections.singletonList(equipmentList.get(7))),
-                    new Discipline("Velocidad", "Domingo 10:00 - 12:00", Collections.singletonList(equipmentList.get(0)))
+                    new Discipline("Salto de Altura", "Lunes 16:00 - 18:00", Collections.singletonList(equipmentList.get(3)), "https://media.istockphoto.com/id/124053579/es/foto/atleta.jpg?s=612x612&w=0&k=20&c=hO1Xxq9kqyK2n6Tlc8rpkbmlHhFLytLSqh6ojUYmy3I="),
+                    new Discipline("100m Vallas", "Martes 17:00 - 19:00", Collections.singletonList(equipmentList.get(1)), "https://media.istockphoto.com/id/515791560/es/foto/atleta-masculino-vallas-de-carrera.jpg?s=612x612&w=0&k=20&c=JHLwan5DT4huFnKPVBNgmVvndCa0NA9LuYoFuvSR8aY="),
+                    new Discipline("Lanzamiento de Disco", "Miércoles 15:00 - 17:00", Collections.singletonList(equipmentList.get(4)), "https://media.istockphoto.com/id/1648117083/es/foto/atleta-femenina-girando-con-disco.jpg?s=612x612&w=0&k=20&c=uTIBIHflXEWraHeB9GGjAH8no0GwYfGQL-HxvyThspU="),
+                    new Discipline("Jabalina", "Jueves 18:00 - 20:00", Collections.singletonList(equipmentList.get(5)), "https://media.istockphoto.com/id/515791354/es/foto/lanzador-de-jabalina.jpg?s=612x612&w=0&k=20&c=uCblB81UhV3Br98tMLxVxyNtOpMblE_MlIPY8ApKubA=" ),
+                    new Discipline("Salto con Pértiga", "Viernes 16:00 - 18:00", Collections.singletonList(equipmentList.get(2)), "https://media.istockphoto.com/id/468046416/es/foto/salto-con-p%C3%A9rtiga-retroiluminaci%C3%B3n.jpg?s=612x612&w=0&k=20&c=pn6_zT8346AL7W1_SvYhxLwPz75FfoJ-pZTSvjsJ5dw="),
+                    new Discipline("Resistencia", "Sábado 10:00 - 12:00", Collections.singletonList(equipmentList.get(7)), "https://wallpapers.com/images/featured/corredor-qam3p3y1s5qtykgy.jpg"),
+                    new Discipline("Velocidad", "Domingo 10:00 - 12:00", Collections.singletonList(equipmentList.get(0)), "https://media.istockphoto.com/id/502290526/es/foto/elite-100-m-runner-sprints-de-cuadras-del-estadio-iluminadas.jpg?s=612x612&w=0&k=20&c=3yt9KLO1T6H-XjTVVbZ1k94et4nsnh8u2D_WSrsX3gc=")
             ));
 
             // Initialize Coaches
@@ -71,9 +71,9 @@ public class DataInitializer {
 
             // Initialize Events
             List<Event> events = eventRepository.saveAll(Arrays.asList(
-                    new Event("Campeonato Nacional", LocalDate.parse("2025-06-10"), "", "", true, disciplines.subList(0, 3)),
-                    new Event("Maratón Ciudadano", LocalDate.parse("2025-05-01"), "", "", false, disciplines.subList(3, 6)),
-                    new Event("Copa Juvenil", LocalDate.parse("2025-07-20"), "", "", true, disciplines.subList(2, 5))
+                    new Event("Campeonato Nacional", LocalDate.parse("2025-06-10"), "", "https://www.atletismomadrid.com/images/stories/fam.jpg", true, disciplines.subList(0, 3)),
+                    new Event("Maratón Ciudadano", LocalDate.parse("2025-05-01"), "", "https://www.atletismomadrid.com/images/stories/fam.jpg", false, disciplines.subList(3, 6)),
+                    new Event("Copa Juvenil", LocalDate.parse("2025-07-20"), "", "https://www.atletismomadrid.com/images/stories/fam.jpg", true, disciplines.subList(2, 5))
             ));
 
             // Initialize Results
