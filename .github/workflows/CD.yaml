@@ -1,0 +1,31 @@
+name: CD - Entrega Continua
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker-build-and-push:
+    name: Construcción y publicación de Docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Construir y etiquetar la imagen Docker
+        run: |
+          docker build -t saac04/backend:latest -f docker/Dockerfile_backend .
+          docker tag saac04/backend:latest saac04/backend:${{ github.run_id }}
+
+      - name: Publicar la imagen Docker
+        run: |
+          docker push saac04/backend:latest
+          docker push saac04/backend:${{ github.run_id }}

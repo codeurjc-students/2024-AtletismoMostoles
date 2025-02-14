@@ -1,0 +1,45 @@
+name: CI - Integración Continua
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  rest-api-tests:
+    name: Pruebas de API REST
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Instalar dependencias y ejecutar pruebas de API REST
+        run: |
+          ./mvnw install
+          ./mvnw test -Dtest=com.example.TFG_WebApp.API_REST_TESTs.*
+
+  e2e-tests:
+    name: Pruebas E2E de la Interfaz de Usuario
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Instalar dependencias y ejecutar pruebas E2E
+        run: |
+          ./mvnw install
+          ./mvnw test -Dtest=com.example.TFG_WebApp.E2E_TESTs.*
