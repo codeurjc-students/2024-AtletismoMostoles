@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {HttpClientModule} from '@angular/common/http';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NgIf } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-index',
@@ -16,8 +16,8 @@ import { NgIf } from '@angular/common';
   ],
   styleUrls: ['./index.component.css']
 })
-export class IndexComponent implements OnInit{
-  isLoogedIn: boolean = false;
+export class IndexComponent implements OnInit {
+  isLoggedIn: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -25,10 +25,16 @@ export class IndexComponent implements OnInit{
   ) {}
 
   ngOnInit(): void {
-    this.isLoogedIn = this.authService.isAuthenticated();
-    console.log("loged:", this.isLoogedIn);
+    // Suscribirse a los cambios del estado de autenticación
+    this.authService.user.subscribe(user => {
+      this.isLoggedIn = !!user; // Se asegura de que el usuario esté autenticado
+      console.log("AuthService:", this.isLoggedIn);
+    });
   }
 
+  /**
+   * Alterna la visibilidad del menú desplegable
+   */
   toggleMenu() {
     const menu = document.getElementById('dropdown-menu');
     if (menu) {
@@ -36,13 +42,16 @@ export class IndexComponent implements OnInit{
     }
   }
 
+  /**
+   * Cierra sesión del usuario
+   */
   logout() {
-    if(!this.isLoogedIn){
-      this.router.navigate(['/login']);
-    }
     this.authService.logout();
   }
 
+  /**
+   * Redirige a la página de login
+   */
   login() {
     this.router.navigate(['/login']);
   }

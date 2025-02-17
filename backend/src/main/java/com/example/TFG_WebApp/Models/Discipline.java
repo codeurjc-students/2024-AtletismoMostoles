@@ -41,7 +41,7 @@ public class Discipline {
 
     public Discipline() {}
 
-    public Discipline(String name, String description, List<Equipment> equipment) {
+    public Discipline(String name, String description, List<Equipment> equipment, String imageLink) {
         this.name = name;
         this.description = description;
         this.imageLink = imageLink;

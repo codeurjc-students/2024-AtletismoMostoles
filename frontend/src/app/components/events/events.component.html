@@ -54,7 +54,9 @@
         <h3>{{ event.name }}</h3>
         <p>Fecha: {{ event.date }}</p>
         <p *ngIf="event.isOrganizedByClub">Organizamos este evento</p>
-        <button (click)="viewEvent(event.id)" class="btn-primary">Ver Más</button>
+        <button id="detail-btm" (click)="viewEvent(event.id)" class="btn-primary">Ver Más</button>
+        <button id="delete-btm" *ngIf="isLoggedIn" (click)="deleteEvent(event.id)" class="btn-primary">Eliminar</button>
+
       </div>
     </div>
   </div>
@@ -67,7 +69,7 @@
 
   <div class="actions">
     <button routerLink="/calendario" class="btn-secondary">Ver Calendario</button>
-    <button *ngIf="isLoggedIn" (click)="navigateToNewEvent()" class="btn-primary">Añadir Evento</button>
+    <button id="add-event" *ngIf="isLoggedIn" (click)="navigateToNewEvent()" class="btn-primary">Añadir Evento</button>
   </div>
 </section>
 

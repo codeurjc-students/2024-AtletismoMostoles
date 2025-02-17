@@ -49,22 +49,22 @@ export class CoachService {
       .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
-  getFiltered(filters: any, page: number = 0, size: number = 10): Observable<Page<Coach>> {
+  getFiltered(filters: any, page: number, size: number): Observable<any> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
 
-    if (filters.nombre) {
-      params = params.set('firstName', filters.nombre);
+    if (filters.firstName) {
+      params = params.set('firstName', filters.firstName);
     }
-    if (filters.apellido) {
-      params = params.set('lastName', filters.apellido);
+    if (filters.lastName) {
+      params = params.set('lastName', filters.lastName);
     }
-    if (filters.numeroLicencia) {
-      params = params.set('licenseNumber', filters.numeroLicencia);
+    if (filters.licenseNumber) {
+      params = params.set('licenseNumber', filters.licenseNumber);
     }
-    if (filters.disciplina) {
-      params = params.set('discipline', filters.disciplina);
+    if (filters.discipline) {
+      params = params.set('discipline', filters.discipline);
     }
 
     return this.http

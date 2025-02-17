@@ -43,7 +43,9 @@ export class DisciplineDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     const disciplineId = this.route.snapshot.params['id'];
-    this.isLoggedIn = this.authService.isAuthenticated();
+    this.authService.user.subscribe(user => {
+      this.isLoggedIn = this.authService.isAuthenticated();
+    });
     this.loadDisciplineDetails(disciplineId);
     this.loadAllEquipment();
   }

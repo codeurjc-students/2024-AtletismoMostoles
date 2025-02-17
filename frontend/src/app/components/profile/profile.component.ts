@@ -58,8 +58,10 @@ export class ProfileComponent implements OnInit {
     const type = this.route.snapshot.params['type'];
     const id = this.route.snapshot.params['id'];
     this.isAthlete = type === 'athlete';
-    this.isAdmin = this.authService.isAdmin();
-    this.isLoogedIn = this.authService.isAuthenticated();
+    this.authService.user.subscribe(user => {
+      this.isAdmin = this.authService.isAdmin();
+      this.isLoogedIn = this.authService.isAuthenticated();
+    });
     this.loadProfile(id);
   }
 

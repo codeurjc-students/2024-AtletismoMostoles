@@ -37,8 +37,9 @@ export class EventsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isAuthenticated();
-    console.log("esta logeado:", this.isLoggedIn);
+    this.authService.user.subscribe(user => {
+      this.isLoggedIn = this.authService.isAuthenticated();
+    });    console.log("esta logeado:", this.isLoggedIn);
     this.loadEvents();
   }
 
@@ -101,5 +102,17 @@ export class EventsComponent implements OnInit {
       this.router.navigate(['/login']);
     }
     this.authService.logout();
+  }
+
+  deleteEvent(eventId: number) {
+    this.eventService.delete(eventId).subscribe(
+      () => {
+        alert('Evento eliminada correctamente');
+        this.loadEvents();
+      },
+      (error) => {
+        console.error('Error al eliminar el evento:', error);
+      }
+    );
   }
 }
