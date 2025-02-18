@@ -33,7 +33,20 @@ public class EventsE2ETest {
 
     @BeforeEach
     public void navigateToPage() {
-        driver.get("https://localhost:4200/eventos");
+        driver.get("https://localhost/");
+
+        WebElement menu = driver.findElement(By.className("menu-icon"));
+        menu.click();
+
+        WebElement disciplinasOption = driver.findElement(By.xpath("//a[text()='Eventos']"));
+        disciplinasOption.click();
+
+        String expectedUrl = "https://localhost/eventos";
+        if (driver.getCurrentUrl().equals(expectedUrl)) {
+            System.out.println("Test PASSED: Se accedió correctamente a Eventos");
+        } else {
+            System.out.println("Test FAILED: No se accedió a Eventos");
+        }
     }
 
     @AfterAll
@@ -52,11 +65,11 @@ public class EventsE2ETest {
 
     @Test
     public void testNavigationLinks() {
-        assertEquals(driver.findElement(By.linkText("Inicio")).getAttribute("href"), "https://localhost:4200/");
-        assertEquals(driver.findElement(By.linkText("Miembros del Club")).getAttribute("href"), "https://localhost:4200/miembros");
-        assertEquals(driver.findElement(By.linkText("Ranking")).getAttribute("href"), "https://localhost:4200/ranking");
-        assertEquals(driver.findElement(By.linkText("Eventos")).getAttribute("href"), "https://localhost:4200/eventos");
-        assertEquals(driver.findElement(By.linkText("Calendario")).getAttribute("href"), "https://localhost:4200/calendario");
+        assertEquals(driver.findElement(By.linkText("Inicio")).getAttribute("href"), "https://localhost/");
+        assertEquals(driver.findElement(By.linkText("Miembros del Club")).getAttribute("href"), "https://localhost/miembros");
+        assertEquals(driver.findElement(By.linkText("Ranking")).getAttribute("href"), "https://localhost/ranking");
+        assertEquals(driver.findElement(By.linkText("Eventos")).getAttribute("href"), "https://localhost/eventos");
+        assertEquals(driver.findElement(By.linkText("Calendario")).getAttribute("href"), "https://localhost/calendario");
     }
 
     @Test
@@ -69,8 +82,7 @@ public class EventsE2ETest {
         driver.findElement(By.id("login-button")).click();
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
-        driver.get("https://localhost:4200/eventos");
-
+        navigateToPage();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
         assertTrue(driver.findElement(By.id("logout-button")).isDisplayed());
         assertTrue(driver.findElement(By.id("add-event")).isDisplayed());
