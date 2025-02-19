@@ -28,6 +28,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          
+      - name: Listar contenedores en ejecución
+        run: docker ps
 
       - name: Run API REST Tests with Maven
         run: |
