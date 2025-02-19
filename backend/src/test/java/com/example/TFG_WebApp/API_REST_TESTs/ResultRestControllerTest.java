@@ -33,7 +33,6 @@ public class ResultRestControllerTest {
     }
 
     @Test
-    @Order(1)
     public void testGetAllResults() {
         Response response = given()
                 .header("Authorization", "Bearer " + authToken)
@@ -57,12 +56,23 @@ public class ResultRestControllerTest {
 
 
     @Test
-    @Order(2)
     public void testCreateResult() {
+        Response response = createResult();
+
+        response.then().log().all();
+
+        response.then()
+                .statusCode(201)
+                .body("value", equalTo(12.5F))
+                .body("id", notNullValue());
+        deleteResult();
+    }
+
+    private static Response createResult() {
         String newResultJson = """
         {
             \"value\": 12.5,
-            \"athlete\": { \"licenseNumber\": \"M12345\" },
+            \"athlete\": { \"licenseNumber\": \"A2001\" },
             \"discipline\": { \"id\": 1 },
             \"event\": { \"id\": 1 }
         }
@@ -76,23 +86,22 @@ public class ResultRestControllerTest {
                 .when()
                 .post("/api/results");
 
-        response.then().log().all();
-
         resultId = response.then()
-                .statusCode(201)
                 .body("value", equalTo(12.5F))
                 .body("id", notNullValue())
                 .extract()
                 .path("id");
+
+        return response;
     }
 
     @Test
-    @Order(3)
     public void testUpdateResult() {
+        createResult();
         String updatedResultJson = """
         {
             \"value\": 12.25,
-            \"athlete\": { \"licenseNumber\": \"M12345\" },
+            \"athlete\": { \"licenseNumber\": \"A2001\" },
             \"discipline\": { \"id\": 1 },
             \"event\": { \"id\": 1 }
         }
@@ -110,18 +119,25 @@ public class ResultRestControllerTest {
                 .statusCode(200)
                 .body("value", equalTo(12.25F))
                 .body("id", notNullValue());
+        deleteResult();
+
     }
 
     @Test
     @Order(4)
     public void testDeleteResult() {
-        given()
-                .header("Authorization", "Bearer " + authToken)
-                .cookie("AuthToken", authToken)
-                .when()
-                .delete("/api/results/{id}", resultId)
+        createResult();
+        deleteResult()
                 .then()
                 .log().all()
                 .statusCode(anyOf(is(200), is(204)));
+    }
+
+    private static Response deleteResult() {
+        return given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .when()
+                .delete("/api/results/{id}", resultId);
     }
 }

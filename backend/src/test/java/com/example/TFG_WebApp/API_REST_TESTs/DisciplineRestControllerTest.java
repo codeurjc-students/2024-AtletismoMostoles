@@ -33,7 +33,6 @@ public class DisciplineRestControllerTest {
     }
 
     @Test
-    @Order(1)
     public void testGetAllDisciplines() {
         given()
                 .header("Authorization", "Bearer " + authToken)
@@ -46,8 +45,20 @@ public class DisciplineRestControllerTest {
     }
 
     @Test
-    @Order(2)
     public void testCreateDiscipline() {
+        Response response = createDiscipline();
+
+        response.then().log().all();
+
+        response.then()
+                .statusCode(201)
+                .body("name", equalTo("Lanzamiento de Martillo"));
+
+        Assertions.assertNotNull(disciplineId, "Error: No se obtuvo un ID para la nueva disciplina");
+        deleteDiscipline();
+    }
+
+    private static Response createDiscipline() {
         String newDisciplineJson = """
         {
             \"name\": \"Lanzamiento de Martillo\",
@@ -62,21 +73,17 @@ public class DisciplineRestControllerTest {
                 .body(newDisciplineJson)
                 .when()
                 .post("/api/disciplines");
-
-        response.then().log().all();
-
-        disciplineId = response.then()
-                .statusCode(201)
+        disciplineId = response
+                .then()
                 .body("name", equalTo("Lanzamiento de Martillo"))
-                .extract()
-                .path("id");
+                .extract().path("id");
 
-        Assertions.assertNotNull(disciplineId, "Error: No se obtuvo un ID para la nueva disciplina");
+        return response;
     }
 
     @Test
-    @Order(3)
     public void testUpdateDiscipline() {
+        createDiscipline();
         String updatedDisciplineJson = """
         {
             \"name\": \"Lanzamiento de Disco\",
@@ -94,17 +101,23 @@ public class DisciplineRestControllerTest {
                 .then()
                 .statusCode(200)
                 .body("name", equalTo("Lanzamiento de Disco"));
+        deleteDiscipline();
     }
 
     @Test
     @Order(4)
     public void testDeleteDiscipline() {
-        given()
+        createDiscipline();
+        deleteDiscipline()
+                .then()
+                .statusCode(anyOf(is(200), is(204)));
+    }
+
+    private static Response deleteDiscipline() {
+        return given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
                 .when()
-                .delete("/api/disciplines/{id}", disciplineId)
-                .then()
-                .statusCode(anyOf(is(200), is(204)));
+                .delete("/api/disciplines/{id}", disciplineId);
     }
 }

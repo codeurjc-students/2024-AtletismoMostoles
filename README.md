@@ -1,5 +1,7 @@
 # Documentación del Proyecto TFG WebApp
 
+# Fase 1
+
 ## 📌 Introducción
 TFG WebApp es una aplicación desarrollada en Angular y Spring Boot para la gestión de eventos deportivos. La aplicación está contenida en Docker y utiliza MySQL como base de datos.
 
@@ -57,4 +59,24 @@ https://localhost:443
 
 ## 🎥 Vídeo Demostrativo
 Se ha subido un vídeo a YouTube mostrando las funcionalidades de la aplicación. Puedes verlo aquí: [Enlace al vídeo](https://www.youtube.com/watch?v=OJED6QcOsPE).
+
+# Fase 2
+
+## 🔄 Automatización con CI/CD
+La aplicación cuenta con un sistema de **Integración y Entrega Continua (CI/CD)** utilizando GitHub Actions. A continuación, se detallan las tareas automáticas y la gestión de artefactos.
+
+### 🚀 Tareas Automáticas
+- **Integración Continua (CI)**:
+    - Ejecuta pruebas de API REST y pruebas E2E en cada pull request a `main`.
+    - Asegura que el código pase las pruebas antes de ser fusionado a la rama principal.
+- **Entrega Continua (CD)**:
+    - Construye y sube la imagen Docker automáticamente al repositorio de Docker Hub cuando hay un commit en `main`.
+    - Actualiza el contenedor de pruebas con la nueva imagen para la ejecución de tests.
+
+### 📦 Almacenamiento de Artefactos
+- **Imágenes Docker**: Se alojan en Docker Hub bajo el nombre `saac04/backend:latest`.
+- **Resultados de Pruebas**: Los registros de las pruebas se almacenan en la sección **Actions** de GitHub.
+- **Registros de Ejecución CI/CD**: Se pueden revisar en la pestaña **Actions** del repositorio en GitHub, donde se almacenan logs de compilación, pruebas y despliegue.
+
+Esto garantiza que cualquier cambio en el código se valide automáticamente y que las imágenes Docker se mantengan actualizadas con la última versión del backend.
 

@@ -34,7 +34,6 @@ public class EquipmentRestControllerTest {
     }
 
     @Test
-    @Order(1)
     public void testGetAllEquipment() {
         given()
                 .header("Authorization", "Bearer " + authToken)
@@ -48,8 +47,20 @@ public class EquipmentRestControllerTest {
     }
 
     @Test
-    @Order(2)
     public void testCreateEquipment() {
+        Response response = createEquipment();
+
+        response.then().log().all();
+
+        response.then()
+                .statusCode(201)
+                .body("name", equalTo("Martillo"))
+                .body("id", notNullValue());
+
+        deleteEquipment();
+    }
+
+    private static Response createEquipment() {
         String newEquipmentJson = """
         {
             \"name\": \"Martillo\",
@@ -57,25 +68,26 @@ public class EquipmentRestControllerTest {
         }
         """;
 
-        equipmentId = given()
+        Response response = given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
                 .contentType(ContentType.JSON)
                 .body(newEquipmentJson)
                 .when()
-                .post("/api/equipment")
-                .then()
-                .log().all()
-                .statusCode(201)
+                .post("/api/equipment");
+
+        equipmentId = response.then()
                 .body("name", equalTo("Martillo"))
                 .body("id", notNullValue())
                 .extract()
                 .path("id");
+
+        return response;
     }
 
     @Test
-    @Order(3)
     public void testUpdateEquipment() {
+        createEquipment();
         String updatedEquipmentJson = """
         {
            \"name\": \"Martillo\",
@@ -96,18 +108,23 @@ public class EquipmentRestControllerTest {
                 .body("name", equalTo("Martillo"))
                 .body("id", equalTo(equipmentId))
                 .body("description", equalTo("8kg, de metal"));
+        deleteEquipment();
     }
 
     @Test
-    @Order(4)
     public void testDeleteEquipment() {
-        given()
-                .header("Authorization", "Bearer " + authToken)
-                .cookie("AuthToken", authToken)
-                .when()
-                .delete("/api/equipment/{id}", equipmentId)
+        createEquipment();
+        deleteEquipment()
                 .then()
                 .log().all()
                 .statusCode(anyOf(is(200), is(204)));
+    }
+
+    private static Response deleteEquipment() {
+        return given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .when()
+                .delete("/api/equipment/{id}", equipmentId);
     }
 }
