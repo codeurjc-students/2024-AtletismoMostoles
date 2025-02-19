@@ -32,7 +32,6 @@ public class AthleteRestControllerTest {
     }
 
     @Test
-    @Order(1)
     public void testGetAllAthletes() {
         given()
                 .header("Authorization", "Bearer " + authToken)
@@ -46,15 +45,27 @@ public class AthleteRestControllerTest {
     }
 
     @Test
-    @Order(2)
     public void testCreateAthlete() {
+        Response response = createAthlete();
+
+        response.then().log().all();
+
+        response.then()
+                .statusCode(anyOf(is(200), is(201)))
+                .body("firstName", equalTo("Daniel"))
+                .body("licenseNumber", equalTo("A98764"));
+
+        deleteAthlete();
+    }
+
+    private static Response createAthlete() {
         String newAthlete = """
             {
              \"licenseNumber\": \"A98764\",
              \"firstName\": \"Daniel\",
              \"lastName\": \"Villaseñor\",
              \"birthDate\": \"1996-12-01\",
-             \"coach\": { \"licenseNumber\": \"C54321\"},
+             \"coach\": { \"licenseNumber\": \"C1001\"},
              \"disciplines\": [
                 {\"id\": 1}
                 ]
@@ -68,25 +79,20 @@ public class AthleteRestControllerTest {
                 .body(newAthlete)
                 .when()
                 .post("/api/athletes");
-
-        response.then().log().all();
-
-        response.then()
-                .statusCode(anyOf(is(200), is(201)))
-                .body("firstName", equalTo("Daniel"))
-                .body("licenseNumber", equalTo("A98764"));
+        return response;
     }
 
     @Test
-    @Order(3)
     public void testUpdateAthlete() {
+        createAthlete();
+
         String updatedAthlete = """
             {
             \"licenseNumber\": \"A98764\",
             \"firstName\": \"Mateo\",
             \"lastName\": \"Martin\",
             \"birthDate\": \"1996-12-01\",
-            \"coach\": { \"licenseNumber\": \"C54321\"},
+            \"coach\": { \"licenseNumber\": \"C1001\"},
             \"disciplines\": [
                 {\"id\": 1}
             ]
@@ -108,11 +114,20 @@ public class AthleteRestControllerTest {
                 .body("licenseNumber", equalTo("A98764"))
                 .body("firstName", equalTo("Mateo"))
                 .body("lastName", equalTo("Martin"));
+
+        deleteAthlete();
     }
 
     @Test
-    @Order(4)
     public void testDeleteAthlete() {
+        createAthlete();
+        Response response = deleteAthlete();
+
+        response.then()
+                .statusCode(anyOf(is(200), is(204)));
+    }
+
+    private static Response deleteAthlete() {
         Response response = given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -120,8 +135,6 @@ public class AthleteRestControllerTest {
                 .delete("/api/athletes/A98764");
 
         response.then().log().all();
-
-        response.then()
-                .statusCode(anyOf(is(200), is(204)));
+        return response;
     }
 }

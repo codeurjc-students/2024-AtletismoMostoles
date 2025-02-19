@@ -33,7 +33,6 @@ public class EventRestControllerTest {
     }
 
     @Test
-    @Order(1)
     public void testGetAllEvents() {
         given()
                 .header("Authorization", "Bearer " + authToken)
@@ -46,8 +45,21 @@ public class EventRestControllerTest {
     }
 
     @Test
-    @Order(2)
     public void testCreateEvent() {
+        Response response = createEvent();
+
+        response.then().log().all();
+
+        response.then()
+                .statusCode(201)
+                .body("name", equalTo("Ilumina Mostoles"))
+                .body("date", equalTo("2025-10-04"));
+
+        Assertions.assertNotNull(eventId, "Error: No se obtuvo un ID de evento");
+        deleteEvent();
+    }
+
+    private static Response createEvent() {
         String newEventJson = """
         {
             \"name\": \"Ilumina Mostoles\",
@@ -64,21 +76,19 @@ public class EventRestControllerTest {
                 .when()
                 .post("/api/events");
 
-        response.then().log().all();
-
         eventId = response.then()
-                .statusCode(201)
                 .body("name", equalTo("Ilumina Mostoles"))
                 .body("date", equalTo("2025-10-04"))
                 .extract()
                 .path("id");
 
-        Assertions.assertNotNull(eventId, "Error: No se obtuvo un ID de evento");
+        return response;
     }
 
     @Test
     @Order(3)
     public void testUpdateEvent() {
+        createEvent();
         String updatedEventJson = """
         {
             \"name\": \"Ilumina Mostoles\",
@@ -98,17 +108,23 @@ public class EventRestControllerTest {
                 .statusCode(200)
                 .body("name", equalTo("Ilumina Mostoles"))
                 .body("date", equalTo("2025-12-04"));
+        deleteEvent();
     }
 
     @Test
     @Order(4)
     public void testDeleteEvent() {
-        given()
+        createEvent();
+        deleteEvent()
+                .then()
+                .statusCode(anyOf(is(200), is(204)));
+    }
+
+    private static Response deleteEvent() {
+        return given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
                 .when()
-                .delete("/api/events/{id}", eventId)
-                .then()
-                .statusCode(anyOf(is(200), is(204)));
+                .delete("/api/events/{id}", eventId);
     }
 }

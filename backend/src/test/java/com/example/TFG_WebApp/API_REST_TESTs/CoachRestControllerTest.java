@@ -32,7 +32,6 @@ public class CoachRestControllerTest {
     }
 
     @Test
-    @Order(1)
     public void testGetAllCoaches() {
         given()
                 .header("Authorization", "Bearer " + authToken)
@@ -46,13 +45,28 @@ public class CoachRestControllerTest {
     }
 
     @Test
-    @Order(2)
     public void testCreateCoach() {
+        Response response = createCoach();
+
+        response.then().log().all();
+
+        response.then()
+                .statusCode(anyOf(is(200), is(201)))
+                .body("licenseNumber", equalTo("F38455"))
+                .body("firstName", equalTo("Pilar"))
+                .body("lastName", equalTo("Torres"));
+        deleteCoach();
+    }
+
+    private static Response createCoach() {
         String newCoachJson = """
         {
           \"licenseNumber\": \"F38455\",
           \"firstName\": \"Pilar\",
-          \"lastName\": \"Torres\"
+          \"lastName\": \"Torres\",
+          \"disciplines\":[
+              {\"id\":1}
+          ]
         }
         """;
 
@@ -63,24 +77,20 @@ public class CoachRestControllerTest {
                 .body(newCoachJson)
                 .when()
                 .post("/api/coaches");
-
-        response.then().log().all();
-
-        response.then()
-                .statusCode(anyOf(is(200), is(201)))
-                .body("licenseNumber", equalTo("F38455"))
-                .body("firstName", equalTo("Pilar"))
-                .body("lastName", equalTo("Torres"));
+        return response;
     }
 
     @Test
-    @Order(3)
     public void testUpdateCoach() {
+        createCoach();
         String updatedCoachJson = """
         {
           \"licenseNumber\": \"F38455\",
           \"firstName\": \"Pilar\",
-          \"lastName\": \"Martin\"
+          \"lastName\": \"Martin\",
+          \"disciplines\":[
+              {\"id\":1}
+          ]
         }
         """;
 
@@ -99,20 +109,28 @@ public class CoachRestControllerTest {
                 .body("licenseNumber", equalTo("F38455"))
                 .body("firstName", equalTo("Pilar"))
                 .body("lastName", equalTo("Martin"));
+        deleteCoach();
     }
 
     @Test
     @Order(4)
     public void testDeleteCoach() {
-        Response response = given()
-                .header("Authorization", "Bearer " + authToken)
-                .cookie("AuthToken", authToken)
-                .when()
-                .delete("/api/coaches/F38455");
+        createCoach();
+
+        Response response = deleteCoach();
 
         response.then().log().all();
 
         response.then()
                 .statusCode(anyOf(is(200), is(204)));
+    }
+
+    private static Response deleteCoach() {
+        Response response = given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .when()
+                .delete("/api/coaches/F38455");
+        return response;
     }
 }
