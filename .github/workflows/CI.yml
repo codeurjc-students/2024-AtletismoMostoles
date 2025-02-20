@@ -2,18 +2,19 @@ name: CI Pipeline
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: [ "CD Pipeline" ]
-    types:
-      - completed
-  pull_request:
-    branches:
-      - main
+  
+  # workflow_run:
+    # workflows: [ "CD Pipeline" ]
+    #types:
+     # - completed
+  #pull_request:
+   # branches:
+    #  - main
 
 jobs:
   setup-and-test:
     name: Setup and Run Tests
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
