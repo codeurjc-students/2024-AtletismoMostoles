@@ -19,8 +19,13 @@ public class EventsE2ETest {
 
     @BeforeAll
     public void setup() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
+        String os = System.getProperty("os.name").toLowerCase();
 
+        if (os.contains("win")) {
+            System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
+        } else {
+            System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        }
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
