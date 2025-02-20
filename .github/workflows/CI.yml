@@ -49,6 +49,22 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Instalar Google Chrome y ChromeDriver
+        run: |
+          sudo apt update
+          sudo apt install -y wget curl unzip google-chrome-stable
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          wget -N "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
+
+      - name: Verificar instalación de Chrome y ChromeDriver
+        run: |
+          google-chrome --version
+          chromedriver --version
+
       - name: Run API REST Tests with Maven
         run: |
           cd backend
