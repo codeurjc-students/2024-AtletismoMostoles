@@ -13,8 +13,8 @@ on:
 jobs:
   setup-and-test:
     name: Setup and Run Tests
-    runs-on: windows-latest
-    
+    runs-on: windows-latest 
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -28,6 +28,10 @@ jobs:
         run: |
           docker --version
           docker info
+
+      - name: Crear directorio para Docker Compose
+        run: |
+          New-Item -Path "C:\Program Files\Docker" -ItemType Directory -Force
 
       - name: Instalar Docker Compose
         run: |
