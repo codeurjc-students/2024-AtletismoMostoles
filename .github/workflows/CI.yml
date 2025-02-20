@@ -13,7 +13,7 @@ on:
 jobs:
   setup-and-test:
     name: Setup and Run Tests
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest 
 
     steps:
       - name: Checkout Repository
@@ -53,11 +53,14 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y wget curl unzip google-chrome-stable
-          CHROMEDRIVER_VERSION=114.0.5735.90  
+          CHROMEDRIVER_VERSION=114.0.5735.90 
           wget -N "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
+
+      - name: Configurar ChromeDriver en Selenium
+        run: echo "export webdriver.chrome.driver=/usr/local/bin/chromedriver" >> $GITHUB_ENV
 
       - name: Verificar instalación de Chrome y ChromeDriver
         run: |
