@@ -13,34 +13,21 @@ on:
 jobs:
   setup-and-test:
     name: Setup and Run Tests
-    runs-on: windows-latest 
-    
+    runs-on: ubuntu-latest 
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
-      - name: Iniciar servicio Docker en Windows
-        run: |
-          Start-Service docker
-          Get-Service docker
 
       - name: Verificar Docker en GitHub Actions
         run: |
           docker --version
           docker info
 
-      - name: Crear directorio para Docker Compose
-        run: |
-          New-Item -Path "C:\Program Files\Docker" -ItemType Directory -Force
-
       - name: Instalar Docker Compose
         run: |
-          Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/latest/download/docker-compose-windows-x86_64.exe" -OutFile "C:\Program Files\Docker\docker-compose.exe"
-          Start-Process -FilePath "C:\Program Files\Docker\docker-compose.exe" -NoNewWindow -Wait
-          echo "C:\Program Files\Docker" | Out-File -Append -Encoding ASCII $env:GITHUB_PATH
-
-      - name: Verificar instalación de Docker Compose
-        run: docker-compose --version
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
       - name: Iniciar los contenedores con Docker Compose
         run: |
@@ -48,14 +35,13 @@ jobs:
           docker-compose up -d
 
       - name: Esperar que el backend se inicie
-        run: Start-Sleep -Seconds 15
+        run: sleep 15
 
       - name: Listar todos los contenedores en ejecución
         run: docker ps -a
 
       - name: Probar conexión al backend en el contenedor
-        run: |
-          Invoke-WebRequest -Uri "https://localhost:443/api/auth/login" -UseBasicParsing || echo "No se pudo conectar"
+        run: curl -k https://localhost:443/api/auth/login || echo "No se pudo conectar"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
