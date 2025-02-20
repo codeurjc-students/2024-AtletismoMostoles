@@ -13,8 +13,8 @@ on:
 jobs:
   setup-and-test:
     name: Setup and Run Tests
-    runs-on: windows-latest  
-
+    runs-on: windows-latest
+    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -28,6 +28,11 @@ jobs:
         run: |
           docker --version
           docker info
+
+      - name: Instalar Docker Compose
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/docker/compose/releases/latest/download/docker-compose-windows-x86_64.exe" -OutFile "C:\Program Files\Docker\docker-compose.exe"
+          [Environment]::SetEnvironmentVariable("Path", $Env:Path + ";C:\\Program Files\\Docker", [System.EnvironmentVariableTarget]::Machine)
 
       - name: Iniciar los contenedores con Docker Compose
         run: |
