@@ -60,8 +60,12 @@ jobs:
           sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Configurar ChromeDriver en Selenium
-        run: echo "export webdriver.chrome.driver=/usr/local/bin/chromedriver" >> $GITHUB_ENV
-
+        run: |
+          echo "webdriver.chrome.driver=/usr/local/bin/chromedriver" >> $GITHUB_ENV
+          export webdriver.chrome.driver=/usr/local/bin/chromedriver
+          echo "Ruta de ChromeDriver configurada:"
+          echo $webdriver.chrome.driver
+          
       - name: Verificar instalación de Chrome y ChromeDriver
         run: |
           google-chrome --version
