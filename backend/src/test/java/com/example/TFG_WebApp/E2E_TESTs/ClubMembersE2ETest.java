@@ -19,9 +19,20 @@ public class ClubMembersE2ETest {
 
     @BeforeAll
     public void setup() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
-
+        String os = System.getProperty("os.name").toLowerCase();
         ChromeOptions options = new ChromeOptions();
+
+        if (os.contains("win")) {
+            System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
+        } else {
+            System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+            options.addArguments("--headless"); // Ejecutar en modo headless en Linux
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--window-size=1920,1080");
+        }
+
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
         options.addArguments("--allow-running-insecure-content");
@@ -30,6 +41,7 @@ public class ClubMembersE2ETest {
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
+
 
     @BeforeEach
     public void navigateToPage() {
