@@ -64,6 +64,12 @@ jobs:
           echo "webdriver.chrome.driver=/usr/local/bin/chromedriver" >> $GITHUB_ENV
           echo "WEBDRIVER_CHROME_DRIVER=/usr/local/bin/chromedriver" >> $GITHUB_ENV
 
+      - name: Configurar Chrome en Modo Headless (Solo Linux)
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu" >> $GITHUB_ENV
+          fi
+
       - name: Verificar instalación de Chrome y ChromeDriver
         run: |
           google-chrome --version
