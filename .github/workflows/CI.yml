@@ -69,7 +69,7 @@ jobs:
       - name: Configurar Chrome en Modo Headless (Solo Linux)
         run: |
           if [[ "$RUNNER_OS" == "Linux" ]]; then
-            echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu" >> $GITHUB_ENV
+              echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --window-size=1920,1080" >> $GITHUB_ENV
           fi
 
       - name: Verificar instalación de Chrome y ChromeDriver
