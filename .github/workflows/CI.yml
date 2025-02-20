@@ -13,7 +13,8 @@ on:
 jobs:
   setup-and-test:
     name: Setup and Run Tests
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest  
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -53,12 +54,11 @@ jobs:
           sudo apt update
           sudo apt install -y wget curl unzip google-chrome-stable
           
-          LATEST_CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
-          
-          echo "Instalando ChromeDriver versión: $LATEST_CHROMEDRIVER_VERSION"
-          wget -N "https://chromedriver.storage.googleapis.com/$LATEST_CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/
+          CHROMEDRIVER_VERSION="133.0.6943.126"
+          echo "Instalando ChromeDriver versión: $CHROMEDRIVER_VERSION"
+          wget -N "https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip"
+          unzip chromedriver-linux64.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Configurar ChromeDriver en Selenium
