@@ -19,8 +19,8 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Login to Docker Hub
-        run: |
-          echo "${{ secrets.DOCKER_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        run: docker login 
+            -u "saac04" -p "29042002Sa" 
 
       - name: Build Docker Image
         run: |
