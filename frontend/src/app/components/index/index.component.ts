@@ -1,57 +1,47 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-index',
   templateUrl: './index.component.html',
+  styleUrls: ['./index.component.css'],
   standalone: true,
   imports: [
     NgIf,
-    RouterLink,
+    MatIconModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatCardModule,
     RouterOutlet,
+    RouterLink,
     HttpClientModule
-  ],
-  styleUrls: ['./index.component.css']
+  ]
 })
 export class IndexComponent implements OnInit {
   isLoggedIn: boolean = false;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     // Suscribirse a los cambios del estado de autenticación
     this.authService.user.subscribe(user => {
-      this.isLoggedIn = !!user; // Se asegura de que el usuario esté autenticado
-      console.log("AuthService:", this.isLoggedIn);
+      this.isLoggedIn = !!user;
     });
   }
 
-  /**
-   * Alterna la visibilidad del menú desplegable
-   */
-  toggleMenu() {
-    const menu = document.getElementById('dropdown-menu');
-    if (menu) {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    }
-  }
-
-  /**
-   * Cierra sesión del usuario
-   */
   logout() {
     this.authService.logout();
   }
 
-  /**
-   * Redirige a la página de login
-   */
   login() {
     this.router.navigate(['/login']);
   }

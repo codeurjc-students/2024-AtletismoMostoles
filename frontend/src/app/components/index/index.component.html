@@ -1,40 +1,36 @@
 <header>
-
   <div class="logo">
-    <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
+    <img src="/assets/images/logo.png" alt="logo"> A.A Mostoles
   </div>
   <nav>
-    <a routerLink="/">Inicio</a>
-    <a routerLink="/miembros">Miembros del Club</a>
-    <a routerLink="/ranking">Ranking</a>
-    <a routerLink="/eventos">Eventos</a>
-    <a routerLink="/calendario">Calendario</a>
+    <a mat-button routerLink="/">Inicio</a>
+    <a mat-button routerLink="/miembros">Miembros del Club</a>
+    <a mat-button routerLink="/ranking">Ranking</a>
+    <a mat-button routerLink="/eventos">Eventos</a>
+    <a mat-button routerLink="/calendario">Calendario</a>
   </nav>
-
   <div class="LogSection">
-    <button id="login-button" (click)="login()"> LogIn </button>
-    <button id="logout-button" *ngIf="isLoggedIn" (click)="logout()"> LogOut </button>
+    <button mat-raised-button color="accent" *ngIf="!isLoggedIn" (click)="login()"> LogIn </button>
+    <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="logout()"> LogOut </button>
   </div>
-  <div class="menu-icon" (click)="toggleMenu()">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-  <div class="dropdown" id="dropdown-menu">
 
-    <a routerLink="/">Inicio</a>
-    <a routerLink="/miembros">Miembros del Club</a>
-    <a routerLink="/ranking">Ranking</a>
-    <a routerLink="/eventos">Eventos</a>
-    <a routerLink="/calendario">Calendario</a>
-    <a routerLink="/disciplines">Disciplinas</a>
-    <a routerLink="/login">Inicio de Sesión</a>
-  </div>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <a mat-menu-item routerLink="/">Inicio</a>
+    <a mat-menu-item routerLink="/miembros">Miembros del Club</a>
+    <a mat-menu-item routerLink="/ranking">Ranking</a>
+    <a mat-menu-item routerLink="/eventos">Eventos</a>
+    <a mat-menu-item routerLink="/calendario">Calendario</a>
+    <a mat-menu-item routerLink="/disciplines">Disciplinas</a>
+    <a mat-menu-item routerLink="/login">Inicio de Sesión</a>
+  </mat-menu>
 </header>
 
 <section id="index_title" class="section-1">
   <div class="overlay">
-    <h1 >ASOCIACIÓN ATLÉTICA DE MÓSTOLES</h1>
+    <h1>ASOCIACIÓN ATLÉTICA DE MÓSTOLES</h1>
   </div>
 </section>
 
@@ -42,29 +38,27 @@
   <img src="/assets/images/about-bg.jpg" alt="Nuestro Club">
   <div>
     <h2>Nuestro Club</h2>
-    <p>Hace a&ntilde;os el atletismo en M&oacute;stoles estaba coordinado por el Patronato Deportivo Municipal de M&oacute;stoles, pero con su disoluci&oacute;n la Concejal&iacute;a de Deportes de M&oacute;stoles pas&oacute; a hacerse cargo s&oacute; de las categor&iacute;as menores de todos los deportes, quedando as&iacute; restringida la edad de participaci&oacute;n en la Escuela de los 7 a los 16 a&ntilde;os. Para ayudar y coordinar al resto de las categor&iacute;a surgi&oacute; la Asociaci&oacute;a Atl&eacute;tica de M&oacute;toles, cuya principal diferencia con la Escuela municipal, a parte de lo mencionado, es que las actividades de la Escuela est&aacute;n circunscritas s&oacute;lo al &aacute;mbito municipal mientras que las de la Asociaci&oacute;n, que aglutina categor&iacute;as menores y mayores, son tanto municipales como auton&oacute;micas y nacionales.</p>
-    <a href="/miembros" class="button">Conoce a nuestros entrenadores</a>
+    <p>Hace a&ntilde;os el atletismo en M&oacute;stoles estaba coordinado por el Patronato Deportivo Municipal de M&oacute;stoles,
+      pero con su disoluci&oacute;n la Concejal&iacute;a de Deportes de M&oacute;stoles pas&oacute; a hacerse cargo s&oacute; de las categor&iacute;as menores de todos los deportes,
+      quedando as&iacute; restringida la edad de participaci&oacute;n en la Escuela de los 7 a los 16 a&ntilde;os. Para ayudar y coordinar al resto de las categor&iacute;a surgi&oacute; la Asociaci&oacute;a Atl&eacute;tica de M&oacute;toles,
+      cuya principal diferencia con la Escuela municipal, a parte de lo mencionado, es que las actividades de la Escuela est&aacute;n circunscritas s&oacute;lo al &aacute;mbito municipal mientras que las de la Asociaci&oacute;n,
+      que aglutina categor&iacute;as menores y mayores, son tanto municipales como auton&oacute;micas y nacionales.</p>
+    <a mat-raised-button color="primary" routerLink="/miembros">Conoce a nuestros entrenadores</a>
   </div>
 </section>
 
 <section class="section-3">
   <img src="/assets/images/img-3.png" alt="Disciplinas">
   <div>
-    <h2>Diversas &Aacute;reas del Atletismo</h2>
-    <p>Contamos con muchas disciplinas distintas dentro del atletismo, no todo es correr, se puede saltar, lanzar y m&aacute;. Descubre qu&eacute; es lo que m&aacute; te gusta y qu&eacute; se te da mejor.</p>
-    <a href="/disciplines" class="button">Ver disciplinas</a>
+    <h2>Diversas Áreas del Atletismo</h2>
+    <p>Contamos con muchas disciplinas distintas dentro del atletismo, no todo es correr, se puede saltar, lanzar y m&aacute;.
+      Descubre qu&eacute; es lo que m&aacute; te gusta y qu&eacute; se te da mejor.</p>
+    <a mat-raised-button color="primary" routerLink="/disciplines">Ver disciplinas</a>
   </div>
 </section>
 
 <section class="section-4">
-  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6083.348047160647!2d-3.8916919250107913!3d40.327391571454086!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd418e0a895581e7%3A0x99ee65d60845a165!2sPista%20Atletismo%20M%C3%B3stoles!5e0!3m2!1ses!2ses!4v1735308156632!5m2!1ses!2ses"
-          width="100%"
-          height="300"
-          style="border: none;"
-          allowfullscreen
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
-  </iframe>
+  <iframe src="https://www.google.com/maps/embed?..." width="100%" height="300" style="border: none;" allowfullscreen loading="lazy"></iframe>
 </section>
 
 <footer>
@@ -75,4 +69,5 @@
     </p>
   </div>
 </footer>
+
 <router-outlet></router-outlet>
