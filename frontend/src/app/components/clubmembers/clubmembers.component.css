@@ -3,150 +3,153 @@ body {
   font-family: Arial, sans-serif;
   color: #333;
 }
+
 header {
   background-color: #007f00;
-  width: 100%;
   color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  padding: 15px 25px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
+
 header .logo {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
   display: flex;
   align-items: center;
 }
+
 header .logo img {
-  margin-right: 10px;
+  margin-right: 12px;
+  height: 50px;
 }
+
 nav {
   display: flex;
-  gap: 22px;
+  gap: 25px;
 }
+
 nav a {
   color: white;
   text-decoration: none;
-  font-size: 25px;
+  font-size: 20px;
+  font-weight: bold;
 }
-.dropdown {
-  display: none;
-  flex-direction: column;
-  position: absolute;
-  top: 60px;
-  right: 20px;
-  background-color: #02bd12;
-  padding: 10px;
-  border-radius: 5px;
-}
-.dropdown a {
-  margin-bottom: 10px;
-  color: #FFFFFF;
-}
-.menu-icon {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  cursor: pointer;
-}
-.menu-icon span {
-  display: block;
-  height: 4px;
-  width: 25px;
-  background-color: white;
-  margin: 5px 0;
-}
-.LogSection button{
-  padding: 10px 20px;
-  background-color: #26e73f;
-  color: #130002;
-  cursor: pointer;
-  font-size: 16px;
-  border-radius: 15px;
-}
+
 section {
   padding: 50px 20px;
 }
 
 .section-1 {
   background: url(/assets/images/coach_bg.jpg) no-repeat center center/cover;
-  width: 100%;
   color: white;
   text-align: center;
 }
+
 .section-1 .overlay {
   background-color: rgba(0, 127, 0, 0.7);
   padding: 50px;
   display: inline-block;
-  font-size: 35px;
+  font-size: 36px;
   border-radius: 10px;
 }
+
+.section-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 40px;
+}
+
+.list-section {
+  width: 65%;
+  background-color: #78d080;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filters {
+  width: 30%;
+  background-color: #14a120;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filters mat-form-field {
+  width: 100%;
+}
+
+.list-section table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #007f00;
+  color: white;
+  font-weight: bold;
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.clickable-row:hover {
+  background-color: rgba(0, 127, 0, 0.4);
+}
+
+.pagination-controls {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.pagination-controls button {
+  margin: 0 5px;
+  padding: 8px 15px;
+  font-size: 14px;
+  background-color: #007f00;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.pagination-controls button:hover {
+  background-color: #ffffff;
+  color: #24A600;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: rgb(0, 126, 1);
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  object-position: center;
+}
+
 footer {
   background-color: #007f00;
   color: white;
   text-align: center;
   padding: 20px;
-  width: 100%;
-}
-.filters{
-  width: 100%;
-  padding: 20px;
-  background-color: rgb(2, 189, 18);
-  font-size: 20px;
-}
-.filters input {
-  font-size:15px;
-  width: 95%;
-  padding: 8px;
-  margin-bottom: 10px;
-  background-color: rgba(0, 255, 196, 0.64);
-}
-
-.trainers-list{
-  font-size: 20px;
-  width: 100%;
-  padding: 20px;
-  background-color: rgba(147, 120, 120, 0.97);
-}
-.list-section ul {
-  list-style: none;
-  padding: 0;
-}
-.pagination-controls {
-  margin-top: 15px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-th, td {
-  border: 1px solid #00ffc4;
-  text-align: left;
-  padding: 8px;
-}
-th {
-  background-color: #02bd12;
-  font-weight: bold;
-}
-.pagination-controls {
-  margin-top: 10px;
-  text-align: center;
-}
-.pagination-controls button {
-  margin: 0 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-button {
   margin-top: 20px;
-  margin-left: 20px;
-  padding: 10px 20px;
-  background-color: #ff7f00;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 16px;
 }

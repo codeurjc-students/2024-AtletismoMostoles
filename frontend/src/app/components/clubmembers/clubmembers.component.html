@@ -3,122 +3,101 @@
     <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
   </div>
   <nav>
-    <a routerLink="/">Inicio</a>
-    <a routerLink="/miembros">Miembros del Club</a>
-    <a routerLink="/ranking">Ranking</a>
-    <a routerLink="/eventos">Eventos</a>
-    <a routerLink="/calendario">Calendario</a>
+    <a mat-button routerLink="/">Inicio</a>
+    <a mat-button routerLink="/miembros">Miembros del Club</a>
+    <a mat-button routerLink="/ranking">Ranking</a>
+    <a mat-button routerLink="/eventos">Eventos</a>
+    <a mat-button routerLink="/calendario">Calendario</a>
   </nav>
   <div class="LogSection">
-    <button id="login-button" (click)="login()"> LogIn </button>
-    <button id="logout-button" *ngIf="isLoggedIn" (click)="logout()"> LogOut </button>
+    <button mat-raised-button color="accent" *ngIf="!isLoggedIn" (click)="login()"> LogIn </button>
+    <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="logout()"> LogOut </button>
   </div>
-  <div class="menu-icon" (click)="toggleMenu()">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-  <div class="dropdown" id="dropdown-menu">
-    <a routerLink="/">Inicio</a>
-    <a routerLink="/miembros">Miembros del Club</a>
-    <a routerLink="/ranking">Ranking</a>
-    <a routerLink="/eventos">Eventos</a>
-    <a routerLink="/calendario">Calendario</a>
-    <a routerLink="/disciplines">Disciplinas</a>
-    <a routerLink="/login">Inicio de Sesión</a>
-  </div>
+
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <a mat-menu-item routerLink="/">Inicio</a>
+    <a mat-menu-item routerLink="/miembros">Miembros del Club</a>
+    <a mat-menu-item routerLink="/ranking">Ranking</a>
+    <a mat-menu-item routerLink="/eventos">Eventos</a>
+    <a mat-menu-item routerLink="/calendario">Calendario</a>
+    <a mat-menu-item routerLink="/disciplines">Disciplinas</a>
+    <a mat-menu-item routerLink="/login">Inicio de Sesión</a>
+  </mat-menu>
 </header>
 
 <section class="section-1">
   <div class="overlay">
     <h1>Nuestros Entrenadores</h1>
-    <p>Contamos con los mejores entrenadores, que aman el atletismo y enseñar a otros lo genial que puede ser. Cada uno de ellos está completamente comprometido en enseñarte todo lo que saben y en ayudarte a convertirte en el mejor.</p>
+    <p>Contamos con los mejores entrenadores, comprometidos con el atletismo y la enseñanza.</p>
   </div>
 </section>
 
-<section class="trainers-list">
-  <h2>Lista de Entrenadores</h2>
-  <table>
-    <thead>
-    <tr>
-      <th>Nombre</th>
-      <th>Apellido</th>
-      <th>Número de Licencia</th>
-      <th>Disciplina</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let entrenador of coaches" [routerLink]="['/profile', 'coach', entrenador.licenseNumber]" id="member-item">
-      <td>{{ entrenador.firstName }}</td>
-      <td>{{ entrenador.lastName }}</td>
-      <td id="license">{{ entrenador.licenseNumber }}</td>
-      <td>{{ formatDisciplines(entrenador.disciplines) }}</td>
-    </tr>
-    </tbody>
-  </table>
-  <button *ngIf="isAdmin" (click)="openNewCoachModal(newCoachModal)" id="new-coach" class="button">Nuevo Entrenador</button>
+<section class="section-container" style="display: flex;">
+    <mat-card class="filters">
+      <mat-card-title>Filtrar Entrenadores</mat-card-title>
+      <mat-card-content>
+        <form (submit)="applyFilters()">
+          <mat-form-field>
+            <mat-label>Nombre</mat-label>
+            <input matInput [(ngModel)]="filters.firstName" name="firstName">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Apellido</mat-label>
+            <input matInput [(ngModel)]="filters.lastName" name="lastName">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Número de Licencia</mat-label>
+            <input matInput [(ngModel)]="filters.licenseNumber" name="licenseNumber">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Disciplina</mat-label>
+            <input matInput [(ngModel)]="filters.discipline" name="discipline">
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit">Aplicar Filtros</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
 
-  <div class="pagination">
-    <button (click)="prevPage()" [disabled]="currentPage === 1" id="prev_btm">Anterior</button>
-    <span>Página {{ currentPage }} de {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages" id="next_btm">Siguiente</button>
+  <div id="list-section" class="list-section">
+    <h2>Lista de Entrenadores</h2>
+    <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="licenseNumber">
+        <mat-header-cell *matHeaderCellDef> Número de Licencia </mat-header-cell>
+        <mat-cell *matCellDef="let coach" (click)="goToCoachProfile(coach)"> {{ coach.licenseNumber }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="firstName">
+        <mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
+        <mat-cell *matCellDef="let coach" (click)="goToCoachProfile(coach)"> {{ coach.firstName }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="lastName">
+        <mat-header-cell *matHeaderCellDef> Apellido </mat-header-cell>
+        <mat-cell *matCellDef="let coach" (click)="goToCoachProfile(coach)"> {{ coach.lastName }} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="disciplines">
+        <mat-header-cell *matHeaderCellDef> Disciplinas </mat-header-cell>
+        <mat-cell *matCellDef="let coach"> {{ formatDisciplines(coach.disciplines) }} </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="clickable-row"></mat-row>
+    </mat-table>
+    <div class="pagination-controls">
+      <button mat-button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button mat-button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
+    </div>
+    <button mat-raised-button color="primary" *ngIf="isAdmin" (click)="openNewCoachDialog()">Nuevo Entrenador</button>
   </div>
 </section>
 
-<section class="filters">
-  <h2>Filtrar Entrenadores</h2>
-  <form (submit)="applyFilters()">
-    <label> Nombre: </label>
-    <input id="name_form" type="text" [(ngModel)]="filters.firstName" [ngModelOptions]="{standalone: true}">
-    <label> Apellido: </label>
-    <input id="lastName_form" type="text" [(ngModel)]="filters.lastName" [ngModelOptions]="{standalone: true}">
-    <label> Número de Licencia: </label>
-    <input id="license_form" type="text" [(ngModel)]="filters.licenseNumber" [ngModelOptions]="{standalone: true}">
-    <label> Disciplina: </label>
-    <input id="disciplines_form" type="text" [(ngModel)]="filters.discipline" [ngModelOptions]="{standalone: true}">
-    <button id="filter-btm" type="submit" class="button">Aplicar Filtros</button>
-  </form>
-</section>
-
-<ng-template #newCoachModal let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="modal-basic-title">Nuevo Entrenador</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+<footer>
+  <div class="contact-info">
+    <p><i class="fas fa-phone"></i> +34 600 123 456</p>
+    <p><i class="fab fa-instagram"></i> &#64;aam_mostoles</p>
+    <p><i class="fab fa-facebook"></i> AAM Club</p>
   </div>
-  <div class="modal-body">
-    <form [formGroup]="coachForm">
-      <div class="mb-3">
-        <label for="licenseNumber" class="form-label">Número de Licencia</label>
-        <input type="text" id="licenseNumber" formControlName="licenseNumber" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label for="firstName" class="form-label">Nombre</label>
-        <input type="text" id="firstName" formControlName="firstName" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label for="lastName" class="form-label">Apellido</label>
-        <input type="text" id="lastName" formControlName="lastName" class="form-control">
-      </div>
-      <div class="mb-3">
-        <label for="disciplines" class="form-label">Disciplinas</label>
-        <select id="disciplines" formControlName="disciplines" class="form-select" multiple>
-          <option *ngFor="let discipline of disciplines" [value]="discipline.id">
-            {{ discipline.name }}
-          </option>
-        </select>
-      </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Cancel click')">Cancelar</button>
-    <button id="submit-coach" type="button" class="btn btn-primary" (click)="modal.close('Save')">Guardar</button>
-  </div>
-</ng-template>
-
-<footer style="background-color: #007f00; color: white; padding: 20px; text-align: center;">
-  <p><i class="fas fa-phone"></i> +34 600 123 456</p>
-  <p><i class="fab fa-instagram"></i> &#64;aam_mostoles</p>
-  <p><i class="fab fa-facebook"></i> AAM Club</p>
-  <p><i class="fas fa-map-marker-alt"></i> Dirección del Club</p>
 </footer>
+
 <router-outlet></router-outlet>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
+import { Router, ActivatedRoute, RouterOutlet, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import {NgIf} from '@angular/common';
@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
   styleUrls: ['./login.component.css'],
   imports: [
     NgIf,
+    RouterLink,
     RouterOutlet,
     ReactiveFormsModule,
     FormsModule,
