@@ -1,33 +1,53 @@
 import { Component, OnInit } from '@angular/core';
-import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgForOf, NgIf } from '@angular/common';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { Page } from '../../models/page.model';
-import {HttpClientModule} from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
+  styleUrls: ['./events.component.css'],
   standalone: true,
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     NgForOf,
     NgIf,
+    HttpClientModule,
+    MatCardModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatIconModule,
+    MatGridListModule,
+    MatToolbarModule,
+    MatPaginatorModule,
+    MatMenuModule,
     RouterLink,
     RouterOutlet,
-    HttpClientModule
+
   ],
-  styleUrls: ['./events.component.css']
 })
 export class EventsComponent implements OnInit {
   events: Event[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 6;
   totalPages: number = 1;
-  selectedFilter: string = 'upcoming';
+  selectedFilter: string = 'all';
   isLoggedIn: boolean = false;
 
   constructor(
@@ -39,13 +59,14 @@ export class EventsComponent implements OnInit {
   ngOnInit(): void {
     this.authService.user.subscribe(user => {
       this.isLoggedIn = this.authService.isAuthenticated();
-    });    console.log("esta logeado:", this.isLoggedIn);
+    });
     this.loadEvents();
   }
 
   loadEvents(): void {
     this.eventService.getAll(this.currentPage - 1, this.itemsPerPage, 'date').subscribe(
       (response: Page<Event>) => {
+        console.log('Eventos cargados:', response);
         this.events = response.content;
         this.totalPages = response.totalPages;
       },
@@ -78,13 +99,6 @@ export class EventsComponent implements OnInit {
     }
   }
 
-  toggleMenu(): void {
-    const menu = document.getElementById('dropdown-menu');
-    if (menu) {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    }
-  }
-
   navigateToNewEvent(): void {
     if (!this.isLoggedIn) {
       alert('Debes iniciar sesión para crear un evento.');
@@ -98,16 +112,13 @@ export class EventsComponent implements OnInit {
   }
 
   logout() {
-    if(!this.isLoggedIn){
-      this.router.navigate(['/login']);
-    }
     this.authService.logout();
   }
 
   deleteEvent(eventId: number) {
     this.eventService.delete(eventId).subscribe(
       () => {
-        alert('Evento eliminada correctamente');
+        alert('Evento eliminado correctamente');
         this.loadEvents();
       },
       (error) => {

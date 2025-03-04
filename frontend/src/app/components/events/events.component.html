@@ -3,82 +3,90 @@
     <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
   </div>
   <nav>
-    <a routerLink="/">Inicio</a>
-    <a routerLink="/miembros">Miembros del Club</a>
-    <a routerLink="/ranking">Ranking</a>
-    <a routerLink="/eventos">Eventos</a>
-    <a routerLink="/calendario">Calendario</a>
+    <a mat-button routerLink="/">Inicio</a>
+    <a mat-button routerLink="/miembros">Miembros del Club</a>
+    <a mat-button routerLink="/ranking">Ranking</a>
+    <a mat-button routerLink="/eventos">Eventos</a>
+    <a mat-button routerLink="/calendario">Calendario</a>
   </nav>
   <div class="LogSection">
-    <button id="login-button" (click)="login()"> LogIn </button>
-    <button id="logout-button" *ngIf="isLoggedIn" (click)="logout()"> LogOut </button>
+    <button mat-raised-button color="accent" *ngIf="!isLoggedIn" (click)="login()"> LogIn </button>
+    <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="logout()"> LogOut </button>
   </div>
-  <div class="menu-icon" (click)="toggleMenu()">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-  <div class="dropdown" id="dropdown-menu">
-    <a routerLink="/">Inicio</a>
-    <a routerLink="/miembros">Miembros del Club</a>
-    <a routerLink="/ranking">Ranking</a>
-    <a routerLink="/eventos">Eventos</a>
-    <a routerLink="/calendario">Calendario</a>
-    <a routerLink="/disciplines">Disciplinas</a>
-    <a routerLink="/login">Inicio de Sesión</a>
-  </div>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <a mat-menu-item routerLink="/">Inicio</a>
+    <a mat-menu-item routerLink="/miembros">Miembros del Club</a>
+    <a mat-menu-item routerLink="/ranking">Ranking</a>
+    <a mat-menu-item routerLink="/eventos">Eventos</a>
+    <a mat-menu-item routerLink="/calendario">Calendario</a>
+    <a mat-menu-item routerLink="/disciplines">Disciplinas</a>
+    <a mat-menu-item routerLink="/login">Inicio de Sesión</a>
+  </mat-menu>
 </header>
 
 <section class="section-1">
   <div class="overlay">
     <h1>Eventos Deportivos</h1>
-    <p>Nos encanta participar y organizar eventos y competiciones. Busca los próximos eventos en los que podrás ver nuestros colores y a nuestros atletas dándolo todo siempre.</p>
+    <p>Explora y participa en los próximos eventos deportivos organizados por el club.</p>
   </div>
 </section>
 
-<section class="events-list">
-  <h2>Lista de Eventos</h2>
-  <div class="filters">
-    <label for="eventFilter">Filtrar por organizador:</label>
-    <select id="eventFilter" [(ngModel)]="selectedFilter" (change)="applyFilter()">
-      <option value="club">Club</option>
-      <option value="external">Externo</option>
-      <option value="all">Todos</option>
-    </select>
-  </div>
+<section class="filters">
+  <mat-card>
+    <mat-card-title>Filtrar Eventos</mat-card-title>
+    <mat-card-content>
+      <mat-form-field>
+        <mat-label>Filtrar por organizador</mat-label>
+        <mat-select [(ngModel)]="selectedFilter" (selectionChange)="applyFilter()">
+          <mat-option value="club">Club</mat-option>
+          <mat-option value="external">Externo</mat-option>
+          <mat-option value="all">Todos</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+</section>
 
-  <div class="events">
-    <div *ngFor="let event of events" class="event-card">
-      <img [src]="event.imageLink" alt="Imagen del evento" class="event-image">
-      <div class="event-info">
-        <h3>{{ event.name }}</h3>
-        <p>Fecha: {{ event.date }}</p>
-        <p *ngIf="event.isOrganizedByClub">Organizamos este evento</p>
-        <button id="detail-btm" (click)="viewEvent(event.id)" class="btn-primary">Ver Más</button>
-        <button id="delete-btm" *ngIf="isLoggedIn" (click)="deleteEvent(event.id)" class="btn-primary">Eliminar</button>
-
-      </div>
-    </div>
-  </div>
-
-  <div class="pagination">
-    <button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+<section class="events">
+  <mat-grid-list cols="3" rowHeight="1:1">
+    <mat-grid-tile *ngFor="let event of events">
+      <mat-card>
+        <img mat-card-image [src]="event.imageLink" alt="Imagen del evento">
+        <mat-card-content>
+          <h3>{{ event.name }}</h3>
+          <p *ngIf="event.date">Fecha: {{ event.date }}</p>
+          <p *ngIf="event.isOrganizedByClub">Organizado por el Club</p>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-raised-button color="primary" (click)="viewEvent(event.id)">Ver Más</button>
+          <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="deleteEvent(event.id)">Eliminar</button>
+        </mat-card-actions>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+  <div class="pagination-controls">
+    <button mat-button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
     <span>Página {{ currentPage }} de {{ totalPages }}</span>
-    <button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
-  </div>
-
-  <div class="actions">
-    <button routerLink="/calendario" class="btn-secondary">Ver Calendario</button>
-    <button id="add-event" *ngIf="isLoggedIn" (click)="navigateToNewEvent()" class="btn-primary">Añadir Evento</button>
+    <button mat-button (click)="nextPage()" [disabled]="currentPage === totalPages">Siguiente</button>
   </div>
 </section>
+
+
+
+<div class="actions">
+  <button mat-raised-button color="accent" routerLink="/calendario">Ver Calendario</button>
+  <button mat-raised-button color="primary" *ngIf="isLoggedIn" (click)="navigateToNewEvent()">Añadir Evento</button>
+</div>
 
 <footer>
   <div class="contact-info">
-    <p><i class="fas fa-phone"></i> +34 600 123 456
-      <i class="fab fa-instagram"></i> &#64;aam_mostoles
-      <i class="fab fa-facebook"></i> AAM Club
-    </p>
+    <p><i class="fas fa-phone"></i> +34 600 123 456</p>
+    <p><i class="fab fa-instagram"></i> &#64;aam_mostoles</p>
+    <p><i class="fab fa-facebook"></i> AAM Club</p>
   </div>
 </footer>
+
 <router-outlet></router-outlet>
