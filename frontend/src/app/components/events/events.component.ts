@@ -5,7 +5,6 @@ import { NgForOf, NgIf } from '@angular/common';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { Page } from '../../models/page.model';
-import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,7 +26,6 @@ import { MatMenuModule } from '@angular/material/menu';
     ReactiveFormsModule,
     NgForOf,
     NgIf,
-    HttpClientModule,
     MatCardModule,
     MatButtonModule,
     MatFormFieldModule,

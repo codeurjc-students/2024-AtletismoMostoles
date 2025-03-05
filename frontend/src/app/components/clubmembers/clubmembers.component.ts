@@ -17,8 +17,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
-import { CommonModule, NgIf, NgForOf } from '@angular/common';
-import { NewCoachDialogComponent } from '../../models/NewCoachDialogComponent.model';
+import { CommonModule, NgIf} from '@angular/common';
+import { NewCoachDialogComponent } from '../../modals/NewCoachDialogComponent.modal';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 

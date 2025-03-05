@@ -22,8 +22,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatMenuModule } from '@angular/material/menu';
-import { CommonModule, NgIf, NgForOf } from '@angular/common';
-import { NewAthleteDialogComponent } from '../../models/NewAthleteDialogComponent.model';
+import { CommonModule, NgIf} from '@angular/common';
+import { NewAthleteDialogComponent } from '../../modals/NewAthleteDialogComponent.modal';
 
 @Component({
   selector: 'app-ranking',
