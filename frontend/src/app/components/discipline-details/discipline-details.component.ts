@@ -1,13 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { NgForOf, NgIf } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { DisciplineService } from '../../services/discipline.service';
-import { EquipmentService } from '../../services/equipment.service';
-import { Discipline } from '../../models/discipline.model';
-import { Equipment } from '../../models/equipment.model';
-import {HttpClientModule} from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { CommonModule, NgForOf, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { EquipmentDialogComponent } from '../../modals/EquipmentDialogComponent.modal';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-discipline-details',
@@ -15,147 +23,111 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./discipline-details.component.css'],
   standalone: true,
   imports: [
+    CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     NgForOf,
     NgIf,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatListModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatIconModule,
+    MatDialogModule,
+    MatMenuModule,
     RouterLink,
-    RouterOutlet,
-    HttpClientModule
-  ]
+    RouterOutlet
+  ],
 })
 export class DisciplineDetailsComponent implements OnInit {
-  isModalOpen: boolean = false;
-  discipline: Discipline = { id: 0, name: '', description: '', imageLink: '', equipment: [], athletes: [], events: [], coaches: [] };
-  allEquipment: (Equipment & { selected: boolean })[] = [];
-  currentPage: number = 1;
-  itemsPerPage: number = 5;
-  totalPages: number = 1;
-  isEditMode: boolean = false;
+  discipline: any;
   isLoggedIn: boolean = false;
+  isEditMode: boolean = false;
+  disciplineForm: FormGroup;
+  currentPage: number = 1;
+  totalPages: number = 1;
 
   constructor(
-    private disciplineService: DisciplineService,
-    private equipmentService: EquipmentService,
     private route: ActivatedRoute,
+    private router: Router,
+    private disciplineService: DisciplineService,
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private fb: FormBuilder,
+    public dialog: MatDialog
+  ) {
+    this.disciplineForm = this.fb.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required]
+    });
+  }
 
   ngOnInit(): void {
-    const disciplineId = this.route.snapshot.params['id'];
     this.authService.user.subscribe(user => {
       this.isLoggedIn = this.authService.isAuthenticated();
     });
-    this.loadDisciplineDetails(disciplineId);
-    this.loadAllEquipment();
+    this.loadDiscipline();
   }
 
-  loadDisciplineDetails(disciplineId: number): void {
-    this.disciplineService.getById(disciplineId).subscribe(
-      (data) => {
-        this.discipline = data;
-      },
-      (error) => {
-        console.error('Error al cargar los detalles de la disciplina:', error);
-      }
-    );
+  loadDiscipline(): void {
+    const disciplineId = Number(this.route.snapshot.paramMap.get('id'));
+    if (disciplineId) {
+      this.disciplineService.getById(Number(disciplineId)).subscribe(response => {
+        this.discipline = response;
+        this.disciplineForm.patchValue({
+          name: this.discipline.name,
+          description: this.discipline.description
+        });
+      });
+    }
   }
 
-  loadAllEquipment(): void {
-    this.equipmentService.getAll().subscribe(
-      (response) => {
-        this.allEquipment = response.content.map(item => ({ ...item, selected: false }));
-      },
-      (error) => {
-        console.error('Error al cargar la lista de equipamiento:', error);
-      }
-    );
+  toggleEditMode(): void {
+    this.isEditMode = !this.isEditMode;
   }
+
+  saveDiscipline(): void {
+    if (this.disciplineForm.valid) {
+      this.disciplineService.update(this.discipline.id, this.disciplineForm.value).subscribe(() => {
+        alert('Disciplina actualizada con éxito');
+        this.isEditMode = false;
+        this.loadDiscipline();
+      });
+    }
+  }
+
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.loadAllEquipment();
     }
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.loadAllEquipment();
     }
   }
 
-  openModal(): void {
-    this.isModalOpen = true;
+  openEquipmentDialog(): void {
+    const dialogRef = this.dialog.open(EquipmentDialogComponent, {
+      width: '400px',
+      data: { equipment: this.discipline.equipment }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'save') {
+        this.loadDiscipline();
+      }
+    });
   }
 
-  closeModal(): void {
-    this.isModalOpen = false;
-  }
-
-  addEquipment(): void {
-    if (!this.isLoggedIn) {
-      alert('Debes iniciar sesión para editar esta disciplina.');
-      return;
-    }
-    const selectedEquipment = this.allEquipment.filter(e => e.selected);
-    if (selectedEquipment.length > 0) {
-      this.discipline.equipment = [...(this.discipline.equipment || []), ...selectedEquipment];
-      this.disciplineService.update(this.discipline.id, this.discipline).subscribe(
-        () => {
-          alert('Equipamiento agregado correctamente');
-          this.closeModal();
-        },
-        (error) => {
-          console.error('Error al agregar equipamiento:', error);
-        }
-      );
-    } else {
-      alert('Seleccione al menos un equipamiento.');
-    }
-  }
-
-  toggleEditMode(): void {
-    if (!this.isLoggedIn) {
-      alert('Debes iniciar sesión para editar esta disciplina.');
-      return;
-    }
-    this.isEditMode = !this.isEditMode;
-  }
-
-  saveDiscipline(): void {
-    if (!this.isLoggedIn) {
-      alert('No tienes permiso para modificar esta disciplina.');
-      return;
-    }
-    if (this.discipline) {
-      this.disciplineService.update(this.discipline.id, this.discipline).subscribe(
-        () => {
-          alert('Disciplina actualizada correctamente');
-          this.isEditMode = false;
-        },
-        (error) => {
-          console.error('Error al actualizar la disciplina:', error);
-        }
-      );
-    }
-  }
-
-  toggleMenu(): void {
-    const menu = document.getElementById('dropdown-menu');
-    if (menu) {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    }
-  }
-
-  login() {
+  login(): void {
     this.router.navigate(['/login']);
   }
 
-  logout() {
-    if(!this.isLoggedIn){
-      this.router.navigate(['/login']);
-    }
+  logout(): void {
     this.authService.logout();
   }
+
 }
