@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { Event } from '../models/event.model';
 import { Page } from '../models/page.model';
 import { Router } from '@angular/router';
+import { EventCreate } from '../models/event-create.model';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +41,7 @@ export class EventService {
       .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
-  create(data: Event): Observable<Event> {
+  create(data: EventCreate): Observable<Event> {
     return this.http
       .post<Event>(this.apiUrl, data, { withCredentials: true })
       .pipe(catchError((err) => this.handleAuthError(err)));

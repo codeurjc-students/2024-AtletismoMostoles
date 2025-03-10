@@ -2,7 +2,9 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   color: #333;
+  background-color: #f4f4f4;
 }
+
 header {
   background-color: #007f00;
   color: white;
@@ -10,40 +12,74 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
+
 header .logo {
   font-size: 24px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
 }
+
+header .logo img {
+  height: 50px;
+  margin-right: 10px;
+}
+
 nav {
   display: flex;
-  gap: 22px;
+  gap: 20px;
 }
+
 nav a {
   color: white;
   text-decoration: none;
-  font-size: 25px;
+  font-weight: bold;
 }
 
-.contact-info p {
-  margin: 10px 0;
+.LogSection button {
+  margin-left: 10px;
 }
-.contact-info i {
-  margin-right: 10px;
+
+.new-event-form {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
 footer {
   background-color: #007f00;
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   padding: 10px 20px;
+  text-align: center;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
 }
 
-footer div{
-  font-size: 20px;
-  padding-left: 100px;
-  gap: 100px;
+footer .contact-info p {
+  margin: 5px 0;
 }
 
+footer .contact-info i {
+  margin-right: 8px;
+}
