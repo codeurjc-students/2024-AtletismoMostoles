@@ -1,149 +1,147 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, Router, RouterLink, RouterOutlet} from '@angular/router';
-import { NgForOf, NgIf, NgStyle } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { EventService } from '../../services/event.service';
-import { ResultService } from '../../services/result.service';
-import { Event } from '../../models/event.model';
-import { Results } from '../../models/results.model';
-import { Page } from '../../models/page.model';
-import {HttpClientModule} from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { CommonModule, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-event-details',
   templateUrl: './event-details.component.html',
+  styleUrls: ['./event-details.component.css'],
   standalone: true,
   imports: [
-    NgStyle,
+    CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     NgIf,
-    NgForOf,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatIconModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatToolbarModule,
+    MatCheckboxModule,
+    MatMenuModule,
     RouterLink,
-    RouterOutlet,
-    HttpClientModule
+    RouterOutlet
   ],
-  styleUrls: ['./event-details.component.css']
 })
 export class EventDetailsComponent implements OnInit {
-  event: Event = {
-    id: 0,
-    name: '',
-    date: '',
-    imageLink: '',
-    isOrganizedByClub: false,
-    disciplines: [],
-    results: []
-  };
-
-  results: Results[] = [];
-  currentPage = 1;
-  itemsPerPage = 10;
-  totalPages = 1;
-
-  isEditing = false;
-  isLoggedIn = false;
-  mapUrl = '';
+  event: any;
+  isLoggedIn: boolean = false;
+  isEditing: boolean = false;
+  eventForm: FormGroup;
+  results: any[] = [];
+  currentPage: number = 1;
+  totalPages: number = 1;
+  mapUrl: string = '';
+  sanitizedMapUrl: SafeResourceUrl = '';
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private eventService: EventService,
-    private resultService: ResultService,
     private authService: AuthService,
-    private router: Router
-  ) {}
+    private fb: FormBuilder,
+    public dialog: MatDialog,
+    private sanitizer: DomSanitizer
+  ) {
+    this.eventForm = this.fb.group({
+      name: ['', Validators.required],
+      date: ['', Validators.required],
+      isOrganizedByClub: [false],
+      imageLink: ['']
+    });
+  }
 
   ngOnInit(): void {
-    const eventId = this.route.snapshot.params['id'];
     this.authService.user.subscribe(user => {
       this.isLoggedIn = this.authService.isAuthenticated();
-    });    this.loadEvent(eventId);
-    this.loadResults(eventId);
+    });
+    this.loadEvent();
   }
 
-  loadEvent(eventId: number): void {
-    this.eventService.getById(eventId).subscribe(
-      (response) => {
+  loadEvent(): void {
+    const eventId = Number(this.route.snapshot.paramMap.get('id'));
+    if (eventId) {
+      this.eventService.getById(eventId).subscribe(response => {
         this.event = response;
-        this.mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${encodeURIComponent(response.mapLink || '')}`;
-      },
-      (error) => {
-        console.error('Error al cargar el evento:', error);
-      }
-    );
-  }
-
-  loadResults(eventId: number): void {
-    this.resultService.getAll(this.currentPage - 1, this.itemsPerPage, 'date', eventId).subscribe(
-      (response: Page<Results>) => {
-        this.results = response.content;
-        this.totalPages = response.totalPages;
-      },
-      (error) => {
-        console.error('Error al cargar los resultados:', error);
-      }
-    );
+        this.results = response.results || [];
+        this.mapUrl = response.mapLink || '';
+        this.sanitizedMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.mapUrl);
+        this.eventForm.patchValue({
+          name: this.event.name,
+          date: this.event.date,
+          isOrganizedByClub: this.event.isOrganizedByClub,
+          imageLink: this.event.imageLink
+        });
+      });
+    }
   }
 
   toggleEdit(): void {
-    if (!this.isLoggedIn) {
-      alert('Debes iniciar sesión para editar este evento.');
-      return;
-    }
     this.isEditing = !this.isEditing;
   }
 
   saveEvent(): void {
-    if (!this.isLoggedIn) {
-      alert('No tienes permiso para modificar este evento.');
-      return;
-    }
-    this.eventService.update(this.event.id, this.event).subscribe(
-      () => {
-        this.isEditing = false;
-        alert('Evento actualizado correctamente');
-      },
-      (error) => {
-        console.error('Error al guardar el evento:', error);
-        alert('Error al guardar el evento');
-      }
-    );
-  }
+    if (this.eventForm.valid) {
+      this.event = {
+        ...this.event,
+        ...this.eventForm.getRawValue()
+      };
 
-  cancelEdit(): void {
-    this.isEditing = false;
-    this.loadEvent(this.event.id);
+      console.log('Datos enviados a la API:', this.event);
+
+      if (this.eventForm.valid) {
+        this.eventService.update(this.event.id, {
+          ...this.event,
+          isOrganizedByClub: !!this.event.isOrganizedByClub
+        }).subscribe(() => {
+          alert('Evento actualizado con éxito');
+          this.isEditing = false;
+          this.loadEvent();
+        });
+      }
+    }
   }
 
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      this.loadResults(this.event.id);
     }
   }
 
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      this.loadResults(this.event.id);
     }
   }
 
-  toggleMenu(): void {
-    const menu = document.getElementById('dropdown-menu');
-    if (menu) {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    }
-  }
-
-  login() {
+  login(): void {
     this.router.navigate(['/login']);
   }
 
-  logout() {
-    if(!this.isLoggedIn){
-      this.router.navigate(['/login']);
-    }
+  logout(): void {
     this.authService.logout();
   }
+
 }
