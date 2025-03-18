@@ -147,7 +147,11 @@ export class ProfileComponent implements OnInit {
 
   deleteProfile(): void {
     if (!this.isAdmin || !confirm('¿Seguro que quieres eliminar este perfil?')) return;
-    this.athleteService.delete(this.profile.licenseNumber).subscribe(() => this.router.navigate(['/ranking']));
+    if (this.isAthlete){
+      this.athleteService.delete(this.profile.licenseNumber).subscribe(() => this.router.navigate(['/ranking']));
+    }else{
+      this.coachService.delete(this.profile.licenseNumber).subscribe(() => this.router.navigate(['/miembros']));
+    }
   }
 
   login(): void {

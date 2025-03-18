@@ -30,7 +30,7 @@ public class AthletesE2ETest {
             System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
         } else {
             System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-            options.addArguments("--headless"); // Ejecutar en modo headless en Linux
+            options.addArguments("--headless");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
             options.addArguments("--disable-gpu");
@@ -46,27 +46,21 @@ public class AthletesE2ETest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-
     @BeforeEach
     public void navigateToPage() {
         driver.get("https://localhost/");
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        // 1️⃣ Esperamos a que el botón del menú sea clickeable y lo abrimos
         WebElement menuButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[mat-icon-button]")));
         menuButton.click();
 
-        // 2️⃣ Esperamos a que el menú se haga visible
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.cdk-overlay-container")));
 
-        // 3️⃣ Esperamos a que desaparezca el backdrop que bloquea la interacción
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.cdk-overlay-backdrop")));
 
-        // 4️⃣ Buscamos el enlace "Ranking"
         WebElement rankingOption = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("a[routerLink='/ranking']")));
 
-        // 5️⃣ Si el overlay sigue bloqueando, forzamos el clic con JavaScript
         try {
             rankingOption.click();
         } catch (Exception e) {
@@ -108,24 +102,17 @@ public class AthletesE2ETest {
     public void testLoginAndCheckUIChanges() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        // Hacer clic en el botón "LogIn"
         driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
 
-        // Esperar a que aparezca el formulario
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-card.login-form")));
 
-        // Ingresar credenciales
         driver.findElement(By.cssSelector("input[formControlName='username']")).sendKeys("admin");
         driver.findElement(By.cssSelector("input[formControlName='password']")).sendKeys("adminpass");
 
-        // Hacer clic en el botón "Iniciar Sesión"
         driver.findElement(By.cssSelector("button[mat-raised-button][color='primary']")).click();
 
-        // Esperar a que el botón de cierre de sesión esté visible
-        WebElement logOutButton = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector("button[mat-raised-button][color='warn']")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[mat-raised-button][color='warn']")));
 
-        // Navegar nuevamente y verificar los cambios en la UI
         navigateToPage();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[mat-raised-button][color='warn']")));
 
@@ -137,72 +124,55 @@ public class AthletesE2ETest {
 
     @Test
     public void testAddAndRemoveAthlete() {
-        login();  // Inicia sesión
-        navigateToPage();  // Navega a la página de atletas
+        login();
+        navigateToPage();
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         int initialCount = countAllElements("list-section", "athlete-row");
 
-        // Hacer clic en el botón de "Nuevo Atleta"
         WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".list-section button:not([disabled])")));
         addButton.click();
 
-        // Espera a que el modal aparezca
         WebElement modal = wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("mat-dialog-container")));
 
-        // Completar el formulario
         driver.findElement(By.cssSelector("input[formControlName='licenseNumber']")).sendKeys("999999");
         driver.findElement(By.cssSelector("input[formControlName='firstName']")).sendKeys("Test");
         driver.findElement(By.cssSelector("input[formControlName='lastName']")).sendKeys("Athlete");
         driver.findElement(By.cssSelector("input[formControlName='birthDate']")).sendKeys("2000-05-10");
 
-        // Selección de entrenador
         WebElement coachDropdown = driver.findElement(By.cssSelector("mat-select[formControlName='coach']"));
         coachDropdown.click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
         driver.findElement(By.xpath("//mat-option/span[contains(text(), 'Clara Díaz')]")).click();
 
-        // Selección de disciplina
         WebElement disciplinesDropdown = driver.findElement(By.cssSelector("mat-select[formControlName='disciplines']"));
         disciplinesDropdown.click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
         driver.findElement(By.xpath("//mat-option/span[contains(text(), 'Velocidad')]")).click();
 
-        // Cerrar dropdown
         disciplinesDropdown.sendKeys(Keys.ESCAPE);
 
-        // Asegurar que el modal sigue visible antes de buscar el botón "Guardar"
         wait.until(ExpectedConditions.visibilityOf(modal));
 
-        // **Localizar el botón "Guardar" dentro del modal correctamente**
         WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[contains(@class, 'mat-mdc-raised-button') and contains(@class, 'mat-primary') and .//span[contains(text(), 'Guardar')]]")));
+        saveButton.click();
 
-        // **Forzar el scroll hasta el botón**
-        //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", saveButton);
-
-        // **Forzar el clic con JavaScript**
-       saveButton.click();
-
-        // **Esperar y manejar la alerta emergente**
         try {
-            wait.until(ExpectedConditions.alertIsPresent()); // Esperar a que la alerta aparezca
-            Alert alert = driver.switchTo().alert(); // Cambiar el foco a la alerta
-            System.out.println("Alerta detectada: " + alert.getText()); // Opcional: imprimir el texto de la alerta
-            alert.accept(); // Cerrar la alerta presionando "Aceptar"
+            wait.until(ExpectedConditions.alertIsPresent());
+            Alert alert = driver.switchTo().alert();
+            System.out.println("Alerta detectada: " + alert.getText());
+            alert.accept();
         } catch (Exception e) {
             System.out.println("No se detectó ninguna alerta.");
         }
 
-        // Validar que se agregó un atleta
         navigateToPage();
         int updatedCount = countAllElements("list-section", "athlete-row");
         assertEquals(initialCount + 1, updatedCount);
 
-        // Eliminar el atleta agregado
         deleteAthleteFromProfile("999999");
 
-        // Validar que el conteo volvió a su estado inicial
         int finalCount = countAllElements("list-section", "athlete-row");
         assertEquals(initialCount, finalCount);
     }
@@ -237,16 +207,6 @@ public class AthletesE2ETest {
         wait.until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(pageIndicator, initialPageText)));
 
         assertNotEquals(initialPageText, pageIndicator.getText(), "❌ The page number did not change after clicking 'Next'.");
-    }
-
-    private void handleAlert(WebDriverWait wait) {
-        try {
-            Alert alert = wait.until(ExpectedConditions.alertIsPresent());
-            System.out.println("✅ Alert: " + alert.getText());
-            alert.accept();
-        } catch (NoAlertPresentException e) {
-            System.out.println("⚠ No alert detected.");
-        }
     }
 
     private int countAllElements(String listId, String itemClass) {
@@ -285,38 +245,31 @@ public class AthletesE2ETest {
             for (WebElement athlete : athletes) {
                 WebElement license = athlete.findElement(By.xpath(".//mat-cell[contains(text(), '" + licenseNum + "')]"));
                 if (license != null && license.getText().contains(licenseNum)) {
-                    license.click(); // Abre el perfil del atleta
+                    license.click();
 
-                    // Esperar a que el perfil cargue completamente
                     wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("profile-card")));
 
-                    // **Esperar extra para Angular Material**
                     try {
-                        Thread.sleep(2000); // Prueba si el retraso ayuda
+                        Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
-                    // **Intentar localizar el botón "Eliminar Perfil"**
                     WebElement deleteButton = null;
                     try {
                         deleteButton = wait.until(ExpectedConditions.presenceOfElementLocated(
                                 By.xpath("//button[normalize-space()='Eliminar Perfil']")));
 
-                        // **Forzar el scroll hasta el botón antes de hacer clic**
                         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", deleteButton);
 
-                        // **Esperar hasta que Selenium lo detecte como clickeable**
                         wait.until(ExpectedConditions.elementToBeClickable(deleteButton));
 
-                        // **Forzar clic con JavaScript si Selenium no lo detecta**
                         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteButton);
                     } catch (Exception e) {
                         System.out.println("❌ No se encontró el botón 'Eliminar Perfil'.");
                         return;
                     }
 
-                    // **Manejar la alerta de confirmación**
                     try {
                         wait.until(ExpectedConditions.alertIsPresent());
                         Alert alert = driver.switchTo().alert();
@@ -326,21 +279,19 @@ public class AthletesE2ETest {
                         System.out.println("No se detectó ninguna alerta de eliminación.");
                     }
 
-                    // Esperar a que vuelva a la lista de atletas
                     wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("list-section")));
 
                     return;
                 }
             }
 
-            // **Comprobar si hay más páginas**
             List<WebElement> nextButtons = driver.findElements(By.id("next_btm"));
             if (nextButtons.isEmpty() || nextButtons.get(0).getAttribute("disabled") != null) {
                 System.out.println("❌ Atleta no encontrado.");
                 return;
             } else {
                 nextButtons.get(0).click();
-                wait.until(ExpectedConditions.stalenessOf(athletes.get(0))); // Esperar a que la tabla se recargue
+                wait.until(ExpectedConditions.stalenessOf(athletes.get(0)));
             }
         }
     }
