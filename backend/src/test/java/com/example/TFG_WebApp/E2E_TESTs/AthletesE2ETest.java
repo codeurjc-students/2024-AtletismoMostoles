@@ -4,9 +4,7 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,12 +126,13 @@ public class AthletesE2ETest {
         navigateToPage();
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        int initialCount = countAllElements("list-section", "athlete-row");
+
+        int initialCount = countAllElements("list-section", "clickable-row");
 
         WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".list-section button:not([disabled])")));
         addButton.click();
 
-        WebElement modal = wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("mat-dialog-container")));
+        WebElement modal = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("mat-dialog-container")));
 
         driver.findElement(By.cssSelector("input[formControlName='licenseNumber']")).sendKeys("999999");
         driver.findElement(By.cssSelector("input[formControlName='firstName']")).sendKeys("Test");
@@ -145,36 +144,30 @@ public class AthletesE2ETest {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
         driver.findElement(By.xpath("//mat-option/span[contains(text(), 'Clara Díaz')]")).click();
 
-        WebElement disciplinesDropdown = driver.findElement(By.cssSelector("mat-select[formControlName='disciplines']"));
-        disciplinesDropdown.click();
+        WebElement disciplineDropdown = driver.findElement(By.cssSelector("mat-select[formControlName='disciplines']"));
+        disciplineDropdown.click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
         driver.findElement(By.xpath("//mat-option/span[contains(text(), 'Velocidad')]")).click();
 
-        disciplinesDropdown.sendKeys(Keys.ESCAPE);
-
-        wait.until(ExpectedConditions.visibilityOf(modal));
+        disciplineDropdown.sendKeys(Keys.ESCAPE);
 
         WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(
                 By.xpath("//button[contains(@class, 'mat-mdc-raised-button') and contains(@class, 'mat-primary') and .//span[contains(text(), 'Guardar')]]")));
         saveButton.click();
 
-        try {
-            wait.until(ExpectedConditions.alertIsPresent());
-            Alert alert = driver.switchTo().alert();
-            System.out.println("Alerta detectada: " + alert.getText());
-            alert.accept();
-        } catch (Exception e) {
-            System.out.println("No se detectó ninguna alerta.");
-        }
+        handleAlert(wait);
 
         navigateToPage();
-        int updatedCount = countAllElements("list-section", "athlete-row");
-        assertEquals(initialCount + 1, updatedCount);
+        int updatedCount = countAllElements("list-section", "clickable-row");
+        assertEquals(initialCount + 1, updatedCount, "❌ The athlete was not added correctly.");
 
         deleteAthleteFromProfile("999999");
 
-        int finalCount = countAllElements("list-section", "athlete-row");
-        assertEquals(initialCount, finalCount);
+        int finalCount = countAllElements("list-section", "clickable-row");
+        assertEquals(initialCount, finalCount, "❌ The athlete was not deleted correctly.");
+
+        WebElement logoutButton = driver.findElement(By.cssSelector("button[mat-raised-button][color='warn']"));
+        logoutButton.click();
     }
 
     @Test
@@ -309,5 +302,17 @@ public class AthletesE2ETest {
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[mat-raised-button][color='warn']")));
     }
+
+    private void handleAlert(WebDriverWait wait) {
+        try {
+            wait.until(ExpectedConditions.alertIsPresent());
+            Alert alert = driver.switchTo().alert();
+            System.out.println("Alerta detectada: " + alert.getText());
+            alert.accept();
+        } catch (Exception e) {
+            System.out.println("No se detectó ninguna alerta.");
+        }
+    }
+
 }
 
