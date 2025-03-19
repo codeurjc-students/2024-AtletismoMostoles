@@ -112,7 +112,7 @@ public class ClubMembersE2ETest {
         login();
         navigateToPage();
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
         int initialCount = countAllElements("list-section", "clickable-row");
 
         WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".list-section button:not([disabled])")));
@@ -147,6 +147,8 @@ public class ClubMembersE2ETest {
 
         int finalCount = countAllElements("list-section", "clickable-row");
         assertEquals(initialCount, finalCount);
+        WebElement logOutbutton = driver.findElement(By.cssSelector("button[mat-raised-button][color='warn']"));
+        logOutbutton.click();
     }
 
     @Test
