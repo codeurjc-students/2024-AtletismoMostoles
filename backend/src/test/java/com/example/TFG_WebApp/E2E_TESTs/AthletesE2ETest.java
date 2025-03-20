@@ -34,7 +34,7 @@ public class AthletesE2ETest {
             options.addArguments("--disable-gpu");
             options.addArguments("--window-size=1920,1080");
         }
-
+        options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
         options.addArguments("--allow-running-insecure-content");
@@ -147,7 +147,8 @@ public class AthletesE2ETest {
         WebElement disciplineDropdown = driver.findElement(By.cssSelector("mat-select[formControlName='disciplines']"));
         disciplineDropdown.click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
-        driver.findElement(By.xpath("//mat-option/span[contains(text(), 'Velocidad')]")).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//mat-option/span[contains(text(), 'Velocidad')]")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//mat-option/span[contains(text(), 'Velocidad')]"))).click();
 
         disciplineDropdown.sendKeys(Keys.ESCAPE);
 

@@ -30,7 +30,7 @@ public class DisciplinesE2ETest {
             options.addArguments("--disable-gpu");
             options.addArguments("--window-size=1920,1080");
         }
-
+        options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
         options.addArguments("--allow-running-insecure-content");

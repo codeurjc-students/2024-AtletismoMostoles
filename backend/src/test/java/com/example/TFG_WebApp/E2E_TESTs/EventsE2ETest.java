@@ -26,7 +26,7 @@ public class EventsE2ETest {
             System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
             options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--window-size=1920,1080");
         }
-
+        options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
         options.addArguments("--allow-running-insecure-content");

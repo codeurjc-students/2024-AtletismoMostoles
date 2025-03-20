@@ -31,6 +31,7 @@ public class ClubMembersE2ETest {
             options.addArguments("--window-size=1920,1080");
         }
 
+        options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
         options.addArguments("--allow-running-insecure-content");
