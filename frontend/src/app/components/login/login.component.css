@@ -1,84 +1,87 @@
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background-color: #007f00;
-  color: white;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
 }
 
-header nav a {
+header {
+  background-color: #007f00;
   color: white;
-  margin: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+header .logo {
+  display: flex;
+  align-items: center;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+header .logo img {
+  height: 50px;
+  margin-right: 10px;
+}
+
+nav a {
+  color: white;
   text-decoration: none;
+  font-weight: bold;
+  margin: 0 10px;
+}
+
+.LogSection button {
+  margin-left: 10px;
 }
 
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
-  background-color: #f5f5f5;
+  min-height: 75vh;
+  padding: 20px;
 }
 
 .login-form {
+  width: 100%;
+  max-width: 450px;
+  padding: 20px;
   background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.full-width {
   width: 100%;
-  max-width: 400px;
-}
-
-.login-form h1 {
-  margin-bottom: 1.5rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-  text-align: left;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-.form-control {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.btn-primary {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #007f00;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  background-color: #005f00;
+  margin-bottom: 20px;
 }
 
 .error-message {
   color: red;
-  margin-top: 1rem;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.form-actions {
+  margin-top: 20px;
 }
 
 footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background-color: #333;
+  background-color: #007f00;
   color: white;
   text-align: center;
-  padding: 10px 0;
+  padding: 10px;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+}
+
+footer .contact-info p {
+  margin: 5px 0;
+}
+
+footer .contact-info i {
+  margin-right: 8px;
 }

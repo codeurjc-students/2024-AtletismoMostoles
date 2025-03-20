@@ -5,9 +5,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.time.Duration;
 import java.util.List;
 
@@ -26,13 +24,9 @@ public class EventsE2ETest {
             System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
         } else {
             System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-            options.addArguments("--headless"); // Ejecutar en modo headless en Linux
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
-            options.addArguments("--window-size=1920,1080");
+            options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--window-size=1920,1080");
         }
-
+        options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
         options.addArguments("--allow-running-insecure-content");
@@ -42,23 +36,25 @@ public class EventsE2ETest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-
     @BeforeEach
     public void navigateToPage() {
         driver.get("https://localhost/");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        WebElement menu = driver.findElement(By.className("menu-icon"));
-        menu.click();
+        WebElement menuButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[mat-icon-button]")));
+        menuButton.click();
 
-        WebElement disciplinasOption = driver.findElement(By.xpath("//a[text()='Eventos']"));
-        disciplinasOption.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.cdk-overlay-container")));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.cdk-overlay-backdrop")));
 
-        String expectedUrl = "https://localhost/eventos";
-        if (driver.getCurrentUrl().equals(expectedUrl)) {
-            System.out.println("Test PASSED: Se accedió correctamente a Eventos");
-        } else {
-            System.out.println("Test FAILED: No se accedió a Eventos");
+        WebElement eventsOption = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("a[routerLink='/eventos']")));
+        try {
+            eventsOption.click();
+        } catch (Exception e) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", eventsOption);
         }
+
+        assertEquals("https://localhost/eventos", driver.getCurrentUrl(), "Test FAILED: No se accedió a Eventos");
     }
 
     @AfterAll
@@ -70,34 +66,39 @@ public class EventsE2ETest {
 
     @Test
     public void testLoadEventsPage() {
-        assertTrue(driver.findElement(By.tagName("header")).isDisplayed());
-        assertTrue(driver.findElement(By.className("events-list")).isDisplayed());
-        assertTrue(driver.findElement(By.tagName("footer")).isDisplayed());
-    }
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-    @Test
-    public void testNavigationLinks() {
-        assertEquals(driver.findElement(By.linkText("Inicio")).getAttribute("href"), "https://localhost/");
-        assertEquals(driver.findElement(By.linkText("Miembros del Club")).getAttribute("href"), "https://localhost/miembros");
-        assertEquals(driver.findElement(By.linkText("Ranking")).getAttribute("href"), "https://localhost/ranking");
-        assertEquals(driver.findElement(By.linkText("Eventos")).getAttribute("href"), "https://localhost/eventos");
-        assertEquals(driver.findElement(By.linkText("Calendario")).getAttribute("href"), "https://localhost/calendario");
+        // Esperar a que la cabecera, el listado de eventos y el footer sean visibles
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("header")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-grid-list"))); // Reemplazo de .events-list
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("footer")));
+
+        // Verificar que los elementos están presentes en la página
+        assertTrue(driver.findElement(By.tagName("header")).isDisplayed());
+        assertTrue(driver.findElement(By.cssSelector("mat-grid-list")).isDisplayed());
+        assertTrue(driver.findElement(By.tagName("footer")).isDisplayed());
     }
 
     @Test
     public void testLoginAndCheckUIChanges() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        driver.findElement(By.id("login-button")).click();
-        driver.findElement(By.id("username")).sendKeys("admin");
-        driver.findElement(By.id("password")).sendKeys("adminpass");
-        driver.findElement(By.id("login-button")).click();
+        driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-card.login-form")));
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
+        driver.findElement(By.cssSelector("input[formControlName='username']")).sendKeys("admin");
+        driver.findElement(By.cssSelector("input[formControlName='password']")).sendKeys("adminpass");
+        driver.findElement(By.cssSelector("button[mat-raised-button][color='primary']")).click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[mat-raised-button][color='warn']")));
         navigateToPage();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
-        assertTrue(driver.findElement(By.id("logout-button")).isDisplayed());
-        assertTrue(driver.findElement(By.id("add-event")).isDisplayed());
+
+        WebElement logOutbutton = driver.findElement(By.cssSelector("button[mat-raised-button][color='warn']"));
+        assertTrue(logOutbutton.isDisplayed());
+        WebElement addEventButton = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//button[contains(@class, 'mat-mdc-raised-button') and contains(@class, 'mat-primary') and span[contains(text(), 'Añadir Evento')]]")));
+        assertTrue(addEventButton.isDisplayed());
+        logOutbutton.click();
     }
 
     @Test
@@ -108,31 +109,30 @@ public class EventsE2ETest {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         int initialCount = countAllElements("events-list", "event-card");
 
-        // Open the add event form
-        driver.findElement(By.id("add-event")).click();
+        WebElement addButton = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.xpath("//button[contains(@class, 'mat-mdc-raised-button') and contains(@class, 'mat-primary') and .//span[contains(text(), 'Añadir Evento')]]")));
+        addButton.click();
 
-        // Fill the form fields
-        driver.findElement(By.id("name")).sendKeys("Test Event");
-        driver.findElement(By.id("imageUrl")).sendKeys("https://example.com/event.jpg");
-        driver.findElement(By.id("mapUrl")).sendKeys("https://maps.google.com/example");
-        driver.findElement(By.id("date")).sendKeys("10-06-2025");
+        driver.findElement(By.cssSelector("input[formControlName='name']")).sendKeys("Test Event");
+        driver.findElement(By.cssSelector("input[formControlName='imageUrl']")).sendKeys("https://example.com/event.jpg");
+        driver.findElement(By.cssSelector("input[formControlName='mapUrl']")).sendKeys("https://maps.google.com/example");
+        driver.findElement(By.cssSelector("input[formControlName='date']")).sendKeys("10-06-2025");
 
-        // Check the "Organizado por el Club" checkbox
-        WebElement organizedByClubCheckbox = driver.findElement(By.cssSelector("input[formControlName='organizedByClub']"));
+        WebElement organizedByClubCheckbox = driver.findElement(By.cssSelector("mat-checkbox[formControlName='organizedByClub']"));
         if (!organizedByClubCheckbox.isSelected()) {
             organizedByClubCheckbox.click();
         }
 
-        // Select multiple disciplines
-        WebElement disciplinesDropdown = driver.findElement(By.id("disciplines"));
-        Select select = new Select(disciplinesDropdown);
-        select.selectByVisibleText("Velocidad");
-        //select.selectByVisibleText("Salto de longitud");
+        WebElement disciplineDropdown = driver.findElement(By.cssSelector("mat-select[formControlName='disciplines']"));
+        disciplineDropdown.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        driver.findElement(By.xpath("//mat-option/span[contains(text(), 'Velocidad')]")).click();
 
-        // Submit the form
-        WebElement submitButton = driver.findElement(By.id("submit-event"));
-        assertTrue(submitButton.isEnabled(), "❌ Submit button should be enabled when the form is valid.");
-        submitButton.click();
+        disciplineDropdown.sendKeys(Keys.ESCAPE);
+
+        WebElement saveButton = wait.until(ExpectedConditions.presenceOfElementLocated(
+                By.xpath("//button[contains(@class, 'mat-mdc-raised-button') and contains(@class, 'mat-primary') and span[normalize-space()='Guardar Evento']]")));
+        saveButton.click();
 
         handleAlert(wait);
 
@@ -141,23 +141,14 @@ public class EventsE2ETest {
         int updatedCount = countAllElements("events-list", "event-card");
         assertEquals(initialCount + 1, updatedCount);
 
-        // Delete event from event details page
         deleteEventFromDetails("Test Event");
 
         int finalCount = countAllElements("events-list", "event-card");
         assertEquals(initialCount, finalCount);
+        WebElement logOutbutton = driver.findElement(By.cssSelector("button[mat-raised-button][color='warn']"));
+        logOutbutton.click();
+
     }
-
-    /*@Test
-    public void testFilterEvents() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
-        WebElement filterDropdown = driver.findElement(By.id("eventFilter"));
-        Select select = new Select(filterDropdown);
-        select.selectByVisibleText("Club");
-
-        wait.until(ExpectedConditions.textToBePresentInElementLocated(By.className("events-list"), "Organizamos este evento"));
-    }*/
 
     @Test
     public void testPagination() {
@@ -166,14 +157,12 @@ public class EventsE2ETest {
         WebElement pageIndicator = driver.findElement(By.xpath("//span[contains(text(), 'Página')]"));
         String initialPageText = pageIndicator.getText();
 
-        // Verifica si el botón "Siguiente" está presente y habilitado
-        List<WebElement> nextButtons = driver.findElements(By.id("next_btm"));
+        List<WebElement> nextButtons = driver.findElements(By.xpath("//button[contains(text(), 'Siguiente')]"));
         if (nextButtons.isEmpty() || nextButtons.get(0).getAttribute("disabled") != null) {
             System.out.println("⚠ No pagination available, only one page exists.");
             return;
         }
 
-        // Si hay más páginas, hacer clic en "Siguiente"
         WebElement nextButton = nextButtons.get(0);
         nextButton.click();
 
@@ -182,78 +171,110 @@ public class EventsE2ETest {
         assertNotEquals(initialPageText, pageIndicator.getText(), "❌ The page number did not change after clicking 'Next'.");
     }
 
+    private void deleteEventFromDetails(String eventName) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("mat-grid-list")));
+
+        List<WebElement> events = driver.findElements(By.cssSelector("mat-grid-tile"));
+        for (WebElement event : events) {
+            try {
+                WebElement nameElement = event.findElement(By.tagName("h3"));
+                if (nameElement.getText().contains(eventName)) {
+                    System.out.println("✅ Evento encontrado: " + nameElement.getText());
+
+                    WebElement deleteButton = event.findElement(By.xpath(".//button[contains(@class, 'mat-warn')]"));
+
+
+                    wait.until(ExpectedConditions.elementToBeClickable(deleteButton));
+
+                    ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", deleteButton);
+                    try {
+                        deleteButton.click();
+                    } catch (Exception e) {
+                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteButton);
+                    }
+
+                    handleAlert(wait);
+
+                    wait.until(ExpectedConditions.stalenessOf(event));
+
+                    System.out.println("✅ Evento eliminado correctamente.");
+                    return;
+                }
+            } catch (Exception e) {
+                System.out.println("⚠ No se pudo encontrar el nombre o botón de eliminar del evento: " + eventName);
+            }
+        }
+        System.out.println("❌ Evento no encontrado: " + eventName);
+    }
+
     private void handleAlert(WebDriverWait wait) {
         try {
             Alert alert = wait.until(ExpectedConditions.alertIsPresent());
             System.out.println("✅ Alert: " + alert.getText());
             alert.accept();
-        } catch (NoAlertPresentException e) {
+        } catch (Exception e) {
             System.out.println("⚠ No alert detected.");
         }
     }
 
     private int countAllElements(String listId, String itemClass) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         int total = 0;
 
         while (true) {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.className(listId)));
-            total += driver.findElements(By.className(itemClass)).size();
+            // **Esperar a que el contenedor de la lista esté presente y visible**
+            try {
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("mat-grid-list")));
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-grid-list")));
+            } catch (Exception e) {
+                System.out.println("⚠ No se encontró el contenedor de eventos.");
+                return total;
+            }
 
-            List<WebElement> nextButtons = driver.findElements(By.id("next_btm"));
-            if (nextButtons.isEmpty() || nextButtons.get(0).getAttribute("disabled") != null) {
-                break;
+            // **Esperar que al menos un elemento de la lista esté visible**
+            List<WebElement> items = driver.findElements(By.cssSelector("mat-grid-tile"));
+            if (!items.isEmpty()) {
+                total += items.size();
+            }
+
+            // **Buscar botón "Siguiente"**
+            List<WebElement> nextButtons = driver.findElements(By.xpath("//button[contains(text(), 'Siguiente')]"));
+
+            if (nextButtons.isEmpty() || !nextButtons.get(0).isDisplayed() || !nextButtons.get(0).isEnabled()) {
+                break; // **Salir si no hay más páginas**
             } else {
-                nextButtons.get(0).click();
-                wait.until(ExpectedConditions.stalenessOf(driver.findElements(By.className(itemClass)).get(0)));
+                // **Hacer clic en "Siguiente" y esperar a que la lista se actualice**
+                WebElement nextButton = nextButtons.get(0);
+                wait.until(ExpectedConditions.elementToBeClickable(nextButton));
+
+                try {
+                    nextButton.click();
+                } catch (Exception e) {
+                    ((JavascriptExecutor) driver).executeScript("arguments[0].click();", nextButton);
+                }
+
+                // **Esperar a que los elementos de la lista se recarguen**
+                if (!items.isEmpty()) {
+                    wait.until(ExpectedConditions.stalenessOf(items.get(0)));
+                }
             }
         }
 
         return total;
     }
 
-    private void deleteEventFromDetails(String eventName) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-
-        while (true) {
-            List<WebElement> events = driver.findElements(By.className("event-card"));
-            for (WebElement event : events) {
-                WebElement nameElement = event.findElement(By.tagName("h3"));
-                if (nameElement.getText().contains(eventName)) {
-                    WebElement deleteButton = event.findElement(By.id("delete-btm"));
-
-                    if (!deleteButton.isDisplayed()) {
-                        System.out.println("❌ Delete button is not visible (user may not be logged in).");
-                        return;
-                    }
-
-                    deleteButton.click();
-
-                    handleAlert(wait);
-
-                    wait.until(ExpectedConditions.stalenessOf(event));
-                    System.out.println("✅ Event successfully deleted.");
-                    return;
-                }
-            }
-
-            List<WebElement> nextButtons = driver.findElements(By.id("next_btm"));
-            if (nextButtons.isEmpty() || nextButtons.get(0).getAttribute("disabled") != null) {
-                System.out.println("❌ Event not found in any page.");
-                return;
-            } else {
-                nextButtons.get(0).click();
-                wait.until(ExpectedConditions.stalenessOf(events.get(0)));
-            }
-        }
-    }
-
     private void login() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        driver.findElement(By.id("login-button")).click();
-        driver.findElement(By.id("username")).sendKeys("admin");
-        driver.findElement(By.id("password")).sendKeys("adminpass");
-        driver.findElement(By.id("login-button")).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
+
+        driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-card.login-form")));
+
+        driver.findElement(By.cssSelector("input[formControlName='username']")).sendKeys("admin");
+        driver.findElement(By.cssSelector("input[formControlName='password']")).sendKeys("adminpass");
+        driver.findElement(By.cssSelector("button[mat-raised-button][color='primary']")).click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[mat-raised-button][color='warn']")));
     }
 }

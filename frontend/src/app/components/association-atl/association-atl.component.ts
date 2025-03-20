@@ -1,12 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgForOf, NgIf } from '@angular/common';
 import { DisciplineService } from '../../services/discipline.service';
-import { Discipline } from '../../models/discipline.model';
-import { Page } from '../../models/page.model';
-import {HttpClientModule} from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatMenuModule } from '@angular/material/menu';
+import { NewDisciplineDialogComponent } from '../../modals/NewDisciplineDialogComponent.modal';
 
 @Component({
   selector: 'app-association-atl',
@@ -15,28 +23,43 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [
     FormsModule,
-    NgIf,
+    ReactiveFormsModule,
     NgForOf,
+    NgIf,
+    MatDialogModule,
+    MatCardModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatIconModule,
+    MatGridListModule,
+    MatToolbarModule,
+    MatPaginatorModule,
+    MatMenuModule,
     RouterLink,
     RouterOutlet,
-    HttpClientModule
-  ]
+  ],
 })
 export class AssociationAtlComponent implements OnInit {
-  isModalOpen: boolean = false;
-  disciplines: Discipline[] = [];
+  disciplines: any[] = [];
   currentPage: number = 1;
-  itemsPerPage: number = 6;
   totalPages: number = 1;
   isLoggedIn: boolean = false;
-
-  newDiscipline: Discipline = { id: 0, name: '', description: '', imageLink: '', coaches: [] };
+  disciplineForm: FormGroup;
 
   constructor(
     private disciplineService: DisciplineService,
+    public dialog: MatDialog,
+    private authService: AuthService,
     private router: Router,
-    private authService: AuthService
-  ) {}
+    private fb: FormBuilder
+  ) {
+    this.disciplineForm = this.fb.group({
+      name: ['', Validators.required],
+      schedule: ['', Validators.required],
+      imageLink: ['', Validators.required]
+    });
+  }
 
   ngOnInit(): void {
     this.authService.user.subscribe(user => {
@@ -46,13 +69,21 @@ export class AssociationAtlComponent implements OnInit {
   }
 
   loadDisciplines(): void {
-    this.disciplineService.getAll(this.currentPage - 1, this.itemsPerPage).subscribe(
-      (response: Page<Discipline>) => {
-        this.disciplines = response.content;
-        this.totalPages = response.totalPages;
+    this.disciplineService.getAll(this.currentPage - 1).subscribe(
+      response => {
+        console.log('Respuesta de la API:', response);
+        if (response && response.content) {
+          this.disciplines = response.content;
+        } else if (Array.isArray(response)) {
+          this.disciplines = response;
+        } else {
+          console.warn('Estructura inesperada en la respuesta de la API', response);
+        }
+        console.log('Disciplinas cargadas:', this.disciplines);
+        this.totalPages = response.totalPages || 1;
       },
-      (error) => {
-        console.error('Error al cargar las disciplinas:', error);
+      error => {
+        console.error('Error al cargar disciplinas:', error);
       }
     );
   }
@@ -71,68 +102,46 @@ export class AssociationAtlComponent implements OnInit {
     }
   }
 
-  confirmDelete(disciplineId: number): void {
-    if (!this.isLoggedIn) {
-      alert('No tienes permiso para realizar esta acción.');
-      return;
-    }
-    if (confirm('¿Estás seguro de que deseas eliminar esta disciplina?')) {
-      this.deleteDiscipline(disciplineId);
+  goToDetails(id: number): void {
+    this.router.navigate([`/discipline-details/${id}`]);
+  }
+
+  confirmDelete(id: number): void {
+    if (confirm('¿Estás seguro de eliminar esta disciplina?')) {
+      this.disciplineService.delete(id).subscribe(() => this.loadDisciplines());
     }
   }
 
-  deleteDiscipline(disciplineId: number): void {
-    this.disciplineService.delete(disciplineId).subscribe(
-      () => {
-        alert('Disciplina eliminada correctamente');
-        this.loadDisciplines();
-      },
-      (error) => {
-        console.error('Error al eliminar la disciplina:', error);
+  formatCoaches(coaches: any[]): string {
+    return coaches.map(coach => coach.name).join(', ');
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(NewDisciplineDialogComponent, {
+      width: '400px',
+      data: { disciplineForm: this.disciplineForm }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'save') {
+        this.createDiscipline();
       }
-    );
+    });
   }
 
-  goToDetails(disciplineId: number): void {
-    this.router.navigate(['/discipline-details', disciplineId]);
-  }
-
-  openModal(): void {
-    this.isModalOpen = true;
-  }
-
-  closeModal(): void {
-    this.isModalOpen = false;
-  }
-
-  saveDiscipline(): void {
-    if (!this.isLoggedIn) {
-      alert('No tienes permiso para realizar esta acción.');
-      return;
-    }
-    if (this.newDiscipline.name && this.newDiscipline.description && this.newDiscipline.imageLink) {
-      this.disciplineService.create(this.newDiscipline).subscribe(
+  createDiscipline(): void {
+    if (this.disciplineForm.valid) {
+      this.disciplineService.create(this.disciplineForm.value).subscribe(
         () => {
-          alert('Nueva disciplina agregada correctamente');
-          this.closeModal();
+          alert('Disciplina creada exitosamente');
           this.loadDisciplines();
         },
         (error) => {
-          console.error('Error al agregar la disciplina:', error);
+          console.error('Error al crear disciplina:', error);
+          alert('Error al crear disciplina');
         }
       );
     } else {
-      alert('Por favor, complete todos los campos antes de guardar.');
-    }
-  }
-  formatCoaches(coaches: { firstName: string; lastName: string }[] | undefined): string {
-    return coaches ? coaches.map(coach => `${coach.firstName} ${coach.lastName}`).join(', ') : 'Sin entrenadores';
-  }
-
-  toggleMenu(): void {
-    const menu = document.getElementById('dropdown-menu');
-    if (menu) {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+      alert('Por favor, complete todos los campos requeridos');
     }
   }
 
@@ -141,10 +150,6 @@ export class AssociationAtlComponent implements OnInit {
   }
 
   logout() {
-    if(!this.isLoggedIn){
-      this.router.navigate(['/login']);
-    }
     this.authService.logout();
   }
-
 }

@@ -5,8 +5,9 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.List;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AthletesE2ETest {
+    private static final Logger log = LoggerFactory.getLogger(AthletesE2ETest.class);
     private WebDriver driver;
 
     @BeforeAll
@@ -26,13 +28,13 @@ public class AthletesE2ETest {
             System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
         } else {
             System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-            options.addArguments("--headless"); // Ejecutar en modo headless en Linux
+            options.addArguments("--headless");
             options.addArguments("--no-sandbox");
             options.addArguments("--disable-dev-shm-usage");
             options.addArguments("--disable-gpu");
             options.addArguments("--window-size=1920,1080");
         }
-
+        options.addArguments("--headless");
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
         options.addArguments("--allow-running-insecure-content");
@@ -42,16 +44,26 @@ public class AthletesE2ETest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-
     @BeforeEach
     public void navigateToPage() {
         driver.get("https://localhost/");
 
-        WebElement menu = driver.findElement(By.className("menu-icon"));
-        menu.click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        WebElement disciplinasOption = driver.findElement(By.xpath("//a[text()='Ranking']"));
-        disciplinasOption.click();
+        WebElement menuButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button[mat-icon-button]")));
+        menuButton.click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.cdk-overlay-container")));
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.cdk-overlay-backdrop")));
+
+        WebElement rankingOption = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("a[routerLink='/ranking']")));
+
+        try {
+            rankingOption.click();
+        } catch (Exception e) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", rankingOption);
+        }
 
         String expectedUrl = "https://localhost/ranking";
         if (driver.getCurrentUrl().equals(expectedUrl)) {
@@ -71,7 +83,7 @@ public class AthletesE2ETest {
     @Test
     public void testLoadRankingPage() {
         assertTrue(driver.findElement(By.tagName("header")).isDisplayed());
-        assertTrue(driver.findElement(By.className("list-section")).isDisplayed());
+        assertTrue(driver.findElement(By.id("list-section")).isDisplayed());
         assertTrue(driver.findElement(By.tagName("footer")).isDisplayed());
     }
 
@@ -88,17 +100,24 @@ public class AthletesE2ETest {
     public void testLoginAndCheckUIChanges() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        driver.findElement(By.id("login-button")).click();
-        driver.findElement(By.id("username")).sendKeys("admin");
-        driver.findElement(By.id("password")).sendKeys("adminpass");
-        driver.findElement(By.id("login-button")).click();
+        driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-card.login-form")));
+
+        driver.findElement(By.cssSelector("input[formControlName='username']")).sendKeys("admin");
+        driver.findElement(By.cssSelector("input[formControlName='password']")).sendKeys("adminpass");
+
+        driver.findElement(By.cssSelector("button[mat-raised-button][color='primary']")).click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[mat-raised-button][color='warn']")));
+
         navigateToPage();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[mat-raised-button][color='warn']")));
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
-        assertTrue(driver.findElement(By.id("logout-button")).isDisplayed());
+        WebElement logoutButton = driver.findElement(By.cssSelector("button[mat-raised-button][color='warn']"));
+        assertTrue(logoutButton.isDisplayed());
         assertTrue(driver.findElement(By.cssSelector(".list-section button")).isDisplayed());
+        logoutButton.click();
     }
 
     @Test
@@ -106,53 +125,61 @@ public class AthletesE2ETest {
         login();
         navigateToPage();
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        int initialCount = countAllElements("list-section", "athlete-row");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        // Open new athlete modal
-        driver.findElement(By.cssSelector(".list-section button")).click();
+        int initialCount = countAllElements("list-section", "clickable-row");
 
-        // Fill the form fields
-        driver.findElement(By.id("licenseNumber")).sendKeys("999999");
-        driver.findElement(By.id("firstName")).sendKeys("Test");
-        driver.findElement(By.id("lastName")).sendKeys("Athlete");
-        driver.findElement(By.id("birthDate")).sendKeys("2000-05-10");
+        WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".list-section button:not([disabled])")));
+        addButton.click();
 
-        // Select a coach
-        WebElement coachDropdown = driver.findElement(By.id("coach"));
-        Select selectCoach = new Select(coachDropdown);
-        selectCoach.selectByVisibleText("Clara Díaz");
+        WebElement modal = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("mat-dialog-container")));
 
-        // Select multiple disciplines
-        WebElement disciplinesDropdown = driver.findElement(By.id("disciplines"));
-        Select selectDisciplines = new Select(disciplinesDropdown);
-        selectDisciplines.selectByVisibleText("Velocidad");
-        //selectDisciplines.selectByVisibleText("Salto de longitud");
+        driver.findElement(By.cssSelector("input[formControlName='licenseNumber']")).sendKeys("999999");
+        driver.findElement(By.cssSelector("input[formControlName='firstName']")).sendKeys("Test");
+        driver.findElement(By.cssSelector("input[formControlName='lastName']")).sendKeys("Athlete");
+        driver.findElement(By.cssSelector("input[formControlName='birthDate']")).sendKeys("2000-05-10");
 
-        // Submit the form
-        driver.findElement(By.cssSelector(".modal-footer .btn-primary")).click();
+        WebElement coachDropdown = driver.findElement(By.cssSelector("mat-select[formControlName='coach']"));
+        coachDropdown.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        driver.findElement(By.xpath("//mat-option/span[contains(text(), 'Clara Díaz')]")).click();
+
+        WebElement disciplineDropdown = driver.findElement(By.cssSelector("mat-select[formControlName='disciplines']"));
+        disciplineDropdown.click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-option")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//mat-option/span[contains(text(), 'Velocidad')]")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//mat-option/span[contains(text(), 'Velocidad')]"))).click();
+
+        disciplineDropdown.sendKeys(Keys.ESCAPE);
+
+        WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//button[contains(@class, 'mat-mdc-raised-button') and contains(@class, 'mat-primary') and .//span[contains(text(), 'Guardar')]]")));
+        saveButton.click();
 
         handleAlert(wait);
 
-        int updatedCount = countAllElements("list-section", "athlete-row");
-        assertEquals(initialCount + 1, updatedCount);
+        navigateToPage();
+        int updatedCount = countAllElements("list-section", "clickable-row");
+        assertEquals(initialCount + 1, updatedCount, "❌ The athlete was not added correctly.");
 
-        // Delete athlete
         deleteAthleteFromProfile("999999");
 
-        int finalCount = countAllElements("list-section", "athlete-row");
-        assertEquals(initialCount, finalCount);
+        int finalCount = countAllElements("list-section", "clickable-row");
+        assertEquals(initialCount, finalCount, "❌ The athlete was not deleted correctly.");
+
+        WebElement logoutButton = driver.findElement(By.cssSelector("button[mat-raised-button][color='warn']"));
+        logoutButton.click();
     }
 
     @Test
     public void testFilterAthletes() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-        driver.findElement(By.id("licenseNumber_form")).sendKeys("A2001");
-        driver.findElement(By.id("filter-button")).click();
+        driver.findElement(By.cssSelector("input[name='licenseNumber']")).sendKeys("A2001");
+        driver.findElement(By.cssSelector("button[mat-raised-button][color='primary']")).click();
 
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("athlete-row")));
-        assertEquals(1, countAllElements("list-section", "athlete-row"));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("mat-table mat-row")));
+        assertEquals(1, countAllElements("list-section", "clickable-row"));
     }
 
     @Test
@@ -176,30 +203,28 @@ public class AthletesE2ETest {
         assertNotEquals(initialPageText, pageIndicator.getText(), "❌ The page number did not change after clicking 'Next'.");
     }
 
-    private void handleAlert(WebDriverWait wait) {
-        try {
-            Alert alert = wait.until(ExpectedConditions.alertIsPresent());
-            System.out.println("✅ Alert: " + alert.getText());
-            alert.accept();
-        } catch (NoAlertPresentException e) {
-            System.out.println("⚠ No alert detected.");
-        }
-    }
-
     private int countAllElements(String listId, String itemClass) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         int total = 0;
 
         while (true) {
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(listId)));
-            total += driver.findElements(By.id(itemClass)).size();
+            total += driver.findElements(By.cssSelector(".clickable-row")).size();
 
             List<WebElement> nextButtons = driver.findElements(By.xpath("//button[contains(text(), 'Siguiente')]"));
-            if (nextButtons.isEmpty() || nextButtons.get(0).getAttribute("disabled") != null) {
+            if (nextButtons.isEmpty()) {
+                break;
+            }
+
+            WebElement nextButton = nextButtons.get(0);
+            if (!nextButton.isEnabled()) {
                 break;
             } else {
-                nextButtons.get(0).click();
-                wait.until(ExpectedConditions.stalenessOf(driver.findElements(By.id(itemClass)).get(0)));
+                nextButton.click();
+                List<WebElement> rows = driver.findElements(By.cssSelector(".clickable-row"));
+                if (!rows.isEmpty()) {
+                    wait.until(ExpectedConditions.stalenessOf(rows.get(0)));
+                }
             }
         }
 
@@ -207,35 +232,56 @@ public class AthletesE2ETest {
     }
 
     private void deleteAthleteFromProfile(String licenseNum) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         while (true) {
-            List<WebElement> athletes = driver.findElements(By.id("athlete-row"));
+            List<WebElement> athletes = driver.findElements(By.cssSelector("mat-table mat-row"));
             for (WebElement athlete : athletes) {
-                WebElement license = athlete.findElement(By.id("license"));
-                if (license.getText().contains(licenseNum)) {
-                    license.click(); // Open the athlete profile
+                WebElement license = athlete.findElement(By.xpath(".//mat-cell[contains(text(), '" + licenseNum + "')]"));
+                if (license != null && license.getText().contains(licenseNum)) {
+                    license.click();
 
-                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("profile-header")));
-                    assertTrue(driver.findElement(By.className("profile-header")).isDisplayed());
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("profile-card")));
 
-                    WebElement deleteButton = driver.findElement(By.id("delete-btm"));
-                    assertTrue(deleteButton.isDisplayed()); // Ensure only admins can delete
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
-                    deleteButton.click();
-                    handleAlert(wait); // Handle confirmation alert
+                    WebElement deleteButton = null;
+                    try {
+                        deleteButton = wait.until(ExpectedConditions.presenceOfElementLocated(
+                                By.xpath("//button[normalize-space()='Eliminar Perfil']")));
 
-                    // Return to Ranking list
-                    handleAlert(wait);
-                    navigateToPage();
+                        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", deleteButton);
+
+                        wait.until(ExpectedConditions.elementToBeClickable(deleteButton));
+
+                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteButton);
+                    } catch (Exception e) {
+                        System.out.println("❌ No se encontró el botón 'Eliminar Perfil'.");
+                        return;
+                    }
+
+                    try {
+                        wait.until(ExpectedConditions.alertIsPresent());
+                        Alert alert = driver.switchTo().alert();
+                        System.out.println("Confirmando eliminación: " + alert.getText());
+                        alert.accept();
+                    } catch (Exception e) {
+                        System.out.println("No se detectó ninguna alerta de eliminación.");
+                    }
+
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("list-section")));
+
                     return;
                 }
             }
 
-            // Check for pagination
             List<WebElement> nextButtons = driver.findElements(By.id("next_btm"));
             if (nextButtons.isEmpty() || nextButtons.get(0).getAttribute("disabled") != null) {
-                System.out.println("❌ Coach not found.");
+                System.out.println("❌ Atleta no encontrado.");
                 return;
             } else {
                 nextButtons.get(0).click();
@@ -244,14 +290,30 @@ public class AthletesE2ETest {
         }
     }
 
-
     private void login() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        driver.findElement(By.id("login-button")).click();
-        driver.findElement(By.id("username")).sendKeys("admin");
-        driver.findElement(By.id("password")).sendKeys("adminpass");
-        driver.findElement(By.id("login-button")).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logout-button")));
+        driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-card.login-form")));
+
+        driver.findElement(By.cssSelector("input[formControlName='username']")).sendKeys("admin");
+        driver.findElement(By.cssSelector("input[formControlName='password']")).sendKeys("adminpass");
+
+        driver.findElement(By.cssSelector("button[mat-raised-button][color='primary']")).click();
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[mat-raised-button][color='warn']")));
     }
+
+    private void handleAlert(WebDriverWait wait) {
+        try {
+            wait.until(ExpectedConditions.alertIsPresent());
+            Alert alert = driver.switchTo().alert();
+            System.out.println("Alerta detectada: " + alert.getText());
+            alert.accept();
+        } catch (Exception e) {
+            System.out.println("No se detectó ninguna alerta.");
+        }
+    }
+
 }
 

@@ -1,24 +1,37 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import { Discipline } from '../../models/discipline.model';
+import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgForOf, NgIf } from '@angular/common';
-import {HttpClientModule} from '@angular/common/http';
-import { EventService } from '../../services/event.service';
+import { Discipline } from '../../models/discipline.model';
 import { DisciplineService } from '../../services/discipline.service';
 import { AuthService } from '../../services/auth.service';
+import { EventService } from '../../services/event.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { EventCreate } from '../../models/event-create.model';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-new-event-form',
   templateUrl: './new-event-form.component.html',
   standalone: true,
   imports: [
-    NgIf,
     ReactiveFormsModule,
-    NgForOf,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatInputModule,
+    MatSelectModule,
+    MatMenuModule,
+    MatIconModule,
+    MatCardModule,
     RouterLink,
     RouterOutlet,
-    HttpClientModule
+    NgForOf,
+    NgIf
   ],
   styleUrls: ['./new-event-form.component.css']
 })
@@ -29,11 +42,11 @@ export class NewEventFormComponent implements OnInit {
   isLoggedIn: boolean = false;
 
   constructor(
-    private fb: FormBuilder,
-    private eventService: EventService,
     private disciplineService: DisciplineService,
-    private router: Router,
-    private authService: AuthService
+    private eventService: EventService,
+    private authService: AuthService,
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.eventForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -46,97 +59,78 @@ export class NewEventFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.user.subscribe(user => {
-      this.isLoggedIn = this.authService.isAuthenticated();
-    });    console.log("isLoggedIn:",this.authService.isAuthenticated());
+    this.isLoggedIn = this.authService.isAuthenticated();
+
     if (!this.isLoggedIn) {
       alert('Debes iniciar sesión para crear un evento.');
       this.router.navigate(['/login']);
     }
 
-    if (!this.authService.isAdmin() && !this.authService.getCurrentUser()?.roles.includes('USER')) {
-      alert('No tienes permisos para crear eventos.');
-      this.router.navigate(['/eventos']); // Redirigir a la lista de eventos
-      return;
-    }
-
-    console.log("llegas hasta el new event");
     this.loadDisciplines();
   }
 
   loadDisciplines(): void {
-    this.disciplineService.getAll(0, 100, 'name').subscribe(
-      (response) => {
-        this.disciplines = response.content;
-      },
-      (error) => {
-        console.error('Error al cargar las disciplinas', error);
-        this.errorMessage = 'Error al cargar las disciplinas. Inténtalo de nuevo más tarde.';
+    this.disciplineService.getAll(0, 100, 'name').subscribe({
+      next: (response) => (this.disciplines = response.content),
+      error: (error) => {
+        console.error('Error al cargar las disciplinas:', error);
+        this.errorMessage = 'Error al cargar disciplinas. Intenta más tarde.';
       }
-    );
+    });
   }
 
   onSubmit(): void {
-    if (!this.isLoggedIn) {
-      alert('No tienes permiso para crear eventos.');
-      return;
-    }
     if (this.eventForm.invalid) {
-      this.errorMessage = 'Por favor, rellene el formulario correctamente.';
+      this.errorMessage = 'Por favor, rellena el formulario correctamente.';
       return;
     }
 
     const formValue = this.eventForm.value;
-    const newEvent = {
-      ...formValue,
-      disciplines: formValue.disciplines.map((id: number) => ({ id }))
+
+    const newEvent:EventCreate = {
+      name: formValue.name!,
+      imageUrl: formValue.imageUrl!,
+      mapUrl: formValue.mapUrl!,
+      date: formValue.date!,
+      isOrganizedByClub: formValue.organizedByClub || false,
+      disciplines: formValue.disciplines!.map((id: number) => ({ id }))
     };
 
-    this.eventService.create(newEvent).subscribe(
-      () => {
-        alert('Evento creado correctamente!');
-        this.router.navigate(['/events']);
+    this.eventService.create(newEvent).subscribe({
+      next: () => {
+        alert('Evento creado correctamente');
+        this.router.navigate(['/eventos']);
       },
-      (error) => {
-        console.error('Error creando evento:', error);
-        this.errorMessage = 'Error creando evento. Intentalo de nuevo.';
+      error: (error) => {
+        console.error('Error al crear evento:', error);
+        this.errorMessage = 'Error creando evento, inténtalo más tarde.';
       }
-    );
+    });
   }
 
+
   onCancel(): void {
-    if (confirm('Quieres cancelar la creacion de este evento?')) {
-      this.router.navigate(['/events']);
+    if (confirm('¿Quieres cancelar la creación de este evento?')) {
+      this.router.navigate(['/eventos']);
     }
   }
 
   isInvalid(controlName: string): boolean {
     const control = this.eventForm.get(controlName);
-    return control ? control.invalid && control.dirty : false;
+    return !!control && control.invalid && (control.dirty || control.touched);
   }
 
-  // Helper methods to get form controls
-  get name() {
-    return this.eventForm.get('name');
+
+  login() {
+    this.router.navigate(['/login']);
   }
 
-  get imageUrl() {
-    return this.eventForm.get('imageUrl');
+  logout(){
+    this.authService.logout();
   }
 
-  get mapUrl() {
-    return this.eventForm.get('mapUrl');
+  get isFormInvalid(): boolean {
+    return this.eventForm.invalid;
   }
 
-  get date() {
-    return this.eventForm.get('date');
-  }
-
-  get organizedByClub() {
-    return this.eventForm.get('organizedByClub');
-  }
-
-  get selectedDisciplines() {
-    return this.eventForm.get('disciplines');
-  }
 }

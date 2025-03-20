@@ -5,31 +5,57 @@ import { DisciplineService } from '../../services/discipline.service';
 import { Athlete } from '../../models/athlete.model';
 import { Coach } from '../../models/coach.model';
 import { Discipline } from '../../models/discipline.model';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NgForOf, NgIf} from '@angular/common';
-import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {HttpClientModule} from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatMenuModule } from '@angular/material/menu';
+import { CommonModule, NgIf} from '@angular/common';
+import { NewAthleteDialogComponent } from '../../modals/NewAthleteDialogComponent.modal';
 
 @Component({
   selector: 'app-ranking',
   templateUrl: './ranking.component.html',
-  imports: [
-    NgIf,
-    NgForOf,
-    RouterOutlet,
-    ReactiveFormsModule,
-    FormsModule,
-    RouterLink,
-    HttpClientModule
-  ],
+  styleUrls: ['./ranking.component.css'],
   standalone: true,
-  styleUrls: ['./ranking.component.css']
+  imports: [
+    CommonModule,
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatCardModule,
+    MatDialogModule,
+    MatSortModule,
+    MatCheckboxModule,
+    MatMenuModule,
+    RouterOutlet,
+    RouterLink
+  ],
 })
 export class RankingComponent implements OnInit {
-  filters = {firstName: '', lastName: '', discipline: '', licenseNumber: '', coach: ''};
-  paginatedAtletas: Athlete[] = [];
+  filters = { firstName: '', lastName: '', discipline: '', licenseNumber: '', coach: '' };
+  dataSource = new MatTableDataSource<Athlete>();
+  displayedColumns: string[] = ['licenseNumber', 'firstName', 'lastName', 'disciplines', 'coach'];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
@@ -43,7 +69,7 @@ export class RankingComponent implements OnInit {
     private athleteService: AthleteService,
     private coachService: CoachService,
     private disciplineService: DisciplineService,
-    private modalService: NgbModal,
+    private dialog: MatDialog,
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
@@ -54,38 +80,26 @@ export class RankingComponent implements OnInit {
       lastName: ['', Validators.required],
       birthDate: ['', Validators.required],
       coach: ['', Validators.required],
-      disciplines: [[], Validators.required]
+      disciplines: [[], Validators.required],
     });
   }
 
   ngOnInit(): void {
-    this.authService.user.subscribe(user => {
+    this.authService.user.subscribe((user) => {
       this.isAdmin = this.authService.isAdmin();
       this.isLoggedIn = this.authService.isAuthenticated();
     });
-    this.loadAtletas();
+    this.loadAthletes();
     this.loadCoaches();
     this.loadDisciplines();
   }
 
-  loadAtletas(): void {
-    this.athleteService.getAll(this.currentPage - 1, this.itemsPerPage).subscribe(
-      response => {
-        this.paginatedAtletas = response.content;
-        this.totalPages = response.totalPages;
-      },
-      error => {
-        console.error('Error al cargar atletas:', error);
-      }
-    );
-  }
-
   loadCoaches(): void {
     this.coachService.getAll().subscribe(
-      response => {
+      (response) => {
         this.coaches = response.content;
       },
-      error => {
+      (error) => {
         console.error('Error al cargar entrenadores:', error);
       }
     );
@@ -93,63 +107,49 @@ export class RankingComponent implements OnInit {
 
   loadDisciplines(): void {
     this.disciplineService.getAll().subscribe(
-      response => {
+      (response) => {
         this.disciplines = response.content;
       },
-      error => {
+      (error) => {
         console.error('Error al cargar disciplinas:', error);
       }
     );
   }
 
-  applyFilter(): void {
-    this.currentPage = 1;
-    this.athleteService.getFiltered(this.filters, this.currentPage - 1, this.itemsPerPage).subscribe(
-      response => {
-        this.paginatedAtletas = response.content;
+  loadAthletes(): void {
+    this.athleteService.getAll(this.currentPage - 1, this.itemsPerPage).subscribe(
+      (response) => {
+        this.dataSource.data = response.content;
         this.totalPages = response.totalPages;
       },
-      error => {
-        console.error('Error al filtrar atletas:', error);
+      (error) => {
+        console.error('Error al cargar atletas:', error);
       }
     );
-  }
-
-
-  prevPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.loadAtletas();
-    }
-  }
-
-  nextPage(): void {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-      this.loadAtletas();
-    }
   }
 
   formatDisciplines(disciplines: Discipline[] | undefined): string {
     return disciplines ? disciplines.map(d => d.name).join(', ') : '';
   }
 
-  openNewAthleteModal(content: any): void {
+  openNewAthleteDialog(): void {
     if (!this.isAdmin) {
       alert('Solo los administradores pueden crear atletas.');
       return;
     }
-    this.athleteForm.reset();
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then(
-      result => {
-        if (result === 'Save') {
-          this.createAthlete();
-        }
-      },
-      reason => {
-        console.log('Modal dismissed:', reason);
+    const dialogRef = this.dialog.open(NewAthleteDialogComponent, {
+      width: '400px',
+      data: {
+        athleteForm: this.athleteForm,
+        coaches: this.coaches,
+        disciplines: this.disciplines
       }
-    );
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'save') {
+        this.createAthlete();
+      }
+    });
   }
 
   createAthlete(): void {
@@ -160,19 +160,17 @@ export class RankingComponent implements OnInit {
     if (this.athleteForm.valid) {
       const formValue = this.athleteForm.value;
       const disciplines = formValue.disciplines.map((id: number) => ({ id }));
-
       const newAthlete: Athlete = {
         ...formValue,
         coach: { licenseNumber: formValue.coach },
-        disciplines: disciplines
+        disciplines: disciplines,
       };
-
       this.athleteService.create(newAthlete).subscribe(
-        response => {
+        () => {
           alert('Atleta creado exitosamente');
-          this.loadAtletas();
+          this.loadAthletes();
         },
-        error => {
+        (error) => {
           console.error('Error al crear atleta:', error);
           alert('Error al crear atleta');
         }
@@ -182,23 +180,45 @@ export class RankingComponent implements OnInit {
     }
   }
 
+  applyFilter(): void {
+    this.currentPage = 1;
+    this.athleteService.getFiltered(this.filters, this.currentPage - 1, this.itemsPerPage).subscribe(
+      (response) => {
+        this.dataSource.data = response.content;
+        this.totalPages = response.totalPages;
+      },
+      (error) => {
+        console.error('Error al filtrar atletas:', error);
+      }
+    );
+  }
 
-  toggleMenu(): void {
-    const menu = document.getElementById('dropdown-menu');
-    if (menu) {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadAthletes();
     }
   }
 
-  login() {
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadAthletes();
+    }
+  }
+
+  login(): void {
     this.router.navigate(['/login']);
   }
 
-  logout() {
-    if(!this.isLoggedIn){
-      this.router.navigate(['/login']);
-    }
+  logout(): void {
     this.authService.logout();
   }
 
+
+  goToAthleteProfile(licenseNumber: String) {
+    if (licenseNumber) {
+      this.router.navigate(['/profile', 'athlete', licenseNumber]);
+    }
+  }
 }

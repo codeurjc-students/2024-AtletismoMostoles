@@ -3,58 +3,39 @@ body {
   font-family: Arial, sans-serif;
   color: #333;
 }
+
 header {
   background-color: #007f00;
   color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  padding: 15px 25px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
+
 header .logo {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
   display: flex;
   align-items: center;
 }
+
 header .logo img {
-  margin-right: 10px;
+  margin-right: 12px;
+  height: 50px;
 }
+
 nav {
   display: flex;
-  gap: 22px;
+  gap: 25px;
 }
+
 nav a {
   color: white;
   text-decoration: none;
-  font-size: 25px;
-}
-.dropdown {
-  display: none;
-  flex-direction: column;
-  position: absolute;
-  top: 60px;
-  right: 20px;
-  background-color: #02bd12;
-  padding: 10px;
-  border-radius: 5px;
-}
-.dropdown a {
-  margin-bottom: 10px;
-  color: #FFFFFF;
-}
-.menu-icon {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  cursor: pointer;
-}
-.menu-icon span {
-  display: block;
-  height: 4px;
-  width: 25px;
-  background-color: white;
-  margin: 5px 0;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 section {
@@ -66,89 +47,116 @@ section {
   color: white;
   text-align: center;
 }
+
 .section-1 .overlay {
   background-color: rgba(0, 127, 0, 0.7);
   padding: 50px;
   display: inline-block;
-  font-size: 35px;
+  font-size: 36px;
+  border-radius: 10px;
 }
+
+.section-2 {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  background-color: #4d4d4d;
+  padding: 40px;
+}
+
+.filter-section {
+  width: 30%;
+  padding: 20px;
+  background-color: rgba(2, 189, 18, 0.76);
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(117, 27, 27, 0.1);
+}
+.filter-section mat-form-field {
+  width: 100%;
+}
+
+.filter-section input, .filter-section select {
+  font-size: 16px;
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 10px;
+}
+
+.list-section {
+  width: 65%;
+  padding: 20px;
+  background-color: #7edc87;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.list-section table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 35px;
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.clickable-row:hover {
+  background-color: rgba(0, 127, 0, 0.4);
+}
+
+.clickable-row td {
+  padding: 15px;
+  border-bottom: 1px solid #b61e1e;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #b61e1e;
+}
+
+th {
+  background-color: #007f00;
+  color: white;
+  font-weight: bold;
+}
+
+.pagination-controls {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.pagination-controls button {
+  margin: 0 5px;
+  padding: 8px 15px;
+  font-size: 14px;
+  background-color: #007f00;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: rgb(0, 126, 1);
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  object-position: center;
+}
+
 footer {
   background-color: #007f00;
   color: white;
   text-align: center;
   padding: 20px;
-}
-.section-2{
-  background-color: rgb(37, 128, 150);
-}
-.section-2 .filter-section{
-  width: 30%;
-  padding: 20px;
-  background-color: rgb(37, 128, 150);
-  font-size: 20px;
-}
-.filter-section input {
-  font-size:15px;
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  background-color: rgb(103, 197, 227);
-}
-.filter-section button{
-  margin-top: 15px;
-}
-.list-section{
-  margin-left: 30px;
-  font-size: 20px;
-  width: 70%;
-  padding: 20px;
-}
-.list-section ul {
-  list-style: none;
-  padding: 0;
-}
-.pagination-controls {
-  margin-top: 15px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-th, td {
-  border: 3px solid #130002;
-  text-align: left;
-  padding: 8px;
-}
-th {
-  background-color: #02bd12;
-  font-weight: bold;
-}
-.pagination-controls {
-  margin-top: 10px;
-  text-align: center;
-}
-.pagination-controls button {
-  margin: 0 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-.LogSection button{
-  padding: 10px 20px;
-  background-color: #26e73f;
-  color: #130002;
-  cursor: pointer;
-  font-size: 16px;
-  border-radius: 15px;
-}
-button {
   margin-top: 20px;
-  margin-left: 20px;
-  padding: 10px 20px;
-  background-color: #02bd12;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 16px;
 }

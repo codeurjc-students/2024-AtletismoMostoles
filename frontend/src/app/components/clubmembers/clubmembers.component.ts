@@ -3,35 +3,59 @@ import { CoachService } from '../../services/coach.service';
 import { DisciplineService } from '../../services/discipline.service';
 import { Coach } from '../../models/coach.model';
 import { Discipline } from '../../models/discipline.model';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {NgForOf, NgIf} from '@angular/common';
-import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import {HttpClientModule} from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { CommonModule, NgIf} from '@angular/common';
+import { NewCoachDialogComponent } from '../../modals/NewCoachDialogComponent.modal';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSortModule } from '@angular/material/sort';
 
 @Component({
   selector: 'app-clubmembers',
   templateUrl: './clubmembers.component.html',
+  styleUrls: ['./clubmembers.component.css'],
   standalone: true,
   imports: [
-    FormsModule,
+    CommonModule,
     NgIf,
-    NgForOf,
-    RouterLink,
+    FormsModule,
     ReactiveFormsModule,
-    RouterOutlet,
-    HttpClientModule
+    MatPaginatorModule,
+    MatTableModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatCardModule,
+    MatDialogModule,
+    MatMenuModule,
+    MatSortModule,
+    RouterLink,
+    RouterOutlet
   ],
-  styleUrls: ['./clubmembers.component.css']
 })
 export class ClubMembersComponent implements OnInit {
-  filters = { firstName: '', lastName: '', licenseNumber:'', discipline:'' };
-  coaches: Coach[] = [];
-  disciplines: Discipline[] = [];
+  filters = { firstName: '', lastName: '', licenseNumber: '', discipline: '' };
+  dataSource = new MatTableDataSource<Coach>();
+  displayedColumns: string[] = ['licenseNumber', 'firstName', 'lastName', 'disciplines'];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
+  disciplines: Discipline[] = [];
   coachForm: FormGroup;
   isAdmin: boolean = false;
   isLoggedIn: boolean = false;
@@ -39,7 +63,7 @@ export class ClubMembersComponent implements OnInit {
   constructor(
     private coachService: CoachService,
     private disciplineService: DisciplineService,
-    private modalService: NgbModal,
+    private dialog: MatDialog,
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
@@ -53,7 +77,7 @@ export class ClubMembersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.user.subscribe(user => {
+    this.authService.user.subscribe((user) => {
       this.isAdmin = this.authService.isAdmin();
       this.isLoggedIn = this.authService.isAuthenticated();
     });
@@ -63,11 +87,11 @@ export class ClubMembersComponent implements OnInit {
 
   loadCoaches(): void {
     this.coachService.getAll(this.currentPage - 1, this.itemsPerPage).subscribe(
-      response => {
-        this.coaches = response.content;
+      (response) => {
+        this.dataSource.data = response.content;
         this.totalPages = response.totalPages;
       },
-      error => {
+      (error) => {
         console.error('Error al cargar entrenadores:', error);
       }
     );
@@ -75,10 +99,10 @@ export class ClubMembersComponent implements OnInit {
 
   loadDisciplines(): void {
     this.disciplineService.getAll().subscribe(
-      response => {
+      (response) => {
         this.disciplines = response.content;
       },
-      error => {
+      (error) => {
         console.error('Error al cargar disciplinas:', error);
       }
     );
@@ -87,16 +111,56 @@ export class ClubMembersComponent implements OnInit {
   applyFilters(): void {
     this.currentPage = 1;
     this.coachService.getFiltered(this.filters, this.currentPage - 1, this.itemsPerPage).subscribe(
-      response => {
-        this.coaches = response.content;
+      (response) => {
+        this.dataSource.data = response.content;
         this.totalPages = response.totalPages;
       },
-      error => {
+      (error) => {
         console.error('Error al filtrar entrenadores:', error);
       }
     );
   }
-
+  openNewCoachDialog(): void {
+    if (!this.isAdmin) {
+      alert('Solo los administradores pueden crear entrenadores.');
+      return;
+    }
+    const dialogRef = this.dialog.open(NewCoachDialogComponent, {
+      width: '400px',
+      data: { coachForm: this.coachForm, disciplines: this.disciplines }
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'save') {
+        this.createCoach();
+      }
+    });
+  }
+  createCoach(): void {
+    if (!this.isAdmin) {
+      alert('Solo los administradores pueden crear entrenadores.');
+      return;
+    }
+    if (this.coachForm.valid) {
+      const formValue = this.coachForm.value;
+      const disciplines = formValue.disciplines.map((id: number) => ({ id }));
+      const newCoach: Coach = {
+        ...formValue,
+        disciplines: disciplines
+      };
+      this.coachService.create(newCoach).subscribe(
+        () => {
+          alert('Entrenador creado exitosamente');
+          this.loadCoaches();
+        },
+        (error) => {
+          console.error('Error al crear entrenador:', error);
+          alert('Error al crear entrenador');
+        }
+      );
+    } else {
+      alert('Por favor, complete todos los campos requeridos');
+    }
+  }
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
@@ -115,65 +179,17 @@ export class ClubMembersComponent implements OnInit {
     return disciplines ? disciplines.map(d => d.name).join(', ') : '';
   }
 
-  openNewCoachModal(content: any): void {
-    this.coachForm.reset();
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
-      result => {
-        if (result === 'Save') {
-          this.createCoach();
-        }
-      },
-      reason => {
-        console.log('Modal dismissed:', reason);
-      }
-    );
-  }
-
-  createCoach(): void {
-    if (!this.isAdmin) {
-      alert('No tienes permiso para realizar esta acción.');
-      return;
-    }
-    if (this.coachForm.valid) {
-      const formValue = this.coachForm.value;
-      const disciplines = formValue.disciplines.map((id: number) => ({ id }));
-
-      const newCoach: Coach = {
-        ...formValue,
-        disciplines: disciplines
-      };
-
-      this.coachService.create(newCoach).subscribe(
-        response => {
-          alert('Entrenador creado exitosamente');
-          this.loadCoaches();
-        },
-        error => {
-          console.error('Error al crear entrenador:', error);
-          alert('Error al crear entrenador');
-        }
-      );
-    } else {
-      alert('Por favor, complete todos los campos requeridos');
-    }
-  }
-
-  toggleMenu(): void {
-    const menu = document.getElementById('dropdown-menu');
-    if (menu) {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    }
-  }
-
-  login() {
+  login(): void {
     this.router.navigate(['/login']);
   }
 
-  logout() {
-    if(!this.isLoggedIn){
-      this.router.navigate(['/login']);
-    }
+  logout(): void {
     this.authService.logout();
   }
 
+  goToCoachProfile(coach: Coach): void {
+    if (coach && coach.licenseNumber) {
+      this.router.navigate(['/profile', 'coach', coach.licenseNumber]);
+    }
+  }
 }

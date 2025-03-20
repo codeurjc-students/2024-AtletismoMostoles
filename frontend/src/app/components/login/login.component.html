@@ -1,35 +1,72 @@
 <header>
   <div class="logo">
-    <img src="/assets/images/logo.png" alt="logo">A.A Mostoles
+    <img src="/assets/images/logo.png" alt="logo"> A.A Mostoles
   </div>
   <nav>
-    <a routerLink="/">Inicio</a>
-    <a routerLink="/miembros">Miembros del Club</a>
-    <a routerLink="/ranking">Ranking</a>
-    <a routerLink="/eventos">Eventos</a>
-    <a routerLink="/calendario">Calendario</a>
+    <a mat-button routerLink="/">Inicio</a>
+    <a mat-button routerLink="/miembros">Miembros del Club</a>
+    <a mat-button routerLink="/ranking">Ranking</a>
+    <a mat-button routerLink="/eventos">Eventos</a>
+    <a mat-button routerLink="/calendario">Calendario</a>
   </nav>
+
+  <div class="LogSection">
+    <button mat-raised-button color="accent" *ngIf="!isLoggedIn" (click)="login()"> LogIn </button>
+    <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="logout()"> LogOut </button>
+  </div>
+
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <a mat-menu-item routerLink="/">Inicio</a>
+    <a mat-menu-item routerLink="/miembros">Miembros del Club</a>
+    <a mat-menu-item routerLink="/ranking">Ranking</a>
+    <a mat-menu-item routerLink="/eventos">Eventos</a>
+    <a mat-menu-item routerLink="/calendario">Calendario</a>
+    <a mat-menu-item routerLink="/disciplines">Disciplinas</a>
+    <a mat-menu-item routerLink="/login">Inicio de Sesión</a>
+  </mat-menu>
 </header>
 
-<main class="login-container">
-  <section class="login-form">
-    <h1>Iniciar Sesión</h1>
-    <form [formGroup]="loginForm" >
-      <div class="form-group">
-        <label for="username">Usuario</label>
-        <input type="text" id="username" formControlName="username" class="form-control" placeholder="Ingresa tu usuario">
-      </div>
-      <div class="form-group">
-        <label for="password">Contraseña</label>
-        <input type="password" id="password" formControlName="password" class="form-control" placeholder="Ingresa tu contraseña">
-      </div>
-      <button class="btn btn-primary" id="login-button" (click)="onSubmit()">Iniciar Sesión</button>
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
-      </div>
-    </form>
-  </section>
-</main>
+<div class="login-container">
+  <mat-card class="login-form">
+    <mat-card-header>
+      <mat-card-title>Iniciar Sesión</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Usuario</mat-label>
+          <input matInput formControlName="username">
+          <mat-error *ngIf="isInvalid('username')">
+            El usuario es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput formControlName="password" type="password">
+          <mat-error *ngIf="isInvalid('password')">
+            La contraseña es obligatoria.
+          </mat-error>
+        </mat-form-field>
+
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" (click)="onSubmit()">
+            Iniciar Sesión
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
 
 <footer>
   <div class="contact-info">
@@ -39,4 +76,5 @@
     </p>
   </div>
 </footer>
+
 <router-outlet></router-outlet>

@@ -14,6 +14,8 @@ header {
 header .logo {
   font-size: 24px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
 }
 nav {
   display: flex;
@@ -92,24 +94,6 @@ section {
 .section-3 {
   flex-direction: row-reverse;
 }
-button{
-  padding: 10px 20px;
-  background-color: #26e73f;
-  color: #130002;
-  cursor: pointer;
-  font-size: 16px;
-  border-radius: 15px;
-}
-.button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #ff7f00;
-  color: white;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  font-size: 16px;
-}
 .section-4 {
   display: flex;
   background-color: #007f00;
@@ -133,14 +117,6 @@ button{
 footer {
   background-color: #007f00;
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 20px;
-}
-
-footer div{
-  font-size: 20px;
-  padding-left: 100px;
-  gap: 100px;
+  text-align: center;
+  padding: 20px;
 }

@@ -1,78 +1,102 @@
-import { Component, OnInit } from '@angular/core';
-import {Router, RouterLink, RouterOutlet} from '@angular/router';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgForOf, NgIf } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
+import { LOCALE_ID } from '@angular/core';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event.model';
 import { Page } from '../../models/page.model';
-import {HttpClientModule} from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { MatDatepickerModule, MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatListModule } from '@angular/material/list';
+import localeEs from '@angular/common/locales/es';
 
-interface Day {
-  date: number;
-  prev: boolean;
-  next: boolean;
-  today: boolean;
-  hasEvent: boolean;
-}
+registerLocaleData(localeEs);
 
 @Component({
   selector: 'app-events-calendar',
   templateUrl: './events-calendar.component.html',
+  styleUrls: ['./events-calendar.component.css'],
   standalone: true,
   imports: [
-    NgClass,
-    NgForOf,
     FormsModule,
+    ReactiveFormsModule,
+    NgForOf,
     NgIf,
-    RouterOutlet,
+    DatePipe,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatCardModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatMenuModule,
+    MatListModule,
     RouterLink,
-    HttpClientModule
+    RouterOutlet
   ],
-  styleUrls: ['./events-calendar.component.css']
+  providers: [
+    DatePipe,
+    { provide: LOCALE_ID, useValue: 'es' }
+  ]
 })
-export class EventsCalendarComponent implements OnInit {
+export class EventsCalendarComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatCalendar) calendar!: MatCalendar<Date>;
   events: Event[] = [];
   filteredEvents: Event[] = [];
-  days: Day[] = [];
-  currentMonth: string = '';
-  currentYear: number = 0;
-  selectedDay: number = 0;
-  selectedDayName: string = '';
-  inputDate: string = '';
+  selectedDate: Date = new Date();
+  markedDates: Set<string> = new Set();
   isLoggedIn: boolean = false;
-
-  private today = new Date();
-  private months = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
-    'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-  ];
-
 
   constructor(
     private eventService: EventService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
-    this.currentMonth = this.months[this.today.getMonth()];
-    this.currentYear = this.today.getFullYear();
     this.authService.user.subscribe(user => {
       this.isLoggedIn = this.authService.isAuthenticated();
     });
     this.loadEvents();
   }
 
-  loadEvents(): void {
-    const startDate = new Date(this.currentYear, this.today.getMonth(), 1).toISOString().split('T')[0];
-    const endDate = new Date(this.currentYear, this.today.getMonth() + 1, 0).toISOString().split('T')[0];
+  ngAfterViewInit(): void {
+    this.calendar.stateChanges.subscribe(() => {
+      this.fetchEventsForMonth(this.calendar.activeDate);
+    });
+  }
 
-    this.eventService.getAll(0, 100, 'date', startDate, endDate).subscribe(
+  loadEvents(): void {
+    this.fetchEventsForMonth(this.selectedDate);
+  }
+
+  fetchEventsForMonth(date: Date): void {
+    const startDate = this.datePipe.transform(new Date(date.getFullYear(), date.getMonth(), 1), 'yyyy-MM-dd');
+    const endDate = this.datePipe.transform(new Date(date.getFullYear(), date.getMonth() + 1, 0), 'yyyy-MM-dd');
+
+    this.eventService.getAll(0, 100, 'date', startDate!, endDate!).subscribe(
       (response: Page<Event>) => {
         this.events = response.content;
-        this.initCalendar();
+        this.markEventsOnCalendar();
         this.filterEventsByDay();
+
+        setTimeout(() => {
+          console.log("🔄 Actualizando calendario...");
+          this.calendar.updateTodaysDate();
+        }, 100);
       },
       (error) => {
         console.error('Error al cargar eventos:', error);
@@ -80,74 +104,48 @@ export class EventsCalendarComponent implements OnInit {
     );
   }
 
-  initCalendar(): void {
-    const firstDay = new Date(this.currentYear, this.today.getMonth(), 1).getDay();
-    const lastDate = new Date(this.currentYear, this.today.getMonth() + 1, 0).getDate();
-
-    this.days = [];
-
-    for (let i = 0; i < firstDay; i++) {
-      this.days.push({ date: 0, prev: false, next: false, today: false, hasEvent: false });
-    }
-
-    for (let i = 1; i <= lastDate; i++) {
-      const hasEvent = Array.isArray(this.events) && this.events.some((event) => new Date(event.date).getDate() === i);
-      this.days.push({ date: i, prev: false, next: false, today: i === this.today.getDate(), hasEvent });
-    }
+  markEventsOnCalendar(): void {
+    this.markedDates.clear();
+    this.events.forEach(event => {
+      const eventDate = this.datePipe.transform(event.date, 'yyyy-MM-dd');
+      if (eventDate) {
+        this.markedDates.add(eventDate);
+        console.log(`Evento marcado en el calendario: ${eventDate}`); // Para depuración
+      }
+    });
   }
 
   filterEventsByDay(): void {
-    if (this.selectedDay) {
-      this.filteredEvents = this.events.filter(event => {
-        const eventDate = new Date(event.date);
-        return eventDate.getDate() === this.selectedDay &&
-          eventDate.getMonth() === this.today.getMonth() &&
-          eventDate.getFullYear() === this.currentYear;
-      });
-    } else {
-      this.filteredEvents = [];
+    const selectedDay = this.datePipe.transform(this.selectedDate, 'yyyy-MM-dd');
+    this.filteredEvents = this.events.filter(event => {
+      const eventDate = this.datePipe.transform(event.date, 'yyyy-MM-dd');
+      return eventDate === selectedDay;
+    });
+  }
+
+  dateChanged(event: Date | null): void {
+    if (!event) {
+      console.warn("⚠️ Se recibió un valor null en dateChanged");
+      return;
     }
-  }
-
-  prevMonth(): void {
-    this.today.setMonth(this.today.getMonth() - 1);
-    this.currentMonth = this.months[this.today.getMonth()];
-    this.currentYear = this.today.getFullYear();
-    this.loadEvents();
-  }
-
-  nextMonth(): void {
-    this.today.setMonth(this.today.getMonth() + 1);
-    this.currentMonth = this.months[this.today.getMonth()];
-    this.currentYear = this.today.getFullYear();
-    this.loadEvents();
-  }
-
-  selectDay(day: Day): void {
-    this.selectedDay = day.date;
-    this.selectedDayName = new Date(this.currentYear, this.today.getMonth(), day.date).toLocaleDateString('es-ES', { weekday: 'long' });
+    this.selectedDate = event;
     this.filterEventsByDay();
   }
 
-  gotoDate(): void {
-    const [month, year] = this.inputDate.split('/').map(Number);
-    if (month && year) {
-      this.today.setMonth(month - 1);
-      this.today.setFullYear(year);
-      this.currentMonth = this.months[this.today.getMonth()];
-      this.currentYear = this.today.getFullYear();
-      this.loadEvents();
-    } else {
-      alert('Fecha no válida.');
-    }
-  }
+  dateClass: MatCalendarCellClassFunction<Date> = (date: Date) => {
+    const dateString = this.datePipe.transform(date, 'yyyy-MM-dd');
 
-  goToToday(): void {
-    this.today = new Date();
-    this.currentMonth = this.months[this.today.getMonth()];
-    this.currentYear = this.today.getFullYear();
-    this.loadEvents();
-  }
+    if (dateString) {
+      console.log(`Revisión de fecha en el calendario: ${dateString}`); // 🔥 Debe aparecer en consola
+    }
+
+    if (dateString && this.markedDates.has(dateString)) {
+      console.log(`✅ Día marcado en UI: ${dateString}`); // 🔥 Debe aparecer si la fecha tiene evento
+      return 'event-highlight';
+    }
+
+    return '';
+  };
 
   viewEvent(eventId: number): void {
     this.router.navigate([`/eventos/${eventId}`]);
@@ -161,22 +159,17 @@ export class EventsCalendarComponent implements OnInit {
     this.router.navigate(['/events/new']);
   }
 
-
-  toggleMenu(): void {
-    const menu = document.getElementById('dropdown-menu');
-    if (menu) {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    }
+  goToToday(): void {
+    this.selectedDate = new Date();
+    this.fetchEventsForMonth(this.selectedDate);
+    this.filterEventsByDay();
   }
 
-  login() {
+  login(): void {
     this.router.navigate(['/login']);
   }
 
-  logout() {
-    if(!this.isLoggedIn){
-      this.router.navigate(['/login']);
-    }
+  logout(): void {
     this.authService.logout();
   }
 }
