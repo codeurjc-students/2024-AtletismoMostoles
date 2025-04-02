@@ -9,21 +9,22 @@ TFG WebApp es una aplicación desarrollada en Angular y Spring Boot para la gest
 Se incluyen capturas de pantalla de las principales páginas de la aplicación, con una breve descripción de cada una.
 
 - **Inicio**: Pantalla De Inicio con información basica del club y acceso a las demás pantallas
-![index](diagrams/screenshots/Index.png)
+![index](diagrams/screenshots/page_update/index_1.png)
+![index](diagrams/screenshots/page_update/index_2.png)
 - **Login**: Pantalla de autenticación de usuarios.
-![login](diagrams/screenshots/login.png)
+![login](diagrams/screenshots/page_update/login.png)
 - **Ranking**: Interfaz con un listado de atletas y los filtros sobre la lista.
-![ranking](diagrams/screenshots/ranking.png)
+![ranking](diagrams/screenshots/page_update/ranking.png)
 - **Clubmembers**: Interfaz con un listado de los entrenadores del club, y los filtros aplicables sobre este.
-![clubmembers](diagrams/screenshots/clubmembers.png)
+![clubmembers](diagrams/screenshots/page_update/clubmembers.png)
 - **Assosiation-atl**: Interfaz con el listado de disciplinas que se imparten en el club.
-![assosiation-atl](diagrams/screenshots/assosiation-atl.png)
+![assosiation-atl](diagrams/screenshots/page_update/disciplines.png)
 - **Calendar-Events**: Interfaz con el calendario de enventos interactivo.
-![calendar-events](diagrams/screenshots/calendar_event.png)
+![calendar-events](diagrams/screenshots/page_update/events_calendar.png)
 
 ## 🔗 Diagrama de Navegación
 Se muestra la navegación entre las distintas páginas de la aplicación, con miniaturas de las capturas de pantalla.
-## ![Diagrama de Navegacion](diagrams/DiagramadeNavegacion.png)
+## ![Diagrama de Navegacion](diagrams/DiagramadeNavegacion_fase2.png)
 
 ## 📊 Diagrama de Entidades de la Base de Datos
 El siguiente diagrama muestra las entidades de la base de datos, sus atributos y relaciones. 
