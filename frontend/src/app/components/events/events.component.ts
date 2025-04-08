@@ -42,6 +42,7 @@ import { MatMenuModule } from '@angular/material/menu';
 })
 export class EventsComponent implements OnInit {
   events: Event[] = [];
+  allEvents: Event[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 6;
   totalPages: number = 1;
@@ -65,7 +66,8 @@ export class EventsComponent implements OnInit {
     this.eventService.getAll(this.currentPage - 1, this.itemsPerPage, 'date').subscribe(
       (response: Page<Event>) => {
         console.log('Eventos cargados:', response);
-        this.events = response.content;
+        this.allEvents = response.content;
+        this.applyFilter();
         this.totalPages = response.totalPages;
       },
       (error) => {
@@ -75,8 +77,18 @@ export class EventsComponent implements OnInit {
   }
 
   applyFilter(): void {
-    this.currentPage = 1;
-    this.loadEvents();
+    if (this.selectedFilter === 'club') {
+      this.events = this.allEvents.filter(event => event.organizedByClub);
+    } else if (this.selectedFilter === 'external') {
+      this.events = this.allEvents.filter(event => !event.organizedByClub);
+    } else if (this.selectedFilter === 'upcoming') {
+      const today = new Date();
+      this.events = this.allEvents.filter(event => new Date(event.date) > today);
+    } else {
+      this.events = this.allEvents;
+    }
+    console.log("eventos: ", this.events);
+
   }
 
   viewEvent(eventId: number): void {

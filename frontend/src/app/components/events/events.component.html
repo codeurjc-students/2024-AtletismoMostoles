@@ -43,6 +43,7 @@
         <mat-select [(ngModel)]="selectedFilter" (selectionChange)="applyFilter()">
           <mat-option value="club">Club</mat-option>
           <mat-option value="external">Externo</mat-option>
+          <mat-option value="upcoming">Próximos</mat-option>
           <mat-option value="all">Todos</mat-option>
         </mat-select>
       </mat-form-field>
@@ -58,7 +59,7 @@
         <mat-card-content>
           <h3>{{ event.name }}</h3>
           <p *ngIf="event.date">Fecha: {{ event.date }}</p>
-          <p *ngIf="event.isOrganizedByClub">Organizado por el Club</p>
+          <p *ngIf="event.organizedByClub">Organizado por el Club</p>
         </mat-card-content>
         <mat-card-actions align="end">
           <button mat-raised-button color="primary" (click)="viewEvent(event.id)">Ver Más</button>

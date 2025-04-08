@@ -23,8 +23,8 @@
     <mat-card-content>
       <img [src]="event?.imageLink ?? 'assets/default-event.jpg'" alt="Imagen del evento" class="event-image">
       <p><strong>Fecha:</strong> {{ event?.date ?? 'Fecha no disponible' }}</p>
-      <p *ngIf="event?.isOrganizedByClub"><strong>Organizado por el club</strong></p>
-      <p *ngIf="!event?.isOrganizedByClub"><strong>No organizado por el club</strong></p>
+      <p *ngIf="event?.organizedByClub"><strong>Organizado por el club</strong></p>
+      <p *ngIf="!event?.organizedByClub"><strong>No organizado por el club</strong></p>
       <button mat-raised-button color="primary" *ngIf="isLoggedIn && !isEditing" (click)="toggleEdit()">Editar Evento</button>
       <iframe [src]="sanitizedMapUrl" width="100%" height="300" style="border:0;" allowfullscreen loading="lazy"></iframe>
     </mat-card-content>

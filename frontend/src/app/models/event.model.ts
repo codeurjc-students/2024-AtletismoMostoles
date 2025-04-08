@@ -6,7 +6,7 @@ export interface Event {
   name: string;
   date: string;
   mapLink?: string;
-  isOrganizedByClub: boolean;
+  organizedByClub: boolean;
   imageLink?: string;
   disciplines?: Discipline[];
   results?: Results[];

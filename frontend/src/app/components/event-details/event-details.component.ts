@@ -91,9 +91,10 @@ export class EventDetailsComponent implements OnInit {
         this.eventForm.patchValue({
           name: this.event.name,
           date: this.event.date,
-          isOrganizedByClub: this.event.isOrganizedByClub,
+          isOrganizedByClub: this.event.organizedByClub,
           imageLink: this.event.imageLink
         });
+        console.log("organized:", this.event.organizedByClub);
       });
     }
   }
@@ -104,23 +105,18 @@ export class EventDetailsComponent implements OnInit {
 
   saveEvent(): void {
     if (this.eventForm.valid) {
-      this.event = {
+      const updatedEvent = {
         ...this.event,
-        ...this.eventForm.getRawValue()
+        ...this.eventForm.value  // toma los valores del form directamente
       };
 
-      console.log('Datos enviados a la API:', this.event);
+      console.log('Datos enviados a la API:', updatedEvent);
 
-      if (this.eventForm.valid) {
-        this.eventService.update(this.event.id, {
-          ...this.event,
-          isOrganizedByClub: !!this.event.isOrganizedByClub
-        }).subscribe(() => {
-          alert('Evento actualizado con éxito');
-          this.isEditing = false;
-          this.loadEvent();
-        });
-      }
+      this.eventService.update(updatedEvent.id, updatedEvent).subscribe(() => {
+        alert('Evento actualizado con éxito');
+        this.isEditing = false;
+        this.loadEvent(); // recarga datos actualizados
+      });
     }
   }
 
