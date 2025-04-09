@@ -34,8 +34,9 @@
       <mat-card>
         <img mat-card-image [src]="discipline.imageLink" [alt]="discipline.name">
         <mat-card-content>
-          <h3>{{ discipline.name }}</h3>
-          <p>Entrenadores: {{ formatCoaches(discipline.coaches) }}</p>
+          <mat-list>
+            <h3>{{ discipline.name }}</h3>
+          </mat-list>
         </mat-card-content>
         <mat-card-actions>
           <button mat-button color="primary" (click)="goToDetails(discipline.id)">Detalles</button>

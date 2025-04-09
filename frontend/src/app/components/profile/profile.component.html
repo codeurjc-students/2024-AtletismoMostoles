@@ -32,31 +32,58 @@
 <section>
   <mat-card class="profile-card">
     <mat-card-header>
-      <mat-card-title>{{ firstName }} {{ lastName }}</mat-card-title>    </mat-card-header>
+      <mat-card-title>{{ firstName }} {{ lastName }}</mat-card-title>
+    </mat-card-header>
     <mat-card-content>
       <p><strong>Número de Licencia:</strong> {{ licenseNumber }}</p>
       <p><strong>Fecha de Nacimiento:</strong> {{ formattedBirthDate }}</p>
+      <p *ngIf="isAthlete && coachName !== 'No disponible'">
+        <strong>Entrenador Principal:</strong> {{ coachName }}
+      </p>
+
+
       <div class="discipline-list">
-        <h3>Disciplinas y Entrenadores:</h3>
+        <h3>Disciplinas:</h3>
         <mat-list *ngIf="profileDisciplines.length; else noDisciplines">
           <mat-list-item *ngFor="let discipline of profileDisciplines">
-            <strong>{{ discipline.name }}</strong>
-            <div *ngIf="discipline.coaches?.length; else noCoachAssigned">
-              <p><strong>Entrenadores:</strong></p>
-              <ul>
-                <li *ngFor="let coach of discipline.coaches">
-                  {{ coach.firstName }} {{ coach.lastName }}
-                </li>
-              </ul>
+            <div>
+              <a><strong>{{ discipline.name }}.</strong> {{discipline.description}}</a>
             </div>
-            <ng-template #noCoachAssigned>
-              <span>— Sin entrenadores asignados</span>
-            </ng-template>
           </mat-list-item>
         </mat-list>
         <ng-template #noDisciplines>
           <p>No asignadas</p>
         </ng-template>
+      </div>
+
+      <div *ngIf="!isAthlete && coachedAthletes.length" class="discipline-list">
+        <h3>Atletas a Cargo:</h3>
+        <mat-list>
+          <mat-list-item *ngFor="let athlete of coachedAthletes">
+            {{ athlete.firstName }} {{ athlete.lastName }} (Licencia: {{ athlete.licenseNumber }})
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <div *ngIf="isAthlete && results.length" class="results-section">
+        <h3>Resultados</h3>
+        <mat-table [dataSource]="paginatedResults">
+          <ng-container matColumnDef="event">
+            <mat-header-cell *matHeaderCellDef> Evento </mat-header-cell>
+            <mat-cell *matCellDef="let result"> {{ result.event?.name ?? 'Evento desconocido' }} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="discipline">
+            <mat-header-cell *matHeaderCellDef> Disciplina </mat-header-cell>
+            <mat-cell *matCellDef="let result"> {{ result.discipline?.name ?? 'Sin disciplina' }} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="value">
+            <mat-header-cell *matHeaderCellDef> Resultado </mat-header-cell>
+            <mat-cell *matCellDef="let result"> {{ result.value ?? 'N/A' }} </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="['event', 'discipline', 'value']"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: ['event', 'discipline', 'value']"></mat-row>
+        </mat-table>
+        <mat-paginator [length]="results.length" [pageSize]="itemsPerPage" (page)="nextPage()"></mat-paginator>
       </div>
 
       <button mat-raised-button color="primary" *ngIf="isAdmin && !isEditing" (click)="enableEdit()">Editar Perfil</button>
