@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.transform.Result;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/results")
@@ -55,4 +56,16 @@ public class ResultRestController {
         resultService.deleteResult(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/batch")
+    public ResponseEntity<?> createMultipleResults(@RequestBody List<Results> resultsList) {
+        try {
+            List<Results> saved = resultService.createMultiple(resultsList);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al guardar los resultados: " + e.getMessage());
+        }
+    }
+
 }

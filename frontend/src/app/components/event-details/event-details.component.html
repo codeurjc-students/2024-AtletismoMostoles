@@ -68,7 +68,7 @@
       <mat-row *matRowDef="let row; columns: ['athlete', 'discipline', 'value'];"></mat-row>
     </mat-table>
     <mat-paginator [length]="totalPages" [pageSize]="1" (page)="nextPage()"></mat-paginator>
-    <button mat-raised-button color="accent" *ngIf="isLoggedIn" routerLink="/eventos/{{ event?.id }}/agregar-resultado">Agregar Resultados</button>
+    <button mat-raised-button color="accent" *ngIf="isLoggedIn" (click)="openAddResultsDialog()">Agregar Resultados</button>
   </mat-card>
 </section>
 

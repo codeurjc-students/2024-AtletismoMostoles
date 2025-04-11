@@ -18,6 +18,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { AddResultsDialogComponent } from '../../modals/AddResultDialogComponent';
+import { ResultService } from '../../services/result.service';
+import { Athlete } from '../../models/athlete.model';
+import { AthleteService } from '../../services/athlete.service';
+
 
 @Component({
   selector: 'app-event-details',
@@ -61,9 +66,11 @@ export class EventDetailsComponent implements OnInit {
     private router: Router,
     private eventService: EventService,
     private authService: AuthService,
+    private athleteService: AthleteService,
     private fb: FormBuilder,
     public dialog: MatDialog,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private resultService: ResultService
   ) {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
@@ -138,6 +145,31 @@ export class EventDetailsComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  openAddResultsDialog(): void {
+    this.athleteService.getAll(0, 1000).subscribe((response) => {
+      const athletes: Athlete[] = response.content;
+
+      this.dialog.open(AddResultsDialogComponent, {
+        width: '600px',
+        data: {
+          eventId: this.event.id,
+          disciplines: this.event.disciplines || [],
+          athletes: athletes
+        }
+      }).afterClosed().subscribe((resultsToSave: any[]) => {
+        if (resultsToSave?.length) {
+          this.resultService.createMultiple(resultsToSave).subscribe(() => {
+            alert('Resultados agregados correctamente');
+            this.loadEvent();
+          }, error => {
+            console.error('Error al guardar resultados:', error);
+            alert('Error al guardar resultados');
+          });
+        }
+      });
+    });
   }
 
 }
