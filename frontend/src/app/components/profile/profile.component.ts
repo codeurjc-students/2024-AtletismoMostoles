@@ -100,6 +100,8 @@ export class ProfileComponent implements OnInit {
           const coach = response as Coach;
           this.coachedAthletes = coach.athletes || [];
         }
+        console.log('Resultados:', this.results);
+        console.log('Ejemplo evento:', this.results[0]?.event);
       },
       (error) => {
         console.error('Error loading profile:', error);

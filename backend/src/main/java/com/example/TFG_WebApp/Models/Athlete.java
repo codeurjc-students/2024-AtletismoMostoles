@@ -32,7 +32,7 @@ public class Athlete {
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "athlete")
-    @JsonIgnoreProperties({"athlete", "event"})
+    @JsonIgnoreProperties({"athlete"})
     private List<Results> results = new ArrayList<>();
 
     public Athlete(String licenseNumber, String firstName, String lastName, LocalDate birthDate, Coach coach, Set<Discipline> disciplines) {

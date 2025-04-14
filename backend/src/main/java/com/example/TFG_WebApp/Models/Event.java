@@ -31,7 +31,7 @@ public class Event {
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "event")
-    @JsonIgnoreProperties({"discipline", "athlete", "event"})
+    @JsonIgnoreProperties({"event"})
     private List<Results> results = new ArrayList<>();
 
     public Event() {}
