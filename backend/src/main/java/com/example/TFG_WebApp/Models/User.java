@@ -27,11 +27,14 @@ public class User {
 
     @JsonView(Basic.class)
     @JsonIgnore
-    @Column(nullable = false)
     private String encodedPassword;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles;
+
+    @Transient
+    @JsonView(Basic.class)
+    private String rawPassword;
 
     public User() {
     }
@@ -40,6 +43,13 @@ public class User {
         this.name = name;
         this.encodedPassword = encodedPassword;
         this.roles = List.of(roles);
+    }
+    public String getRawPassword() {
+        return rawPassword;
+    }
+
+    public void setRawPassword(String rawPassword) {
+        this.rawPassword = rawPassword;
     }
 
     public Long getId() {

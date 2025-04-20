@@ -32,15 +32,33 @@ public class UserRestController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody @JsonView(User.Basic.class) User user) {
-        user.setEncodedPassword(passwordEncoder.encode(user.getEncodedPassword()));
-        user.setRoles(Collections.singletonList("USER"));
-        User savedUser = userService.addUser(user);
+    public ResponseEntity<?> register(@RequestBody @JsonView(User.Basic.class) User user) {
+        try {
+            if (userRepository.findByName(user.getName()).isPresent()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El nombre de usuario ya existe"));
+            }
+            String rawPassword = user.getRawPassword();
+            if (rawPassword == null || rawPassword.isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "La contraseña no puede estar vacía"));
+            }
 
-        URI location = fromCurrentRequest().path("/{id}")
-                .buildAndExpand(savedUser.getId()).toUri();
+            String encodedPassword = passwordEncoder.encode(rawPassword);
+            user.setEncodedPassword(encodedPassword);
 
-        return ResponseEntity.created(location).body(savedUser);
+            user.setRoles(Collections.singletonList("USER"));
+
+            User userSaved = userService.addUser(user);
+            if (userSaved == null) {
+                return ResponseEntity.internalServerError().body(Map.of("error", "No se pudo crear el usuario"));
+            }
+            URI location = fromCurrentRequest().path("/{id}")
+                    .buildAndExpand(userSaved.getId()).toUri();
+
+            return ResponseEntity.created(location).body(userSaved);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @GetMapping("/me")

@@ -60,7 +60,6 @@ public class UserService {
                 userRepository.save(newUser);
                 return newUser;
             } catch (DataIntegrityViolationException e) {
-                // if unique restrict is broken, we will return null value to showing this violation of restriction
                 return null;
             }
         } else {
