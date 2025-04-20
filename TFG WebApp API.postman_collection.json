@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "10be2be2-8127-44e4-9b77-64a98490ff5c",
 		"name": "TFG WebApp API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25893666"
 	},
 	"item": [
@@ -47,7 +47,18 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/athletes/{licenseNumber}"
+						"url": {
+							"raw": "https://localhost/api/athletes/{licenseNumber}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"athletes",
+								"{licenseNumber}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -65,7 +76,17 @@
 							"mode": "raw",
 							"raw": "{\n  \"licenseNumber\": \"M12345\",\n  \"firstName\": \"Maria\",\n  \"lastName\": \"Gomez\",\n  \"birthDate\": \"1968-08-15\",\n  \"coach\": { \"licenseNumber\": \"C54321\" },\n  \"disciplines\": [\n    {\"id\": 1}\n    ]\n}"
 						},
-						"url": "https://localhost/api/athletes"
+						"url": {
+							"raw": "https://localhost/api/athletes",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"athletes"
+							]
+						}
 					},
 					"response": []
 				},
@@ -83,7 +104,18 @@
 							"mode": "raw",
 							"raw": "{\n  \"licenseNumber\": \"A12345\",\n  \"firstName\": \"John Updated\",\n  \"lastName\": \"Doe\",\n  \"birthDate\": \"2000-01-01\",\n  \"coach\": { \"licenseNumber\": \"C54321\" }\n}"
 						},
-						"url": "https://localhost/api/athletes/{licenseNumber}"
+						"url": {
+							"raw": "https://localhost/api/athletes/{licenseNumber}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"athletes",
+								"{licenseNumber}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -92,7 +124,18 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "https://localhost/api/athletes/{licenseNumber}"
+						"url": {
+							"raw": "https://localhost/api/athletes/{licenseNumber}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"athletes",
+								"{licenseNumber}"
+							]
+						}
 					},
 					"response": []
 				}
@@ -139,7 +182,18 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/coaches/U20394"
+						"url": {
+							"raw": "https://localhost/api/coaches/U20394",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"coaches",
+								"U20394"
+							]
+						}
 					},
 					"response": []
 				},
@@ -157,7 +211,17 @@
 							"mode": "raw",
 							"raw": "{\n  \"licenseNumber\": \"C54321\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"disciplines\":[\n    {\"id\":1}\n  ]\n}"
 						},
-						"url": "https://localhost/api/coaches"
+						"url": {
+							"raw": "https://localhost/api/coaches",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"coaches"
+							]
+						}
 					},
 					"response": []
 				},
@@ -175,7 +239,18 @@
 							"mode": "raw",
 							"raw": "{\n  \"licenseNumber\": \"U20394\",\n    \"firstName\": \"Alfonso\",\n    \"lastName\": \"Mansilla\",\n    \"disciplines\": [\n        {\n            \"id\": 3\n        },\n        {\n            \"id\": 2\n        }\n    ],\n    \"athletes\": [\n        {\n            \"licenseNumber\": \"P30445\"\n        }\n    ]\n}"
 						},
-						"url": "https://localhost/api/coaches/U20394"
+						"url": {
+							"raw": "https://localhost/api/coaches/U20394",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"coaches",
+								"U20394"
+							]
+						}
 					},
 					"response": []
 				},
@@ -184,7 +259,18 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "https://localhost/api/coaches/C54321"
+						"url": {
+							"raw": "https://localhost/api/coaches/C54321",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"coaches",
+								"C54321"
+							]
+						}
 					},
 					"response": []
 				}
@@ -231,7 +317,18 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/disciplines/{id}"
+						"url": {
+							"raw": "https://localhost/api/disciplines/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"disciplines",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -249,7 +346,17 @@
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"High Jump\",\n  \"description\": \"Jump discipline description\"\n}"
 						},
-						"url": "https://localhost/api/disciplines"
+						"url": {
+							"raw": "https://localhost/api/disciplines",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"disciplines"
+							]
+						}
 					},
 					"response": []
 				},
@@ -267,7 +374,18 @@
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Updated Discipline\",\n  \"description\": \"Updated description\"\n}"
 						},
-						"url": "https://localhost/api/disciplines/{id}"
+						"url": {
+							"raw": "https://localhost/api/disciplines/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"disciplines",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -276,7 +394,18 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "https://localhost/api/disciplines/{id}"
+						"url": {
+							"raw": "https://localhost/api/disciplines/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"disciplines",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				}
@@ -323,7 +452,18 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/equipment/{id}"
+						"url": {
+							"raw": "https://localhost/api/equipment/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"equipment",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -341,7 +481,17 @@
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Hurdles\",\n  \"description\": \"Hurdles description\"\n}"
 						},
-						"url": "https://localhost/api/equipment"
+						"url": {
+							"raw": "https://localhost/api/equipment",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"equipment"
+							]
+						}
 					},
 					"response": []
 				},
@@ -359,7 +509,18 @@
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Updated Equipment\",\n  \"description\": \"Updated description\"\n}"
 						},
-						"url": "https://localhost/api/equipment/{id}"
+						"url": {
+							"raw": "https://localhost/api/equipment/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"equipment",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -368,7 +529,18 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "https://localhost/api/equipment/{id}"
+						"url": {
+							"raw": "https://localhost/api/equipment/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"equipment",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				}
@@ -415,7 +587,18 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/events/{id}"
+						"url": {
+							"raw": "https://localhost/api/events/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"events",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -433,7 +616,17 @@
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"City Marathon\",\n  \"date\": \"2025-05-01\",\n  \"isOrganizedByClub\": true\n}"
 						},
-						"url": "https://localhost/api/events"
+						"url": {
+							"raw": "https://localhost/api/events",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"events"
+							]
+						}
 					},
 					"response": []
 				},
@@ -451,7 +644,18 @@
 							"mode": "raw",
 							"raw": "{\n  \"name\": \"Updated Marathon\",\n  \"date\": \"2025-06-01\",\n  \"isOrganizedByClub\": false\n}"
 						},
-						"url": "https://localhost/api/events/{id}"
+						"url": {
+							"raw": "https://localhost/api/events/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"events",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -460,7 +664,18 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "https://localhost/api/events/{id}"
+						"url": {
+							"raw": "https://localhost/api/events/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"events",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				}
@@ -507,7 +722,18 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/results/{id}"
+						"url": {
+							"raw": "https://localhost/api/results/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"results",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -525,7 +751,17 @@
 							"mode": "raw",
 							"raw": "{\n  \"value\": 12.5,\n  \"athlete\": { \"licenseNumber\": \"M12345\" },\n  \"discipline\": { \"id\": 1 },\n  \"event\": { \"id\": 1 }\n}"
 						},
-						"url": "https://localhost/api/results"
+						"url": {
+							"raw": "https://localhost/api/results",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"results"
+							]
+						}
 					},
 					"response": []
 				},
@@ -543,7 +779,18 @@
 							"mode": "raw",
 							"raw": "{\n  \"value\": 14.2,\n  \"athlete\": { \"licenseNumber\": \"A12345\" },\n  \"discipline\": { \"id\": 1 },\n  \"event\": { \"id\": 1 }\n}"
 						},
-						"url": "https://localhost/api/results/{id}"
+						"url": {
+							"raw": "https://localhost/api/results/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"results",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				},
@@ -552,7 +799,18 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "https://localhost/api/results/{id}"
+						"url": {
+							"raw": "https://localhost/api/results/{id}",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"results",
+								"{id}"
+							]
+						}
 					},
 					"response": []
 				}
@@ -578,7 +836,18 @@
 								}
 							}
 						},
-						"url": "https://localhost/api/auth/login"
+						"url": {
+							"raw": "https://localhost/api/auth/login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
 					},
 					"response": []
 				},
@@ -596,7 +865,18 @@
 								}
 							}
 						},
-						"url": "https://localhost/api/auth/login"
+						"url": {
+							"raw": "https://localhost/api/auth/login",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
 					},
 					"response": []
 				},
@@ -605,7 +885,18 @@
 					"request": {
 						"method": "POST",
 						"header": [],
-						"url": "https://localhost/api/auth/logout"
+						"url": {
+							"raw": "https://localhost/api/auth/logout",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
 					},
 					"response": []
 				},
@@ -623,7 +914,18 @@
 								}
 							}
 						},
-						"url": "https://localhost/api/users/register"
+						"url": {
+							"raw": "https://localhost/api/users/register",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
 					},
 					"response": []
 				},
@@ -632,7 +934,18 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/users/me"
+						"url": {
+							"raw": "https://localhost/api/users/me",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						}
 					},
 					"response": []
 				}
@@ -646,7 +959,18 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/admin/users"
+						"url": {
+							"raw": "https://localhost/api/admin/users",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
 					},
 					"response": []
 				},
@@ -655,7 +979,19 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "https://localhost/api/admin/user/2"
+						"url": {
+							"raw": "https://localhost/api/admin/user/2",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"admin",
+								"user",
+								"2"
+							]
+						}
 					},
 					"response": []
 				},
@@ -666,14 +1002,25 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Random_name\",\r\n    \"encodedPassword\": \"pass\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Random_name\",\r\n    \"rawPassword\": \"new_pass\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "https://localhost/api/admin/users"
+						"url": {
+							"raw": "https://localhost/api/users/register",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
 					},
 					"response": []
 				},
@@ -691,7 +1038,20 @@
 								}
 							}
 						},
-						"url": "https://localhost:8443/api/admin/user/1"
+						"url": {
+							"raw": "https://localhost:8443/api/admin/user/1",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "8443",
+							"path": [
+								"api",
+								"admin",
+								"user",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -700,7 +1060,19 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
-						"url": "https://localhost/api/admin/user/2"
+						"url": {
+							"raw": "https://localhost/api/admin/user/2",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"api",
+								"admin",
+								"user",
+								"2"
+							]
+						}
 					},
 					"response": []
 				}
