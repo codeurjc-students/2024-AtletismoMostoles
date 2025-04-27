@@ -19,6 +19,15 @@ export class UserService {
   }
 
   deleteUser(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { withCredentials: true });
+    return this.http.delete<void>(`/api/admin/user/${id}`, { withCredentials: true });
   }
+
+  updateUser(id: number, data: any): Observable<any> {
+    return this.http.put(`/api/admin/user/${id}`, data, { withCredentials: true });
+  }
+
+  getUsersAdmin(): Observable<any> {
+    return this.http.get('/api/admin/users', { withCredentials: true });
+  }
+
 }

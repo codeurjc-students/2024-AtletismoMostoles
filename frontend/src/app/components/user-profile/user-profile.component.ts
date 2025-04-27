@@ -10,6 +10,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { SelectionModel } from '@angular/cdk/collections';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 
 @Component({
   selector: 'app-user-profile',
@@ -24,13 +30,19 @@ import { MatCardModule } from '@angular/material/card';
     MatButtonModule,
     MatCardModule,
     RouterOutlet,
-    RouterLink
+    RouterLink,
+    MatTableModule,
+    MatCheckboxModule,
+    MatPaginatorModule,
+    MatSortModule
   ]
 })
 export class UserProfileComponent implements OnInit {
   user: any;
   isLoggedIn = false;
   isAdmin = false;
+  users: any[] = [];
+  selection = new SelectionModel<any>(true, []);
 
   constructor(
     private authService: AuthService,
@@ -44,6 +56,16 @@ export class UserProfileComponent implements OnInit {
       this.user = user;
       this.isLoggedIn = this.authService.isAuthenticated();
       this.isAdmin = this.authService.isAdmin();
+
+      if (this.isAdmin) {
+        this.loadUsers();
+      }
+    });
+  }
+
+  loadUsers(): void {
+    this.userService.getUsersAdmin().subscribe(users => {
+      this.users = users.content; // porque es paginado
     });
   }
 
@@ -61,10 +83,39 @@ export class UserProfileComponent implements OnInit {
     }).afterClosed().subscribe(result => {
       if (result) {
         this.userService.registerUser(result).subscribe(
-          () => alert('✅ Usuario creado correctamente'),
+          () => {
+            this.loadUsers();
+            alert('✅ Usuario creado correctamente');
+          },
           () => alert('❌ Error al crear el usuario')
         );
       }
     });
   }
+
+  deleteSelectedUsers(): void {
+    const promises = this.selection.selected.map(u => this.userService.deleteUser(u.id).toPromise());
+    Promise.all(promises).then(() => {
+      this.loadUsers();
+      this.selection.clear();
+      alert('✅ Usuarios eliminados correctamente');
+    }).catch(() => {
+      alert('❌ Error al eliminar usuarios');
+    });
+  }
+
+  masterToggle() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
+      this.users.forEach(user => this.selection.select(user));
+    }
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.users.length;
+    return numSelected === numRows;
+  }
+
 }

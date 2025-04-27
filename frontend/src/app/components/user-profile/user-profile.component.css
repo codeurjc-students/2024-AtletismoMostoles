@@ -85,3 +85,101 @@ footer .contact-info p {
 footer .contact-info i {
   margin-right: 8px;
 }
+
+h2 {
+  margin-bottom: 20px;
+  color: #007f00;
+  text-align: center;
+}
+
+.user-table-container {
+  margin-top: 40px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.user-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.user-actions button {
+  margin-left: 10px;
+}
+
+.mat-elevation-z8 {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+mat-card {
+  margin-bottom: 30px;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+mat-card-title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.login-form {
+  margin-bottom: 30px;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 75vh;
+  padding: 20px;
+}
+
+.profile-container {
+  display: flex;
+  gap: 30px; /* espacio entre las cajas */
+  max-width: 1200px;
+  width: 100%;
+}
+
+.login-form, .user-table-container {
+  flex: 1; /* que cada bloque ocupe 50% */
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+h2, mat-card-title {
+  margin-bottom: 20px;
+  color: #007f00;
+  text-align: center;
+}
+
+.user-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.user-actions button {
+  margin-left: 10px;
+}
+
+.mat-elevation-z8 {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+}
+
