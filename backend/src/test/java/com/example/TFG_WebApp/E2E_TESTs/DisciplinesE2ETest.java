@@ -1,5 +1,6 @@
 package com.example.TFG_WebApp.E2E_TESTs;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -17,28 +18,24 @@ public class DisciplinesE2ETest {
 
     @BeforeAll
     public void setup() {
-        String os = System.getProperty("os.name").toLowerCase();
         ChromeOptions options = new ChromeOptions();
-
-        if (os.contains("win")) {
-            System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
-        } else {
-            System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-            options.addArguments("--headless");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
-            options.addArguments("--window-size=1920,1080");
-        }
-        options.addArguments("--headless");
+        options.addArguments("--headless"); // ya no necesitas duplicarlo
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1920,1080");
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
         options.addArguments("--allow-running-insecure-content");
         options.setAcceptInsecureCerts(true);
 
+        // 👉 Aquí inicializas automáticamente el ChromeDriver correcto
+        WebDriverManager.chromedriver().setup();
+
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
+
 
     @BeforeEach
     public void navigateToPage() {
