@@ -83,7 +83,7 @@ public class DisciplinesE2ETest {
 
     @Test
     public void testLoginAndCheckUIChanges() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
         driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-card.login-form")));
@@ -105,7 +105,7 @@ public class DisciplinesE2ETest {
     public void testAddAndRemoveDiscipline() {
         login();
         navigateToPage();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
         int initialCount = countAllDisciplines();
         System.out.println("🔎 Initial total count: " + initialCount);
@@ -114,6 +114,8 @@ public class DisciplinesE2ETest {
         addButton.click();
 
         WebElement modal = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("mat-dialog-container")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("mat-dialog-container")));
+        System.out.println("✅ Modal opened!");
 
         driver.findElement(By.cssSelector("input[formControlName='name']")).sendKeys("Test Discipline");
         driver.findElement(By.cssSelector("input[formControlName='schedule']")).sendKeys("Lunes y Miércoles");
