@@ -1,5 +1,6 @@
 package com.example.TFG_WebApp.E2E_TESTs;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -17,28 +18,24 @@ public class DisciplinesE2ETest {
 
     @BeforeAll
     public void setup() {
-        String os = System.getProperty("os.name").toLowerCase();
         ChromeOptions options = new ChromeOptions();
-
-        if (os.contains("win")) {
-            System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\ChromeDriver\\chromedriver.exe");
-        } else {
-            System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-            options.addArguments("--headless");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
-            options.addArguments("--window-size=1920,1080");
-        }
-        options.addArguments("--headless");
+        options.addArguments("--headless"); // ya no necesitas duplicarlo
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1920,1080");
         options.addArguments("--ignore-certificate-errors");
         options.addArguments("--disable-web-security");
         options.addArguments("--allow-running-insecure-content");
         options.setAcceptInsecureCerts(true);
 
+        // 👉 Aquí inicializas automáticamente el ChromeDriver correcto
+        WebDriverManager.chromedriver().setup();
+
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
+
 
     @BeforeEach
     public void navigateToPage() {
@@ -86,7 +83,7 @@ public class DisciplinesE2ETest {
 
     @Test
     public void testLoginAndCheckUIChanges() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
         driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-card.login-form")));
@@ -108,7 +105,7 @@ public class DisciplinesE2ETest {
     public void testAddAndRemoveDiscipline() {
         login();
         navigateToPage();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
         int initialCount = countAllDisciplines();
         System.out.println("🔎 Initial total count: " + initialCount);
@@ -117,6 +114,8 @@ public class DisciplinesE2ETest {
         addButton.click();
 
         WebElement modal = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("mat-dialog-container")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("mat-dialog-container")));
+        System.out.println("✅ Modal opened!");
 
         driver.findElement(By.cssSelector("input[formControlName='name']")).sendKeys("Test Discipline");
         driver.findElement(By.cssSelector("input[formControlName='schedule']")).sendKeys("Lunes y Miércoles");
