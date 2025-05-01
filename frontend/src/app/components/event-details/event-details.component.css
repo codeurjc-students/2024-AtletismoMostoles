@@ -34,8 +34,7 @@ nav {
 nav a {
   color: white;
   text-decoration: none;
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 25px;
 }
 
 .event-card {
@@ -104,6 +103,16 @@ section{
   padding-top: 10px;
   padding-bottom: 20px;
 }
+
+button {
+  color: white;
+}
+
+button:hover {
+  color: green;
+  background-color: white;
+}
+
 
 footer {
   background-color: #007f00;

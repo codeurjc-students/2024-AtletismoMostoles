@@ -29,13 +29,13 @@ header .logo img {
 
 nav {
   display: flex;
-  gap: 20px;
+  gap: 25px;
 }
 
 nav a {
   color: white;
   text-decoration: none;
-  font-weight: bold;
+  font-size: 25px;
 }
 
 .LogSection button {
@@ -60,6 +60,15 @@ nav a {
   color: red;
   margin-top: 10px;
   font-weight: bold;
+}
+
+button {
+  color: white;
+}
+
+button:hover {
+  color: green;
+  background-color: white;
 }
 
 .form-actions {

@@ -24,14 +24,18 @@ header .logo {
 
 header .logo img {
   height: 50px;
-  margin-right: 10px;
+  margin-right: 12px;
+}
+
+nav {
+  display: flex;
+  gap: 25px;
 }
 
 nav a {
   color: white;
   text-decoration: none;
-  font-weight: bold;
-  margin: 0 10px;
+  font-size: 25px;
 }
 
 .LogSection button {
@@ -68,6 +72,15 @@ nav a {
 
 .form-actions {
   margin-top: 20px;
+}
+
+button {
+  color: white;
+}
+
+button:hover {
+  color: green;
+  background-color: white;
 }
 
 footer {

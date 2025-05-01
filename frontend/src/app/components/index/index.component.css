@@ -3,29 +3,40 @@ body {
   font-family: Arial, sans-serif;
   color: #333;
 }
+
 header {
   background-color: #007f00;
   color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
+  padding: 15px 25px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
+
 header .logo {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: bold;
   display: flex;
   align-items: center;
 }
+
+header .logo img {
+  margin-right: 12px;
+  height: 50px;
+}
+
 nav {
   display: flex;
-  gap: 22px;
+  gap: 25px;
 }
+
 nav a {
   color: white;
   text-decoration: none;
   font-size: 25px;
 }
+
 .dropdown {
   display: none;
   flex-direction: column;
@@ -40,27 +51,16 @@ nav a {
   margin-bottom: 10px;
   color: #FFFFFF;
 }
-.menu-icon {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  cursor: pointer;
-}
-.menu-icon span {
-  display: block;
-  height: 4px;
-  width: 25px;
-  background-color: white;
-  margin: 5px 0;
-}
 
 section {
-  padding: 50px 20px;
+  padding: 20px;
 }
+
 .section-1 {
   background: url(/assets/images/banner-bg.jpg) no-repeat center center/cover;
   color: white;
   text-align: center;
+  padding: 10px;
 }
 .section-1 .overlay {
   background-color: rgba(0, 127, 0, 0.7);
@@ -112,6 +112,15 @@ section {
 }
 .contact-info i {
   margin-right: 10px;
+}
+
+button {
+  color: white;
+}
+
+button:hover {
+  color: green;
+  background-color: white;
 }
 
 footer {
