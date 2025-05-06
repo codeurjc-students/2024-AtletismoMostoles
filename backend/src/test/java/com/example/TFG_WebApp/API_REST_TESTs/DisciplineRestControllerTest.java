@@ -12,24 +12,21 @@ import static org.hamcrest.Matchers.*;
 public class DisciplineRestControllerTest {
 
     private static int disciplineId;
-    private static String authToken;  // 🔹 Almacena el token de autenticación para futuras solicitudes
+    private static String authToken;
 
     @BeforeAll
     public static void setup() {
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.baseURI = "https://localhost:443";
 
-        // 🔹 Autenticación y obtención del token
         Response response = given()
                 .contentType(ContentType.JSON)
                 .body("{ \"username\": \"admin\", \"password\": \"adminpass\" }")
                 .when()
                 .post("/api/auth/login");
 
-        response.then().log().all(); // Imprimir respuesta para depuración
-
-        authToken = response.getCookie("AuthToken"); // Obtener token de la cookie
-        Assertions.assertNotNull(authToken, "Error: No se obtuvo un token JWT");
+        authToken = response.getCookie("AuthToken");
+        Assertions.assertNotNull(authToken);
     }
 
     @Test
@@ -48,37 +45,12 @@ public class DisciplineRestControllerTest {
     public void testCreateDiscipline() {
         Response response = createDiscipline();
 
-        response.then().log().all();
-
         response.then()
                 .statusCode(201)
                 .body("name", equalTo("Lanzamiento de Martillo"));
 
-        Assertions.assertNotNull(disciplineId, "Error: No se obtuvo un ID para la nueva disciplina");
+        Assertions.assertNotNull(disciplineId);
         deleteDiscipline();
-    }
-
-    private static Response createDiscipline() {
-        String newDisciplineJson = """
-        {
-            \"name\": \"Lanzamiento de Martillo\",
-            \"description\": \"Jueves 19:30 - 21:30 y Viernes 19:30 - 21:30\"
-        }
-        """;
-
-        Response response = given()
-                .header("Authorization", "Bearer " + authToken)
-                .cookie("AuthToken", authToken)
-                .contentType(ContentType.JSON)
-                .body(newDisciplineJson)
-                .when()
-                .post("/api/disciplines");
-        disciplineId = response
-                .then()
-                .body("name", equalTo("Lanzamiento de Martillo"))
-                .extract().path("id");
-
-        return response;
     }
 
     @Test
@@ -101,6 +73,7 @@ public class DisciplineRestControllerTest {
                 .then()
                 .statusCode(200)
                 .body("name", equalTo("Lanzamiento de Disco"));
+
         deleteDiscipline();
     }
 
@@ -111,6 +84,69 @@ public class DisciplineRestControllerTest {
         deleteDiscipline()
                 .then()
                 .statusCode(anyOf(is(200), is(204)));
+    }
+
+    @Test
+    public void testGetDiscipline_NotFound() {
+        given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .when()
+                .get("/api/disciplines/999999")
+                .then()
+                .statusCode(404);
+    }
+
+    @Test
+    public void testCreateDiscipline_InvalidData() {
+        String invalidDisciplineJson = """
+        {
+            \"name\": \"\",
+            \"description\": \"Clase sin nombre\"
+        }
+        """;
+
+        given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .contentType(ContentType.JSON)
+                .body(invalidDisciplineJson)
+                .when()
+                .post("/api/disciplines")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testDeleteDiscipline_Unauthorized() {
+        createDiscipline();
+
+        given()
+                .when()
+                .delete("/api/disciplines/{id}", disciplineId)
+                .then()
+                .statusCode(401);
+
+        deleteDiscipline();
+    }
+
+    private static Response createDiscipline() {
+        String newDisciplineJson = """
+        {
+            \"name\": \"Lanzamiento de Martillo\",
+            \"description\": \"Jueves 19:30 - 21:30 y Viernes 19:30 - 21:30\"
+        }
+        """;
+
+        Response response = given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .contentType(ContentType.JSON)
+                .body(newDisciplineJson)
+                .when()
+                .post("/api/disciplines");
+        disciplineId = response.then().extract().path("id");
+        return response;
     }
 
     private static Response deleteDiscipline() {

@@ -4,6 +4,7 @@ import com.example.TFG_WebApp.Models.Discipline;
 import com.example.TFG_WebApp.Models.Coach;
 import com.example.TFG_WebApp.Services.DisciplineService;
 import com.example.TFG_WebApp.Services.CoachService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,7 +44,7 @@ public class DisciplineRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Discipline> createDiscipline(@RequestBody Discipline discipline) {
+    public ResponseEntity<Discipline> createDiscipline(@Valid @RequestBody Discipline discipline) {
         Set<Coach> coaches = discipline.getCoaches();
         if (coaches != null && !coaches.isEmpty()) {
             coaches.forEach(coach -> {
@@ -56,7 +57,7 @@ public class DisciplineRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Discipline> updateDiscipline(@PathVariable Long id, @RequestBody Discipline discipline) {
+    public ResponseEntity<Discipline> updateDiscipline(@PathVariable Long id, @Valid @RequestBody Discipline discipline) {
         Set<Coach> coaches = discipline.getCoaches();
         if (coaches != null && !coaches.isEmpty()) {
             coaches.forEach(coach -> {

@@ -2,6 +2,7 @@ package com.example.TFG_WebApp.RESTControllers;
 
 import com.example.TFG_WebApp.Models.Results;
 import com.example.TFG_WebApp.Services.ResultService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,13 +41,13 @@ public class ResultRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Results> createResult(@RequestBody Results result) {
+    public ResponseEntity<Results> createResult(@Valid @RequestBody Results result) {
         Results createdResult = resultService.createResult(result);
         return new ResponseEntity<>(createdResult, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Results> updateResult(@PathVariable Long id, @RequestBody Results result) {
+    public ResponseEntity<Results> updateResult(@PathVariable Long id,@Valid @RequestBody Results result) {
         Results updatedResult = resultService.updateResult(id, result);
         return ResponseEntity.ok(updatedResult);
     }

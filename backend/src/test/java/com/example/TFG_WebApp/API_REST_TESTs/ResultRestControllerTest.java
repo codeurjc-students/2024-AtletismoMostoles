@@ -19,62 +19,48 @@ public class ResultRestControllerTest {
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.baseURI = "https://localhost:443";
 
-        // 🔹 Autenticación y obtención del token
         Response response = given()
                 .contentType(ContentType.JSON)
                 .body("{ \"username\": \"admin\", \"password\": \"adminpass\" }")
                 .when()
                 .post("/api/auth/login");
 
-        response.then().log().all(); // Imprimir respuesta para depuración
-
-        authToken = response.getCookie("AuthToken"); // Obtener token de la cookie
+        authToken = response.getCookie("AuthToken");
         Assertions.assertNotNull(authToken, "Error: No se obtuvo un token JWT");
     }
 
     @Test
     public void testGetAllResults() {
-        Response response = given()
+        given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
                 .when()
-                .get("/api/results");
-
-        // 🔹 Log completo de la respuesta
-        response.then().log().all();
-
-        // 🔹 Captura la respuesta en un String y la imprime
-        String jsonResponse = response.getBody().asString();
-        System.out.println("🔹 Respuesta obtenida: " + jsonResponse);
-
-        // 🔹 Verifica que el código de estado sea 200
-        response.then()
+                .get("/api/results")
+                .then()
                 .statusCode(200)
-                .body("content", notNullValue()) // Se asegura que 'content' exista en la respuesta
+                .body("content", notNullValue())
                 .body("content.size()", greaterThanOrEqualTo(0));
     }
-
 
     @Test
     public void testCreateResult() {
         Response response = createResult();
 
-        response.then().log().all();
-
         response.then()
                 .statusCode(201)
                 .body("value", equalTo(12.5F))
                 .body("id", notNullValue());
+
         deleteResult();
     }
 
     private static Response createResult() {
         String newResultJson = """
         {
-            \"value\": 12.5,
-            \"athlete\": { \"licenseNumber\": \"A2001\" },
-            \"discipline\": { \"id\": 1 },
-            \"event\": { \"id\": 1 }
+            "value": 12.5,
+            "athlete": { "licenseNumber": "A2001" },
+            "discipline": { "id": 1 },
+            "event": { "id": 1 }
         }
         """;
 
@@ -100,10 +86,10 @@ public class ResultRestControllerTest {
         createResult();
         String updatedResultJson = """
         {
-            \"value\": 12.25,
-            \"athlete\": { \"licenseNumber\": \"A2001\" },
-            \"discipline\": { \"id\": 1 },
-            \"event\": { \"id\": 1 }
+            "value": 12.25,
+            "athlete": { "licenseNumber": "A2001" },
+            "discipline": { "id": 1 },
+            "event": { "id": 1 }
         }
         """;
 
@@ -115,12 +101,11 @@ public class ResultRestControllerTest {
                 .when()
                 .put("/api/results/{id}", resultId)
                 .then()
-                .log().all()
                 .statusCode(200)
                 .body("value", equalTo(12.25F))
                 .body("id", notNullValue());
-        deleteResult();
 
+        deleteResult();
     }
 
     @Test
@@ -129,7 +114,6 @@ public class ResultRestControllerTest {
         createResult();
         deleteResult()
                 .then()
-                .log().all()
                 .statusCode(anyOf(is(200), is(204)));
     }
 
@@ -140,4 +124,48 @@ public class ResultRestControllerTest {
                 .when()
                 .delete("/api/results/{id}", resultId);
     }
+
+    @Test
+    public void testCreateMultipleResults() {
+        String multipleResultsJson = """
+        [
+            {
+                "value": 13.0,
+                "athlete": { "licenseNumber": "A2001" },
+                "discipline": { "id": 1 },
+                "event": { "id": 1 }
+            },
+            {
+                "value": 11.75,
+                "athlete": { "licenseNumber": "A2002" },
+                "discipline": { "id": 1 },
+                "event": { "id": 1 }
+            }
+        ]
+        """;
+
+        given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .contentType(ContentType.JSON)
+                .body(multipleResultsJson)
+                .when()
+                .post("/api/results/batch")
+                .then()
+                .statusCode(201)
+                .body("size()", greaterThanOrEqualTo(2))
+                .body("[0].value", equalTo(13.0F))
+                .body("[1].value", equalTo(11.75F));
+    }
+
+    @Test
+    public void testDeleteResult_Unauthorized() {
+        createResult();
+        given()
+                .when()
+                .delete("/api/results/{id}", resultId)
+                .then()
+                .statusCode(401); // O 403 según configuración
+    }
+
 }

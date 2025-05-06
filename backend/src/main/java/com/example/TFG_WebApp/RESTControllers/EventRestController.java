@@ -2,6 +2,7 @@ package com.example.TFG_WebApp.RESTControllers;
 
 import com.example.TFG_WebApp.Models.Event;
 import com.example.TFG_WebApp.Services.EventService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -41,13 +42,13 @@ public class EventRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
+    public ResponseEntity<Event> createEvent(@Valid @RequestBody Event event) {
         Event createdEvent = eventService.createEvent(event);
         return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody Event event) {
+    public ResponseEntity<Event> updateEvent(@PathVariable Long id,@Valid @RequestBody Event event) {
         Event updatedEvent = eventService.updateEvent(id, event);
         return ResponseEntity.ok(updatedEvent);
     }
