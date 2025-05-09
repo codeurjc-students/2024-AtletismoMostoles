@@ -6,5 +6,5 @@ export interface Coach {
   firstName: string;
   lastName: string;
   disciplines?: Discipline[];
-  athletes?: Athlete[];
+  athletes?: Athlete[]|null;
 }
