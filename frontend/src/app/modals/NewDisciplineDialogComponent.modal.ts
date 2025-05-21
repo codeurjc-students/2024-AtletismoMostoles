@@ -20,7 +20,7 @@ import { MatButtonModule } from '@angular/material/button';
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 100%;">
           <mat-label>Horarios de Entrenamiento</mat-label>
-          <input matInput formControlName="schedule">
+          <input matInput formControlName="description">
         </mat-form-field>
         <mat-form-field appearance="fill" style="width: 100%;">
           <mat-label>Enlace de Imagen</mat-label>

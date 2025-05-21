@@ -19,7 +19,7 @@ public class DisciplinesE2ETest {
     @BeforeAll
     public void setup() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless"); // ya no necesitas duplicarlo
+        options.addArguments("--headless");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");
@@ -29,7 +29,6 @@ public class DisciplinesE2ETest {
         options.addArguments("--allow-running-insecure-content");
         options.setAcceptInsecureCerts(true);
 
-        // 👉 Aquí inicializas automáticamente el ChromeDriver correcto
         WebDriverManager.chromedriver().setup();
 
         driver = new ChromeDriver(options);
@@ -83,7 +82,7 @@ public class DisciplinesE2ETest {
 
     @Test
     public void testLoginAndCheckUIChanges() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("mat-card.login-form")));
@@ -118,7 +117,7 @@ public class DisciplinesE2ETest {
         System.out.println("✅ Modal opened!");
 
         driver.findElement(By.cssSelector("input[formControlName='name']")).sendKeys("Test Discipline");
-        driver.findElement(By.cssSelector("input[formControlName='schedule']")).sendKeys("Lunes y Miércoles");
+        driver.findElement(By.cssSelector("input[formControlName='description']")).sendKeys("Lunes y Miércoles");
         driver.findElement(By.cssSelector("input[formControlName='imageLink']")).sendKeys("https://example.com/image.jpg");
 
         WebElement saveButton = wait.until(ExpectedConditions.elementToBeClickable(

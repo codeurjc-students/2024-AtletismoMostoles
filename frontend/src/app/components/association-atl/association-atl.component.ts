@@ -58,7 +58,7 @@ export class AssociationAtlComponent implements OnInit {
   ) {
     this.disciplineForm = this.fb.group({
       name: ['', Validators.required],
-      schedule: ['', Validators.required],
+      description: ['', Validators.required],
       imageLink: ['', Validators.required]
     });
   }
