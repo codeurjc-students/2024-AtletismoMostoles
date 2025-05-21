@@ -82,3 +82,21 @@ jobs:
         run: |
           cd backend
           mvn clean test -Dtest="com.example.TFG_WebApp.E2E_TESTs.**"
+
+      - name: Run Unit Tests with Maven
+        run: |
+          cd backend
+          mvn clean test -Dtest="com.example.TFG_WebApp.Unit_TESTs.**"
+          
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run Angular Unit Tests
+        working-directory: frontend
+        run: ng test --watch=false --browsers=ChromeHeadless
