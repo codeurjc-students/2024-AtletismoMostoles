@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IndexComponent } from './index.component';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router';
+import { APP_BASE_HREF } from '@angular/common';
+import { BehaviorSubject, EMPTY } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgIf } from '@angular/common';
@@ -16,19 +17,27 @@ import { RouterTestingModule } from '@angular/router/testing';
 describe('IndexComponent', () => {
   let component: IndexComponent;
   let fixture: ComponentFixture<IndexComponent>;
-  let authSubject: BehaviorSubject<any|null>;
+  let authSubject: BehaviorSubject<any | null>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let routerSpy: Partial<Router> & {
+    events: any;
+    createUrlTree: jasmine.Spy;
+    serializeUrl: jasmine.Spy;
+  };
 
   beforeEach(waitForAsync(() => {
-    authSubject = new BehaviorSubject<any|null>(null);
-
+    authSubject = new BehaviorSubject<any | null>(null);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['logout', 'isAuthenticated'], {
       user: authSubject.asObservable()
     });
     authServiceSpy.isAuthenticated.and.callFake(() => authSubject.value != null);
 
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    routerSpy = {
+      navigate: jasmine.createSpy('navigate'),
+      events: EMPTY,
+      createUrlTree: jasmine.createSpy('createUrlTree').and.returnValue([]),
+      serializeUrl: jasmine.createSpy('serializeUrl').and.returnValue('')
+    };
 
     TestBed.configureTestingModule({
       imports: [
@@ -44,10 +53,11 @@ describe('IndexComponent', () => {
       ],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router,      useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ActivatedRoute, useValue: {} },
+        { provide: APP_BASE_HREF, useValue: '/' }
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -61,11 +71,9 @@ describe('IndexComponent', () => {
   });
 
   it('by default should show LogIn button only', () => {
-    fixture.detectChanges();
     const buttons = fixture.debugElement.queryAll(By.css('.LogSection button'));
-    expect(buttons.length).toBe(1, 'Sólo debe renderizar un botón');
-    const btn = buttons[0].nativeElement as HTMLButtonElement;
-    expect(btn.textContent).toContain('LogIn');
+    expect(buttons.length).toBe(1);
+    expect((buttons[0].nativeElement as HTMLButtonElement).textContent).toContain('LogIn');
   });
 
   it('should call router.navigate on login()', () => {
@@ -75,20 +83,16 @@ describe('IndexComponent', () => {
   });
 
   it('when authService emits a user, should show LogOut button', () => {
-    // Simulamos login
     authSubject.next({ name: 'test' });
     fixture.detectChanges();
-
     const buttons = fixture.debugElement.queryAll(By.css('.LogSection button'));
-    expect(buttons.length).toBe(1, 'Sólo debe renderizar un botón');
-    const btn = buttons[0].nativeElement as HTMLButtonElement;
-    expect(btn.textContent).toContain('LogOut');
+    expect(buttons.length).toBe(1);
+    expect((buttons[0].nativeElement as HTMLButtonElement).textContent).toContain('LogOut');
   });
 
   it('should call authService.logout on logout()', () => {
     authSubject.next({ name: 'test' });
     fixture.detectChanges();
-
     const btn = fixture.debugElement.query(By.css('.LogSection button')).nativeElement as HTMLButtonElement;
     btn.click();
     expect(authServiceSpy.logout).toHaveBeenCalled();

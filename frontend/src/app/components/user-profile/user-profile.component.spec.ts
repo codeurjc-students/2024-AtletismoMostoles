@@ -3,8 +3,10 @@ import { UserProfileComponent } from './user-profile.component';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
+
 
 describe('UserProfileComponent', () => {
   let component: UserProfileComponent;
@@ -21,14 +23,19 @@ describe('UserProfileComponent', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [UserProfileComponent],
+      imports: [UserProfileComponent, RouterTestingModule],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
         { provide: UserService, useValue: userServiceSpy },
         { provide: MatDialog, useValue: dialogSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ActivatedRoute, useValue: {} }
       ]
     }).compileComponents();
+
+    TestBed.overrideComponent(UserProfileComponent        , {
+      set: { template: '' }
+    });
 
     fixture = TestBed.createComponent(UserProfileComponent);
     component = fixture.componentInstance;
@@ -69,21 +76,22 @@ describe('UserProfileComponent', () => {
   });
 
   it('openNewUserDialog - crea usuario exitosamente', fakeAsync(() => {
-    const afterClosedSpy = jasmine.createSpyObj({ subscribe: (fn: (res: any) => void) => fn({ username: 'NewUser' }) });
-    dialogSpy.open.and.returnValue({ afterClosed: () => afterClosedSpy } as any);
+    dialogSpy.open.and.returnValue({
+      afterClosed: () => of({ name: 'NewUser', password: 'pass123' })
+    } as any);
 
     userServiceSpy.registerUser.and.returnValue(of({}));
-    spyOn(window, 'alert');
-
-    userServiceSpy.getUsersAdmin.and.returnValue(of({ content: [] })); // para loadUsers
+    spyOn(window, 'alert').and.stub();
+    userServiceSpy.getUsersAdmin.and.returnValue(of({ content: [] }));
 
     component.openNewUserDialog();
     tick();
 
-    expect(userServiceSpy.registerUser).toHaveBeenCalled();
+    expect(userServiceSpy.registerUser).toHaveBeenCalledWith({ name: 'NewUser', password: 'pass123' });
     expect(userServiceSpy.getUsersAdmin).toHaveBeenCalled();
     expect(window.alert).toHaveBeenCalledWith('✅ Usuario creado correctamente');
   }));
+
 
   it('deleteSelectedUsers - elimina usuarios seleccionados', fakeAsync(() => {
     const mockUsers = [{ id: 1 }, { id: 2 }];
@@ -91,7 +99,7 @@ describe('UserProfileComponent', () => {
     userServiceSpy.deleteUser.and.returnValue(of(void 0));
     userServiceSpy.getUsersAdmin.and.returnValue(of({ content: [] }));
 
-    spyOn(window, 'alert');
+    spyOn(window, 'alert').and.stub();
 
     component.deleteSelectedUsers();
     tick();

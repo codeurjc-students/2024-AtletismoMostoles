@@ -132,7 +132,7 @@ describe('EventService', () => {
 
   it('should delete an event', () => {
     service.delete(2).subscribe(response => {
-      expect(response).toBeUndefined();
+      expect(response).toBeNull();
     });
 
     const req = httpMock.expectOne('/api/events/2');

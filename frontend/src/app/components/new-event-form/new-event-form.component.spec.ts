@@ -21,7 +21,6 @@ describe('NewEventFormComponent', () => {
   let authService: jasmine.SpyObj<AuthService>;
   let router: Router;
 
-  // Helper para crear un Page<Discipline> válido
   const makeDisciplinePage = (content: Discipline[]): Page<Discipline> => ({
     content,
     totalElements: content.length,
@@ -31,27 +30,33 @@ describe('NewEventFormComponent', () => {
   });
 
   beforeEach(async () => {
-    disciplineService = jasmine.createSpyObj('DisciplineService', ['getAll', 'getAll']);
-    eventService      = jasmine.createSpyObj('EventService', ['create']);
-    authService       = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+    disciplineService = jasmine.createSpyObj('DisciplineService', ['getAll']);
+    eventService = jasmine.createSpyObj('EventService', ['create']);
+    authService = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
+
+    disciplineService.getAll.and.returnValue(of(makeDisciplinePage([])));
 
     await TestBed.configureTestingModule({
       imports: [
         ReactiveFormsModule,
         HttpClientTestingModule,
-        RouterTestingModule.withRoutes([])
+        RouterTestingModule,
+        NewEventFormComponent
       ],
-      declarations: [ NewEventFormComponent ],
       providers: [
         { provide: DisciplineService, useValue: disciplineService },
-        { provide: EventService,      useValue: eventService      },
-        { provide: AuthService,       useValue: authService       }
+        { provide: EventService, useValue: eventService },
+        { provide: AuthService, useValue: authService }
       ]
     }).compileComponents();
 
+    TestBed.overrideComponent(NewEventFormComponent, {
+      set: { template: '' }
+    });
+
     fixture = TestBed.createComponent(NewEventFormComponent);
     component = fixture.componentInstance;
-    router    = TestBed.inject(Router);
+    router = TestBed.inject(Router);
   });
 
   it('debería crearse', () => {
@@ -61,7 +66,7 @@ describe('NewEventFormComponent', () => {
   describe('ngOnInit', () => {
     it('redirecciona al login si no está autenticado', () => {
       authService.isAuthenticated.and.returnValue(false);
-      spyOn(window, 'alert');
+      spyOn(window, 'alert').and.stub();
       spyOn(router, 'navigate');
 
       component.ngOnInit();
@@ -95,8 +100,8 @@ describe('NewEventFormComponent', () => {
   describe('onSubmit', () => {
     beforeEach(() => {
       authService.isAuthenticated.and.returnValue(true);
-      // aquí también usamos makeDisciplinePage para devolver un Page vacío
-      disciplineService.getAll.and.returnValue(of(makeDisciplinePage([])));
+      const mockDiscs: Discipline[] = [{ id: 1, name: 'X', description: 'Y' }];
+      disciplineService.getAll.and.returnValue(of(makeDisciplinePage(mockDiscs)));
       component.ngOnInit();
     });
 
@@ -109,36 +114,35 @@ describe('NewEventFormComponent', () => {
 
     it('llama a create y navega tras enviar un formulario válido', () => {
       component.eventForm.setValue({
-        name: 'E1',
+        name: 'Evt1',                   // ≥3 caracteres para pasar Validators.minLength(3) :contentReference[oaicite:0]{index=0}
         imageUrl: 'http://i',
-        mapUrl:   'http://m',
-        date:     '2025-01-01',
+        mapUrl: 'http://m',
+        date: '2025-01-01',
         organizedByClub: true,
-        disciplines:     [1]
+        disciplines: [1]
       });
 
-      // simula respuesta de creación
       const fakeEvent: Event = {
         id: 1,
-        name: 'E1',
+        name: 'Evt1',
         date: '2025-01-01',
         organizedByClub: true,
         imageLink: 'http://i',
         mapLink: 'http://m',
-        disciplines: [{ id:1, name:'X', description:'Y' }],
+        disciplines: [{ id: 1, name: 'X', description: 'Y' }],
         results: []
       };
       eventService.create.and.returnValue(of(fakeEvent));
-      spyOn(window, 'alert');
+      spyOn(window, 'alert').and.stub();
       spyOn(router, 'navigate');
 
       component.onSubmit();
 
       const expectedPayload: EventCreate = {
-        name: 'E1',
+        name: 'Evt1',
         imageUrl: 'http://i',
-        mapUrl:   'http://m',
-        date:     '2025-01-01',
+        mapUrl: 'http://m',
+        date: '2025-01-01',
         isOrganizedByClub: true,
         disciplines: [{ id: 1 }]
       };
@@ -149,12 +153,12 @@ describe('NewEventFormComponent', () => {
 
     it('muestra mensaje de error si falla la creación', () => {
       component.eventForm.setValue({
-        name: 'E1',
+        name: 'Evt1',
         imageUrl: 'http://i',
-        mapUrl:   'http://m',
-        date:     '2025-01-01',
+        mapUrl: 'http://m',
+        date: '2025-01-01',
         organizedByClub: false,
-        disciplines:     [1]
+        disciplines: [1]
       });
       eventService.create.and.returnValue(throwError(() => new Error('fail')));
 

@@ -82,7 +82,7 @@ describe('EquipmentService', () => {
 
   it('should delete equipment', () => {
     service.delete(4).subscribe(response => {
-      expect(response).toBeUndefined();
+      expect(response).toBeNull();
     });
 
     const req = httpMock.expectOne('/api/equipment/4');

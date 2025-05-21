@@ -1,10 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EventsComponent } from './events.component';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { EventService } from '../../services/event.service';
 import { AuthService } from '../../services/auth.service';
 import { of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+
 
 describe('EventsComponent', () => {
   let component: EventsComponent;
@@ -19,13 +21,18 @@ describe('EventsComponent', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [EventsComponent, HttpClientTestingModule],
+      imports: [EventsComponent, HttpClientTestingModule, RouterTestingModule],
       providers: [
         { provide: EventService, useValue: eventServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: ActivatedRoute, useValue: {} }
       ]
     }).compileComponents();
+
+    TestBed.overrideComponent(EventsComponent, {
+      set: { template: '' }
+    });
 
     fixture = TestBed.createComponent(EventsComponent);
     component = fixture.componentInstance;
@@ -149,7 +156,7 @@ describe('EventsComponent', () => {
 
   it('should alert if not logged in when trying to add new event', () => {
     component.isLoggedIn = false;
-    spyOn(window, 'alert');
+    spyOn(window, 'alert').and.stub();
     component.navigateToNewEvent();
     expect(window.alert).toHaveBeenCalledWith('Debes iniciar sesión para crear un evento.');
   });
@@ -173,7 +180,7 @@ describe('EventsComponent', () => {
       size: 6,
       number: 0
     }));
-    spyOn(window, 'alert');
+    spyOn(window, 'alert').and.stub();
 
     component.deleteEvent(1);
 

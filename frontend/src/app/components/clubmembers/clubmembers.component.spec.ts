@@ -4,10 +4,12 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CoachService } from '../../services/coach.service';
 import { DisciplineService } from '../../services/discipline.service';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { of } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+
 
 describe('ClubMembersComponent', () => {
   let component: ClubMembersComponent;
@@ -26,15 +28,21 @@ describe('ClubMembersComponent', () => {
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     await TestBed.configureTestingModule({
-      imports: [ClubMembersComponent, HttpClientTestingModule, ReactiveFormsModule],
+      imports: [ClubMembersComponent, HttpClientTestingModule, ReactiveFormsModule, RouterTestingModule],
       providers: [
         { provide: CoachService, useValue: coachServiceSpy },
         { provide: DisciplineService, useValue: disciplineServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: MatDialog, useValue: dialogSpy }
+        { provide: MatDialog, useValue: dialogSpy },
+        { provide: ActivatedRoute, useValue: {} }
       ]
     }).compileComponents();
+
+    TestBed.overrideComponent(ClubMembersComponent, {
+      set: { template: '' }
+    });
+
 
     fixture = TestBed.createComponent(ClubMembersComponent);
     component = fixture.componentInstance;
@@ -147,7 +155,7 @@ describe('ClubMembersComponent', () => {
       number: 0
     }));
 
-    spyOn(window, 'alert');
+    spyOn(window, 'alert').and.stub();
     component.createCoach();
 
     expect(coachServiceSpy.create).toHaveBeenCalled();
@@ -156,14 +164,14 @@ describe('ClubMembersComponent', () => {
 
   it('should not create coach if form is invalid', () => {
     component.isAdmin = true;
-    spyOn(window, 'alert');
+    spyOn(window, 'alert').and.stub();
     component.createCoach();
     expect(window.alert).toHaveBeenCalledWith('Por favor, complete todos los campos requeridos');
   });
 
   it('should not create coach if user is not admin', () => {
     component.isAdmin = false;
-    spyOn(window, 'alert');
+    spyOn(window, 'alert').and.stub();
     component.createCoach();
     expect(window.alert).toHaveBeenCalledWith('Solo los administradores pueden crear entrenadores.');
   });

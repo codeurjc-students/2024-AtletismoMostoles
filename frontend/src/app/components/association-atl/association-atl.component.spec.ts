@@ -1,12 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AssociationAtlComponent } from './association-atl.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { DisciplineService } from '../../services/discipline.service';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
+import { Component } from '@angular/core';
+import { provideRouter } from '@angular/router';
+
+@Component({ template: '' })
+class DummyComponent {}
 
 describe('AssociationAtlComponent', () => {
   let component: AssociationAtlComponent;
@@ -23,14 +28,27 @@ describe('AssociationAtlComponent', () => {
     dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
 
     await TestBed.configureTestingModule({
-      imports: [AssociationAtlComponent, HttpClientTestingModule, ReactiveFormsModule],
+      imports: [
+        AssociationAtlComponent,
+        HttpClientTestingModule,
+        ReactiveFormsModule
+      ],
       providers: [
+        provideRouter([
+          { path: 'discipline-details/:id', component: DummyComponent },
+          { path: 'login', component: DummyComponent }
+        ]),
         { provide: DisciplineService, useValue: disciplineServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: MatDialog, useValue: dialogSpy }
+        { provide: MatDialog, useValue: dialogSpy },
+        { provide: ActivatedRoute, useValue: {} }
       ]
     }).compileComponents();
+
+    TestBed.overrideComponent(AssociationAtlComponent, {
+      set: { template: '' }
+    });
 
     fixture = TestBed.createComponent(AssociationAtlComponent);
     component = fixture.componentInstance;
@@ -55,7 +73,7 @@ describe('AssociationAtlComponent', () => {
     };
     disciplineServiceSpy.getAll.and.returnValue(of(mockResponse));
 
-    fixture.detectChanges(); // triggers ngOnInit
+    fixture.detectChanges();
 
     expect(component.disciplines.length).toBe(1);
     expect(component.totalPages).toBe(2);
@@ -143,7 +161,7 @@ describe('AssociationAtlComponent', () => {
       number: 0
     }));
 
-    spyOn(window, 'alert');
+    spyOn(window, 'alert').and.stub();
     component.createDiscipline();
 
     expect(disciplineServiceSpy.create).toHaveBeenCalled();
@@ -151,7 +169,7 @@ describe('AssociationAtlComponent', () => {
   });
 
   it('should alert when form is invalid', () => {
-    spyOn(window, 'alert');
+    spyOn(window, 'alert').and.stub();
     component.createDiscipline();
     expect(window.alert).toHaveBeenCalledWith('Por favor, complete todos los campos requeridos');
   });

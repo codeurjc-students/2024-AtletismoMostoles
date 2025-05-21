@@ -8,13 +8,16 @@ import { of, throwError } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Athlete } from '../../models/athlete.model';
+import { Coach } from '../../models/coach.model';
 import { Results } from '../../models/results.model';
+import { Page } from '../../models/page.model';
 import { By } from '@angular/platform-browser';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { APP_BASE_HREF } from '@angular/common';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
@@ -22,17 +25,29 @@ describe('ProfileComponent', () => {
   let athleteSvc: jasmine.SpyObj<AthleteService>;
   let coachSvc: jasmine.SpyObj<CoachService>;
   let authSvc: jasmine.SpyObj<AuthService>;
-  let router: jasmine.SpyObj<Router>;
+  let router: Router;
+
+  const emptyAthletePage: Page<Athlete> = { content: [], totalElements: 0, totalPages: 0, size: 0, number: 0 };
+  const emptyCoachPage: Page<Coach> = { content: [], totalElements: 0, totalPages: 0, size: 0, number: 0 };
 
   beforeEach(async () => {
     athleteSvc = jasmine.createSpyObj('AthleteService', ['getById', 'update', 'delete', 'getAll']);
-    coachSvc = jasmine.createSpyObj('CoachService', ['getById', 'update', 'delete']);
+    coachSvc = jasmine.createSpyObj('CoachService', ['getById', 'update', 'delete', 'getAll']);
     authSvc = jasmine.createSpyObj('AuthService', ['isAdmin', 'isAuthenticated'], { user: of(null) });
-    router = jasmine.createSpyObj('Router', ['navigate']);
+
+    const defaultAthlete: Athlete = {
+      licenseNumber: '', firstName: '', lastName: '', birthDate: '',
+      disciplines: [], results: [], coach: null
+    };
+    athleteSvc.getById.and.returnValue(of(defaultAthlete));
+    athleteSvc.getAll.and.returnValue(of(emptyAthletePage));
+    const defaultCoach: Coach = { /* populate minimally if needed */ } as Coach;
+    coachSvc.getById.and.returnValue(of(defaultCoach));
+    coachSvc.getAll.and.returnValue(of(emptyCoachPage));
 
     await TestBed.configureTestingModule({
       imports: [
-        ProfileComponent, // standalone component
+        ProfileComponent,
         ReactiveFormsModule,
         RouterTestingModule.withRoutes([]),
         MatCardModule,
@@ -45,19 +60,22 @@ describe('ProfileComponent', () => {
         { provide: AthleteService, useValue: athleteSvc },
         { provide: CoachService, useValue: coachSvc },
         { provide: AuthService, useValue: authSvc },
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { params: { type: 'athlete', id: 'A100' } } }
-        },
-        { provide: Router, useValue: router }
+        { provide: ActivatedRoute, useValue: { snapshot: { params: { type: 'athlete', id: 'A100' } } } },
+        { provide: APP_BASE_HREF, useValue: '/' }
       ]
     }).compileComponents();
 
     authSvc.isAuthenticated.and.returnValue(true);
     authSvc.isAdmin.and.returnValue(true);
 
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate');
+
     fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('debería crearse', () => {
@@ -77,20 +95,6 @@ describe('ProfileComponent', () => {
       };
       athleteSvc.getById.and.returnValue(of(fakeAthlete));
 
-      athleteSvc.getAll.and.returnValue(of({
-        content: [{
-          licenseNumber: 'A100',
-          firstName: 'Juan',
-          lastName: 'Pérez',
-          birthDate: '1990-05-05'
-        }],
-        totalElements: 1,
-        totalPages: 1,
-        size: 100,
-        number: 0
-      }));
-
-
       component.ngOnInit();
       tick();
       fixture.detectChanges();
@@ -98,27 +102,19 @@ describe('ProfileComponent', () => {
       expect(athleteSvc.getById).toHaveBeenCalledWith('A100');
       expect(component.profile).toEqual(fakeAthlete);
       expect(component.disciplines!).toEqual(fakeAthlete.disciplines!);
-
       const title = fixture.nativeElement.querySelector('mat-card-title')!.textContent!.trim();
       expect(title).toBe('Juan Pérez');
     }));
 
     it('muestra mensaje de error si falla carga', fakeAsync(() => {
       athleteSvc.getById.and.returnValue(throwError(() => new Error('fail')));
-      athleteSvc.getAll.and.returnValue(of({
-        content: [],
-        totalElements: 0,
-        totalPages: 1,
-        size: 100,
-        number: 0
-      }));
 
       component.ngOnInit();
       tick();
       fixture.detectChanges();
 
       expect(component.errorMessage).toBe('Error al cargar el perfil. Inténtalo de nuevo más tarde.');
-      const errEl = fixture.debugElement.query(By.css('.profile-card'));
+      expect(fixture.debugElement.query(By.css('.profile-card'))).toBeTruthy();
     }));
   });
 
@@ -165,7 +161,7 @@ describe('ProfileComponent', () => {
       athleteSvc.update.and.returnValue(of(updatedProfile));
       athleteSvc.getById.and.returnValue(of(updatedProfile));
 
-      spyOn(window, 'alert');
+      spyOn(window, 'alert').and.stub();
 
       component.saveProfile();
       tick();

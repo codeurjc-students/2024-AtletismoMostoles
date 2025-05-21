@@ -51,7 +51,7 @@ describe('UserService', () => {
 
   it('should delete a user', () => {
     service.deleteUser(1).subscribe(response => {
-      expect(response).toBeUndefined();
+      expect(response).toBeNull();
     });
 
     const req = httpMock.expectOne('/api/admin/user/1');

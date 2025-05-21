@@ -95,7 +95,7 @@ describe('ResultService', () => {
 
   it('should delete a result', () => {
     service.delete(1).subscribe(response => {
-      expect(response).toBeUndefined();
+      expect(response).toBeNull();
     });
 
     const req = httpMock.expectOne('/api/results/1');

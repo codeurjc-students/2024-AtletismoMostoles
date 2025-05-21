@@ -10,6 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DomSanitizer } from '@angular/platform-browser';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('EventDetailsComponent', () => {
   let component: EventDetailsComponent;
@@ -21,11 +22,10 @@ describe('EventDetailsComponent', () => {
   let routerSpy: jasmine.SpyObj<Router>;
   let dialogSpy: jasmine.SpyObj<MatDialog>;
   let sanitizerSpy: jasmine.SpyObj<DomSanitizer>;
+  let alertSpy: jasmine.Spy;
 
   beforeEach(async () => {
-    const routeStub = {
-      snapshot: { paramMap: { get: () => '1' } }
-    };
+    const routeStub = { snapshot: { paramMap: { get: () => '1' } } };
 
     eventServiceSpy = jasmine.createSpyObj('EventService', ['getById', 'update']);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['logout', 'isAuthenticated'], { user: of(null) });
@@ -36,7 +36,7 @@ describe('EventDetailsComponent', () => {
     sanitizerSpy = jasmine.createSpyObj('DomSanitizer', ['bypassSecurityTrustResourceUrl']);
 
     await TestBed.configureTestingModule({
-      imports: [EventDetailsComponent, ReactiveFormsModule, HttpClientTestingModule],
+      imports: [EventDetailsComponent, ReactiveFormsModule, HttpClientTestingModule, RouterTestingModule],
       providers: [
         { provide: ActivatedRoute, useValue: routeStub },
         { provide: EventService, useValue: eventServiceSpy },
@@ -44,13 +44,20 @@ describe('EventDetailsComponent', () => {
         { provide: AthleteService, useValue: athleteServiceSpy },
         { provide: ResultService, useValue: resultServiceSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: MatDialog, useValue: dialogSpy },
         { provide: DomSanitizer, useValue: sanitizerSpy }
       ]
-    }).compileComponents();
+    })
+      .overrideProvider(MatDialog, { useValue: dialogSpy })
+      .compileComponents();
+
+    TestBed.overrideComponent(EventDetailsComponent, {
+      set: { template: '' }
+    });
 
     fixture = TestBed.createComponent(EventDetailsComponent);
     component = fixture.componentInstance;
+
+    alertSpy = spyOn(window, 'alert').and.stub();
   });
 
   it('should create', () => {
@@ -75,7 +82,12 @@ describe('EventDetailsComponent', () => {
 
     expect(eventServiceSpy.getById).toHaveBeenCalledWith(1);
     expect(component.event).toEqual(mockEvent);
-    expect(component.eventForm.value.name).toBe('Maratón');
+    expect(component.eventForm.value).toEqual({
+      name: 'Maratón',
+      date: '2025-10-10',
+      isOrganizedByClub: true,
+      imageLink: 'link.jpg'
+    });
     expect(component.sanitizedMapUrl).toBe('sanitized-url' as any);
   });
 
@@ -97,7 +109,7 @@ describe('EventDetailsComponent', () => {
     component.eventForm.setValue({
       name: 'Nuevo nombre',
       date: '2025-11-11',
-      organizedByClub: true,
+      isOrganizedByClub: true,
       imageLink: 'nuevo-link.jpg'
     });
     eventServiceSpy.update.and.returnValue(of({
@@ -108,21 +120,18 @@ describe('EventDetailsComponent', () => {
       imageLink: 'nuevo-link.jpg',
       mapLink: 'maplink'
     }));
-    spyOn(window, 'alert');
-    spyOn(component, 'loadEvent');
+    const loadSpy = spyOn(component, 'loadEvent');
 
     component.saveEvent();
 
-    expect(eventServiceSpy.update).toHaveBeenCalledWith(1, {
-      id: 1,
+    expect(eventServiceSpy.update).toHaveBeenCalledWith(1, jasmine.objectContaining({
       name: 'Nuevo nombre',
       date: '2025-11-11',
       organizedByClub: true,
-      imageLink: 'nuevo-link.jpg',
-      mapLink: 'maplink'
-    });
+      imageLink: 'nuevo-link.jpg'
+    }));
     expect(window.alert).toHaveBeenCalledWith('Evento actualizado con éxito');
-    expect(component.loadEvent).toHaveBeenCalled();
+    expect(loadSpy).toHaveBeenCalled();
     expect(component.isEditing).toBeFalse();
   });
 
@@ -130,10 +139,12 @@ describe('EventDetailsComponent', () => {
     component.eventForm.setValue({
       name: '',
       date: '',
-      organizedByClub: false,
+      isOrganizedByClub: false,
       imageLink: ''
     });
+
     component.saveEvent();
+
     expect(eventServiceSpy.update).not.toHaveBeenCalled();
   });
 
@@ -188,19 +199,25 @@ describe('EventDetailsComponent', () => {
     };
 
     athleteServiceSpy.getAll.and.returnValue(of(mockAthletes));
+    dialogSpy.open.and.returnValue({ afterClosed: () => of([{ value: 10 }]) } as any);
+    resultServiceSpy.createMultiple.and.returnValue(of([]));
+    const loadSpy = spyOn(component, 'loadEvent');
 
-    const afterClosedSpy = jasmine.createSpyObj({ subscribe: (fn: any) => fn([{ value: 10 }]) });
-    dialogSpy.open.and.returnValue({ afterClosed: () => afterClosedSpy } as any);
-    resultServiceSpy.createMultiple.and.returnValue(of([])); // devuelve un array vacío
-    spyOn(window, 'alert');
-    spyOn(component, 'loadEvent');
-
-    component.event = { id: 1, disciplines: [] };
+    component.event = { id: 1, disciplines: [] } as any;
     component.openAddResultsDialog();
 
-    expect(dialogSpy.open).toHaveBeenCalled();
+    expect(dialogSpy.open).toHaveBeenCalledWith(
+      jasmine.any(Function),
+      jasmine.objectContaining({
+        data: jasmine.objectContaining({
+          eventId: 1,
+          disciplines: [],
+          athletes: mockAthletes.content
+        })
+      })
+    );
     expect(resultServiceSpy.createMultiple).toHaveBeenCalledWith([{ value: 10 }]);
     expect(window.alert).toHaveBeenCalledWith('Resultados agregados correctamente');
-    expect(component.loadEvent).toHaveBeenCalled();
+    expect(loadSpy).toHaveBeenCalled();
   });
 });

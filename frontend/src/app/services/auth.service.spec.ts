@@ -19,6 +19,10 @@ describe('AuthService', () => {
     service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
     routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+
+    // ✅ Interceptamos la petición automática a /api/users/me al iniciar el servicio
+    const initReq = httpMock.expectOne('/api/users/me');
+    initReq.flush(null);
   });
 
   afterEach(() => {
@@ -55,7 +59,7 @@ describe('AuthService', () => {
 
     const req = httpMock.expectOne('/api/auth/logout');
     expect(req.request.method).toBe('POST');
-    req.flush({});
+    req.flush(null);
 
     expect(service.getCurrentUser()).toBeNull();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);

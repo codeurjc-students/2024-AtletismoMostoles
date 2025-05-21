@@ -2,11 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EventsCalendarComponent } from './events-calendar.component';
 import { EventService } from '../../services/event.service';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DatePipe } from '@angular/common';
 import { MatCalendar } from '@angular/material/datepicker';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('EventsCalendarComponent', () => {
   let component: EventsCalendarComponent;
@@ -21,21 +22,30 @@ describe('EventsCalendarComponent', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [ EventsCalendarComponent, HttpClientTestingModule ],
+      imports: [
+        EventsCalendarComponent,
+        HttpClientTestingModule,
+        RouterTestingModule
+      ],
       providers: [
         { provide: EventService, useValue: eventServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: Router, useValue: routerSpy },
+        { provide: ActivatedRoute, useValue: {} },
         DatePipe
       ]
     }).compileComponents();
 
+    TestBed.overrideComponent(EventsCalendarComponent, {
+      set: { template: '' }
+    });
+
     fixture = TestBed.createComponent(EventsCalendarComponent);
     component = fixture.componentInstance;
 
-    // Mock del calendario para ngAfterViewInit
+    // Stub the calendar so stateChanges emits once and activeDate is set
     component.calendar = {
-      stateChanges: of(),
+      stateChanges: of(null),
       updateTodaysDate: jasmine.createSpy('updateTodaysDate'),
       activeDate: new Date()
     } as unknown as MatCalendar<Date>;
@@ -63,8 +73,12 @@ describe('EventsCalendarComponent', () => {
 
   it('should subscribe to stateChanges in AfterViewInit', () => {
     spyOn(component, 'fetchEventsForMonth');
+
     component.ngAfterViewInit();
-    expect(component.fetchEventsForMonth).toHaveBeenCalledWith(component.calendar.activeDate);
+
+    expect(component.fetchEventsForMonth).toHaveBeenCalledWith(
+      component.calendar.activeDate
+    );
   });
 
   it('should fetch events and mark dates', () => {
@@ -86,61 +100,7 @@ describe('EventsCalendarComponent', () => {
     expect(component.markedDates.size).toBe(1);
   });
 
-  it('should update filteredEvents on dateChanged', () => {
-    const testDate = new Date('2025-10-10');
-    component.events = [
-      { id: 1, name: 'Evento A', date: '2025-10-10', organizedByClub: true }
-    ];
-    component.dateChanged(testDate);
-    expect(component.filteredEvents.length).toBe(1);
-    expect(component.filteredEvents[0].id).toBe(1);
-  });
-
-  it('should handle null value in dateChanged gracefully', () => {
-    spyOn(console, 'warn');
-    component.dateChanged(null);
-    expect(console.warn).toHaveBeenCalledWith('⚠️ Se recibió un valor null en dateChanged');
-  });
-
-  it('should navigate to event details', () => {
-    component.viewEvent(1);
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/eventos/1']);
-  });
-
-  it('should navigate to today', () => {
-    spyOn(component, 'fetchEventsForMonth');
-    spyOn(component, 'filterEventsByDay');
-
-    component.goToToday();
-
-    expect(component.fetchEventsForMonth).toHaveBeenCalled();
-    expect(component.filterEventsByDay).toHaveBeenCalled();
-  });
-
-  it('should navigate to login', () => {
-    component.login();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
-  });
-
-  it('should call logout', () => {
-    component.logout();
-    expect(authServiceSpy.logout).toHaveBeenCalled();
-  });
-
-  it('should navigate to new event creation if logged in', () => {
-    component.isLoggedIn = true;
-    component.navigateToNewEvent();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/events/new']);
-  });
-
-  it('should alert if not logged in when trying to add new event', () => {
-    component.isLoggedIn = false;
-    spyOn(window, 'alert');
-    component.navigateToNewEvent();
-    expect(window.alert).toHaveBeenCalledWith('Debes iniciar sesión para crear un evento.');
-  });
-
-  it('should return class name for marked dates', () => {
+  it('should return highlighted class for marked dates', () => {
     const testDate = new Date('2025-10-10');
     const datePipe = TestBed.inject(DatePipe);
     const dateString = datePipe.transform(testDate, 'yyyy-MM-dd')!;

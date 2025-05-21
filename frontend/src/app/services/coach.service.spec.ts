@@ -113,7 +113,7 @@ describe('CoachService', () => {
 
   it('should delete a coach', () => {
     service.delete('C004').subscribe(response => {
-      expect(response).toBeUndefined();
+      expect(response).toBeNull();
     });
 
     const req = httpMock.expectOne('/api/coaches/C004');

@@ -95,8 +95,11 @@ export class DisciplineDetailsComponent implements OnInit {
         this.isEditMode = false;
         this.loadDiscipline();
       });
+    } else {
+      alert('Por favor, completa el formulario correctamente.');
     }
   }
+
 
   previousPage(): void {
     if (this.currentPage > 1) {
@@ -113,10 +116,17 @@ export class DisciplineDetailsComponent implements OnInit {
   openEquipmentDialog(): void {
     const dialogRef = this.dialog.open(EquipmentDialogComponent, {
       width: '400px',
-      data: { equipment: this.discipline.equipment }
+      data: { equipment: this.discipline?.equipment ?? [] }
     });
+
     dialogRef.afterClosed().subscribe(result => {
-      if (result === 'save') {
+      if (
+        result &&
+        typeof result === 'object' &&
+        this.discipline &&
+        Array.isArray(this.discipline.equipment)
+      ) {
+        this.discipline.equipment.push(result);
         this.loadDiscipline();
       }
     });

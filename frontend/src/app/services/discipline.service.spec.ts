@@ -88,7 +88,7 @@ describe('DisciplineService', () => {
 
   it('should delete a discipline', () => {
     service.delete(1).subscribe(response => {
-      expect(response).toBeUndefined();
+      expect(response).toBeNull();
     });
 
     const req = httpMock.expectOne('/api/disciplines/1');

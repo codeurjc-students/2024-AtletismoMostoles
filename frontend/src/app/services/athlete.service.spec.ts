@@ -113,7 +113,7 @@ describe('AthleteService', () => {
 
   it('should delete an athlete', () => {
     service.delete('A004').subscribe(response => {
-      expect(response).toBeUndefined();
+      expect(response).toBeNull();
     });
 
     const req = httpMock.expectOne('/api/athletes/A004');
