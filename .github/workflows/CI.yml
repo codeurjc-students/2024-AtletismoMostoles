@@ -85,12 +85,21 @@ jobs:
       # ----------------------------
       # Run all backend tests (unit, REST API, and E2E)
       # ----------------------------
-      - name: Run Backend Tests
+      - name: Run API REST Tests with Maven
         run: |
           cd backend
-          mvn clean test \
-            -Dtest="com.example.TFG_WebApp.Unit_TESTs.*,com.example.TFG_WebApp.API_REST_TESTs.*,com.example.TFG_WebApp.E2E_TESTs.*"
+          mvn clean test -Dtest="com.example.TFG_WebApp.API_REST_TESTs.**"
 
+      - name: Run E2E Tests with Maven
+        run: |
+          cd backend
+          mvn clean test -Dtest="com.example.TFG_WebApp.E2E_TESTs.**"
+
+      - name: Run Unit Tests with Maven
+        run: |
+          cd backend
+          mvn clean test -Dtest="com.example.TFG_WebApp.Unit_TESTs.**"
+          
       # ----------------------------
       # Angular Frontend
       # ----------------------------
