@@ -59,7 +59,10 @@ https://localhost:443
 ```
 
 ## 🎥 Vídeo Demostrativo
-Se ha subido un vídeo a YouTube mostrando las funcionalidades de la aplicación. Puedes verlo aquí: [Enlace al vídeo](https://www.youtube.com/watch?v=OJED6QcOsPE).
+Se ha subido a YouTube una serie de vídeos que muestran las funciones de la aplicación y la estética desarrollada a lo largo de las distintas etapas. 
+Puedes ver la primera versión aquí: [Enlace al vídeo](https://youtu.be/OJED6QcOsPE?si=7qQyJ-jagEKwMUVG).
+Esta sería una segunda versión con funcionalidad corregida y estética actualizada: [Enlace al vídeo]().
+
 
 # Fase 2
 
@@ -80,4 +83,9 @@ La aplicación cuenta con un sistema de **Integración y Entrega Continua (CI/CD
 - **Registros de Ejecución CI/CD**: Se pueden revisar en la pestaña **Actions** del repositorio en GitHub, donde se almacenan logs de compilación, pruebas y despliegue.
 
 Esto garantiza que cualquier cambio en el código se valide automáticamente y que las imágenes Docker se mantengan actualizadas con la última versión del backend.
+
+## 🎥 Vídeo Demostrativo
+De los videos antes mencionados este corresponde a la fase 2.
+Esta sería una segunda versión con funcionalidad corregida y estética actualizada: [Enlace al vídeo](https://youtu.be/jJ4yeAZt4ws?si=a1dX1wDeue1Mc7gK).
+
 
