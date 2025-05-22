@@ -2,6 +2,8 @@ package com.example.TFG_WebApp.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,9 +12,11 @@ import java.util.Set;
 public class Coach {
 
     @Id
+    @NotBlank
     private String licenseNumber;
-
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String lastName;
 
     @ManyToMany

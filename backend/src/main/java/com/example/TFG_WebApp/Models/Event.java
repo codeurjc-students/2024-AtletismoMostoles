@@ -2,6 +2,8 @@ package com.example.TFG_WebApp.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,9 +17,12 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String name;
+    @NotNull
     private LocalDate date;
     private String mapLink;
+    @NotNull
     private boolean isOrganizedByClub;
     private String imageLink;
 
@@ -31,7 +36,7 @@ public class Event {
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "event")
-    @JsonIgnoreProperties({"discipline", "athlete", "event"})
+    @JsonIgnoreProperties({"event"})
     private List<Results> results = new ArrayList<>();
 
     public Event() {}

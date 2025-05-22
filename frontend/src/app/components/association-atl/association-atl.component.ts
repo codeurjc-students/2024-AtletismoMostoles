@@ -15,6 +15,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
 import { NewDisciplineDialogComponent } from '../../modals/NewDisciplineDialogComponent.modal';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-association-atl',
@@ -31,6 +32,7 @@ import { NewDisciplineDialogComponent } from '../../modals/NewDisciplineDialogCo
     MatButtonModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatListModule,
     MatIconModule,
     MatGridListModule,
     MatToolbarModule,
@@ -56,7 +58,7 @@ export class AssociationAtlComponent implements OnInit {
   ) {
     this.disciplineForm = this.fb.group({
       name: ['', Validators.required],
-      schedule: ['', Validators.required],
+      description: ['', Validators.required],
       imageLink: ['', Validators.required]
     });
   }

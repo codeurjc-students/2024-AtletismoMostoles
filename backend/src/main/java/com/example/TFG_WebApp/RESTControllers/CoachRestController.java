@@ -2,6 +2,7 @@ package com.example.TFG_WebApp.RESTControllers;
 
 import com.example.TFG_WebApp.Models.Coach;
 import com.example.TFG_WebApp.Services.CoachService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,13 +36,13 @@ public class CoachRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Coach> createCoach(@RequestBody Coach coach) {
+    public ResponseEntity<Coach> createCoach(@Valid @RequestBody Coach coach) {
         Coach createdCoach = coachService.createCoach(coach);
         return new ResponseEntity<>(createdCoach, HttpStatus.CREATED);
     }
 
     @PutMapping("/{licenseNumber}")
-    public ResponseEntity<Coach> updateCoach(@PathVariable String licenseNumber, @RequestBody Coach coach) {
+    public ResponseEntity<Coach> updateCoach(@PathVariable String licenseNumber, @Valid @RequestBody Coach coach) {
         Coach updatedCoach = coachService.updateCoach(licenseNumber, coach);
         return ResponseEntity.ok(updatedCoach);
     }

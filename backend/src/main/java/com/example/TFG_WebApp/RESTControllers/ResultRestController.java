@@ -2,6 +2,7 @@ package com.example.TFG_WebApp.RESTControllers;
 
 import com.example.TFG_WebApp.Models.Results;
 import com.example.TFG_WebApp.Services.ResultService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.transform.Result;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/results")
@@ -39,13 +41,13 @@ public class ResultRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Results> createResult(@RequestBody Results result) {
+    public ResponseEntity<Results> createResult(@Valid @RequestBody Results result) {
         Results createdResult = resultService.createResult(result);
         return new ResponseEntity<>(createdResult, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Results> updateResult(@PathVariable Long id, @RequestBody Results result) {
+    public ResponseEntity<Results> updateResult(@PathVariable Long id,@Valid @RequestBody Results result) {
         Results updatedResult = resultService.updateResult(id, result);
         return ResponseEntity.ok(updatedResult);
     }
@@ -55,4 +57,16 @@ public class ResultRestController {
         resultService.deleteResult(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/batch")
+    public ResponseEntity<?> createMultipleResults(@RequestBody List<Results> resultsList) {
+        try {
+            List<Results> saved = resultService.createMultiple(resultsList);
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al guardar los resultados: " + e.getMessage());
+        }
+    }
+
 }

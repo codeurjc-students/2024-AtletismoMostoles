@@ -2,6 +2,7 @@ package com.example.TFG_WebApp.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,8 +13,9 @@ public class Equipment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @NotBlank
     private String name;
+    @NotBlank
     private String description;
     private String imageLink;
 

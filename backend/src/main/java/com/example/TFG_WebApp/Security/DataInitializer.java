@@ -33,16 +33,22 @@ public class DataInitializer {
 
     @PostConstruct
     public void initDatabase() {
-        User user = new User();
-        user.setName(admin);
-        user.setEncodedPassword(passwordEncoder.encode(adminPasword));
-        user.setRoles(List.of("ADMIN"));
-        userRepository.save(user);
 
-        user = new User();
-        user.setName(user1);
-        user.setEncodedPassword(passwordEncoder.encode(user1Pasword));
-        user.setRoles(List.of("USER"));
-        userRepository.save(user);
+        if (userRepository.findByName(admin).isEmpty()) {
+            User user = new User();
+            user.setName(admin);
+            user.setEncodedPassword(passwordEncoder.encode(adminPasword));
+            user.setRoles(List.of("ADMIN"));
+            userRepository.save(user);
+        }
+
+        if (userRepository.findByName(user1).isEmpty()) {
+            User user = new User();
+            user.setName(user1);
+            user.setEncodedPassword(passwordEncoder.encode(user1Pasword));
+            user.setRoles(List.of("USER"));
+            userRepository.save(user);
+        }
     }
+
 }

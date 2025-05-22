@@ -10,6 +10,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { AssociationAtlComponent } from './components/association-atl/association-atl.component';
 import { DisciplineDetailsComponent } from './components/discipline-details/discipline-details.component';
 import { NewEventFormComponent } from './components/new-event-form/new-event-form.component';
+import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { AuthGuard } from './guards/auth.guard';
 import { LoginComponent } from './components/login/login.component';
 
@@ -26,6 +27,12 @@ export const routes: Routes = [
   {
     path: 'events/new',
     component: NewEventFormComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['USER'] },
+  },
+  {
+    path: 'user-profile',
+    component: UserProfileComponent,
     canActivate: [AuthGuard],
     data: { roles: ['USER'] },
   },

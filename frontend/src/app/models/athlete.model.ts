@@ -7,7 +7,7 @@ export interface Athlete {
   firstName: string;
   lastName: string;
   birthDate: string;
-  coach?: Coach;
-  disciplines?: Discipline[];
+  coach?: Coach|null;
+  disciplines?: Discipline[]|null;
   results?: Results[];
 }

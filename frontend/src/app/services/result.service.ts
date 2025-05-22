@@ -67,4 +67,10 @@ export class ResultService {
     }
     return throwError(() => error);
   }
+  createMultiple(results: any[]): Observable<Results[]> {
+    return this.http
+      .post<Results[]>(`${this.apiUrl}/batch`, results, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
+  }
+
 }

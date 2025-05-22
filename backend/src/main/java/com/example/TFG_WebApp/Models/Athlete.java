@@ -2,6 +2,9 @@ package com.example.TFG_WebApp.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,10 +14,13 @@ import java.util.Set;
 @Entity
 public class Athlete {
     @Id
+    @NotBlank
     private String licenseNumber; // Unique identifier
-
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String lastName;
+    @NotNull
     private LocalDate birthDate;
 
     @ManyToOne
@@ -32,7 +38,7 @@ public class Athlete {
     private Set<Discipline> disciplines = new HashSet<>();
 
     @OneToMany(mappedBy = "athlete")
-    @JsonIgnoreProperties({"athlete", "event"})
+    @JsonIgnoreProperties({"athlete"})
     private List<Results> results = new ArrayList<>();
 
     public Athlete(String licenseNumber, String firstName, String lastName, LocalDate birthDate, Coach coach, Set<Discipline> disciplines) {

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.xml.transform.Result;
+import java.util.List;
 
 @Service
 
@@ -50,4 +51,9 @@ public class ResultService {
         Results results = getResultById(id);
         resultRepository.delete(results);
     }
+
+    public List<Results> createMultiple(List<Results> resultsList) {
+        return resultRepository.saveAll(resultsList);
+    }
+
 }

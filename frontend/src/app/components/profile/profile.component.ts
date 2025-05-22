@@ -48,6 +48,7 @@ import { MatListModule } from '@angular/material/list';
 })
 export class ProfileComponent implements OnInit {
   profile!: Athlete | Coach;
+  coachedAthletes: Athlete[] = [];
   results: Results[] = [];
   paginatedResults: Results[] = [];
   disciplines: Discipline[] = [];
@@ -75,7 +76,7 @@ export class ProfileComponent implements OnInit {
     const type = this.route.snapshot.params['type'];
     const id = this.route.snapshot.params['id'];
     this.isAthlete = type === 'athlete';
-    this.authService.user.subscribe(user => {
+    this.authService.user.subscribe(() => {
       this.isAdmin = this.authService.isAdmin();
       this.isLoggedIn = this.authService.isAuthenticated();
     });
@@ -89,15 +90,22 @@ export class ProfileComponent implements OnInit {
       (response) => {
         this.profile = response;
         this.disciplines = Array.isArray(response.disciplines) ? response.disciplines : [];
+
         if (this.isAthlete) {
-          this.results = (response as Athlete).results || [];
+          const athlete = response as Athlete;
+          this.results = athlete.results || [];
           this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
           this.updatePagination();
+        } else {
+          const coach = response as Coach;
+          this.coachedAthletes = coach.athletes || [];
         }
+        console.log('Resultados:', this.results);
+        console.log('Ejemplo evento:', this.results[0]?.event);
       },
-      (error: any) => {
+      (error) => {
         console.error('Error loading profile:', error);
-        this.errorMessage = 'Error loading profile. Please try again later.';
+        this.errorMessage = 'Error al cargar el perfil. Inténtalo de nuevo más tarde.';
       }
     );
   }
@@ -108,7 +116,7 @@ export class ProfileComponent implements OnInit {
         this.availableDisciplines = Array.isArray(response) ? response : [];
       },
       (error) => {
-        console.error('Error loading disciplines:', error);
+        console.error('Error cargando disciplinas:', error);
       }
     );
   }
@@ -147,11 +155,10 @@ export class ProfileComponent implements OnInit {
 
   deleteProfile(): void {
     if (!this.isAdmin || !confirm('¿Seguro que quieres eliminar este perfil?')) return;
-    if (this.isAthlete){
-      this.athleteService.delete(this.profile.licenseNumber).subscribe(() => this.router.navigate(['/ranking']));
-    }else{
-      this.coachService.delete(this.profile.licenseNumber).subscribe(() => this.router.navigate(['/miembros']));
-    }
+    const service = this.isAthlete ? this.athleteService : this.coachService;
+    service.delete(this.profile.licenseNumber).subscribe(() => {
+      this.router.navigate([this.isAthlete ? '/ranking' : '/miembros']);
+    });
   }
 
   login(): void {
@@ -187,11 +194,6 @@ export class ProfileComponent implements OnInit {
     return (this.profile as Athlete).birthDate;
   }
 
-  get formattedDisciplines(): string {
-    if (!this.profile?.disciplines?.length) return 'No asignadas';
-    return this.profile.disciplines.map(d => d.name).join(', ');
-  }
-
   get firstName(): string {
     return this.profile?.firstName || '';
   }
@@ -206,6 +208,19 @@ export class ProfileComponent implements OnInit {
 
   get profileDisciplines(): Discipline[] {
     return this.profile?.disciplines || [];
+  }
+
+  get coachName(): string {
+    if (
+      !this.isAthlete ||
+      !this.profile ||
+      !('coach' in this.profile) ||
+      !this.profile.coach
+    ) {
+      return 'No disponible';
+    }
+
+    return `${this.profile.coach.firstName} ${this.profile.coach.lastName}`;
   }
 
 

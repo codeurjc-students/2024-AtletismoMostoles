@@ -11,24 +11,21 @@ import static org.hamcrest.Matchers.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AthleteRestControllerTest {
 
-    private static String authToken;  // 🔹 Almacena el token de autenticación para futuras solicitudes
+    private static String authToken;
 
     @BeforeAll
     public static void setup() {
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.baseURI = "https://localhost:443";
 
-        // 🔹 Autenticación y obtención del token
         Response response = given()
                 .contentType(ContentType.JSON)
                 .body("{ \"username\": \"admin\", \"password\": \"adminpass\" }")
                 .when()
                 .post("/api/auth/login");
 
-        response.then().log().all(); // Imprimir respuesta para depuración
-
-        authToken = response.getCookie("AuthToken"); // Obtener token de la cookie
-        Assertions.assertNotNull(authToken, "Error: No se obtuvo un token JWT");
+        authToken = response.getCookie("AuthToken");
+        Assertions.assertNotNull(authToken);
     }
 
     @Test
@@ -39,21 +36,100 @@ public class AthleteRestControllerTest {
                 .when()
                 .get("/api/athletes")
                 .then()
-                .log().all()
                 .statusCode(200)
                 .body("content.size()", greaterThanOrEqualTo(0));
     }
 
     @Test
-    public void testCreateAthlete() {
-        Response response = createAthlete();
+    public void testGetAthlete_NotFound() {
+        given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .when()
+                .get("/api/athletes/UNKNOWN999")
+                .then()
+                .statusCode(404);
+    }
 
-        response.then().log().all();
+    @Test
+    public void testCreateAthlete_InvalidData() {
+        String invalidAthlete = """
+            {
+                \"licenseNumber\": \"\",
+                \"firstName\": \"\"
+            }
+        """;
 
-        response.then()
+        given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .contentType(ContentType.JSON)
+                .body(invalidAthlete)
+                .when()
+                .post("/api/athletes")
+                .then()
+                .statusCode(400);
+    }
+
+    @Test
+    public void testCreateUpdateAndDeleteAthlete() {
+        createAthlete().then()
                 .statusCode(anyOf(is(200), is(201)))
                 .body("firstName", equalTo("Daniel"))
                 .body("licenseNumber", equalTo("A98764"));
+
+        String updatedAthlete = """
+            {
+             \"licenseNumber\": \"A98764\",
+             \"firstName\": \"DanielUpdated\",
+             \"lastName\": \"VillaseñorUpdated\",
+             \"birthDate\": \"1996-12-01\",
+             \"coach\": { \"licenseNumber\": \"C1001\"},
+             \"disciplines\": [
+                {\"id\": 1}
+             ]
+            }
+        """;
+
+        given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .contentType(ContentType.JSON)
+                .body(updatedAthlete)
+                .when()
+                .put("/api/athletes/A98764")
+                .then()
+                .statusCode(200)
+                .body("firstName", equalTo("DanielUpdated"));
+
+        deleteAthlete();
+    }
+
+    @Test
+    public void testFilterAthletes() {
+        given()
+                .header("Authorization", "Bearer " + authToken)
+                .cookie("AuthToken", authToken)
+                .queryParam("firstName", "Daniel")
+                .queryParam("page", 0)
+                .queryParam("size", 5)
+                .when()
+                .get("/api/athletes/filter")
+                .then()
+                .statusCode(200)
+                .body("content.size()", greaterThanOrEqualTo(0));
+    }
+
+    @Test
+    public void testDeleteAthlete_Unauthorized() {
+        createAthlete().then()
+                .statusCode(anyOf(is(200), is(201)));
+
+        given()
+                .when()
+                .delete("/api/athletes/A98764")
+                .then()
+                .statusCode(401);
 
         deleteAthlete();
     }
@@ -68,73 +144,24 @@ public class AthleteRestControllerTest {
              \"coach\": { \"licenseNumber\": \"C1001\"},
              \"disciplines\": [
                 {\"id\": 1}
-                ]
-             }
+             ]
+            }
         """;
 
-        Response response = given()
+        return given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
                 .contentType(ContentType.JSON)
                 .body(newAthlete)
                 .when()
                 .post("/api/athletes");
-        return response;
-    }
-
-    @Test
-    public void testUpdateAthlete() {
-        createAthlete();
-
-        String updatedAthlete = """
-            {
-            \"licenseNumber\": \"A98764\",
-            \"firstName\": \"Mateo\",
-            \"lastName\": \"Martin\",
-            \"birthDate\": \"1996-12-01\",
-            \"coach\": { \"licenseNumber\": \"C1001\"},
-            \"disciplines\": [
-                {\"id\": 1}
-            ]
-            }
-        """;
-
-        Response response = given()
-                .header("Authorization", "Bearer " + authToken)
-                .cookie("AuthToken", authToken)
-                .contentType(ContentType.JSON)
-                .body(updatedAthlete)
-                .when()
-                .put("/api/athletes/A98764");
-
-        response.then().log().all();
-
-        response.then()
-                .statusCode(200)
-                .body("licenseNumber", equalTo("A98764"))
-                .body("firstName", equalTo("Mateo"))
-                .body("lastName", equalTo("Martin"));
-
-        deleteAthlete();
-    }
-
-    @Test
-    public void testDeleteAthlete() {
-        createAthlete();
-        Response response = deleteAthlete();
-
-        response.then()
-                .statusCode(anyOf(is(200), is(204)));
     }
 
     private static Response deleteAthlete() {
-        Response response = given()
+        return given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
                 .when()
                 .delete("/api/athletes/A98764");
-
-        response.then().log().all();
-        return response;
     }
 }

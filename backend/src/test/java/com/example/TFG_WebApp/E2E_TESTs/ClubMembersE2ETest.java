@@ -19,7 +19,7 @@ public class ClubMembersE2ETest {
     @BeforeAll
     public void setup() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless"); // ya no necesitas duplicarlo
+        options.addArguments("--headless");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-gpu");
@@ -29,7 +29,6 @@ public class ClubMembersE2ETest {
         options.addArguments("--allow-running-insecure-content");
         options.setAcceptInsecureCerts(true);
 
-        // 👉 Aquí inicializas automáticamente el ChromeDriver correcto
         WebDriverManager.chromedriver().setup();
 
         driver = new ChromeDriver(options);

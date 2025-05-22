@@ -34,9 +34,9 @@ public class DataInitializer {
         if (athleteRepository.count() == 0) {
             // Initialize Equipment
             List<Equipment> equipmentList = equipmentRepository.saveAll(Arrays.asList(
-                    new Equipment("Cronómetro", ""), new Equipment("Vallas", "Vallas con Altura de 76, 84, 91, 100, 106"), new Equipment("Pértiga" ," 4.00m 145lb 18flex 14tp"),
-                    new Equipment("Colchoneta de salto", ""), new Equipment("Disco" ,""), new Equipment("Jabalina", ""),
-                    new Equipment("Balón medicinal", "5Kg"), new Equipment("Cuerda de resistencia", ""), new Equipment("Conos" ," De Plastico, pequeños")
+                    new Equipment("Cronómetro", "Nuevo Modelo"), new Equipment("Vallas", "Vallas con Altura de 76, 84, 91, 100, 106"), new Equipment("Pértiga" ," 4.00m 145lb 18flex 14tp"),
+                    new Equipment("Colchoneta de salto", "Para altura"), new Equipment("Disco" ,"De 1kg"), new Equipment("Jabalina", "De 800g"),
+                    new Equipment("Balón medicinal", "5Kg"), new Equipment("Cuerda de resistencia", "De 2m"), new Equipment("Conos" ," De Plastico, pequeños")
             ));
 
             // Initialize Disciplines

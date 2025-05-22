@@ -2,6 +2,7 @@ package com.example.TFG_WebApp.RESTControllers;
 
 import com.example.TFG_WebApp.Models.Athlete;
 import com.example.TFG_WebApp.Services.AthleteService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,13 +38,13 @@ public class AthleteRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Athlete> createAthlete(@RequestBody Athlete athlete) {
+    public ResponseEntity<Athlete> createAthlete(@Valid @RequestBody Athlete athlete) {
         Athlete createdAthlete = athleteService.createAthlete(athlete);
         return new ResponseEntity<>(createdAthlete, HttpStatus.CREATED);
     }
 
     @PutMapping("/{licenseNumber}")
-    public ResponseEntity<Athlete> updateAthlete(@PathVariable String licenseNumber, @RequestBody Athlete athlete) {
+    public ResponseEntity<Athlete> updateAthlete(@PathVariable String licenseNumber, @Valid @RequestBody Athlete athlete) {
         Athlete updatedAthlete = athleteService.updateAthlete(licenseNumber, athlete);
         return ResponseEntity.ok(updatedAthlete);
     }
