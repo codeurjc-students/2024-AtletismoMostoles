@@ -56,12 +56,14 @@ jobs:
       # ----------------------------
       - name: Install Google Chrome and ChromeDriver
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget curl unzip google-chrome-stable
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-          wget -q "https://chromedriver.storage.googleapis.com/${CHROME_VERSION}/chromedriver_linux64.zip"
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/chromedriver
+          sudo apt update
+          sudo apt install -y wget curl unzip google-chrome-stable
+          
+          CHROMEDRIVER_VERSION="133.0.6943.126"
+          echo "Instalando ChromeDriver versión: $CHROMEDRIVER_VERSION"
+          wget -N "https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip"
+          unzip chromedriver-linux64.zip
+          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Set ChromeDriver environment variables
@@ -70,10 +72,11 @@ jobs:
           echo "WEBDRIVER_CHROME_DRIVER=/usr/local/bin/chromedriver" >> $GITHUB_ENV
 
       - name: Configure headless Chrome options
-        if: runner.os == 'Linux'
         run: |
-          echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --window-size=1920,1080" >> $GITHUB_ENV
-
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+              echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --window-size=1920,1080" >> $GITHUB_ENV
+          fi
+          
       - name: Verify Chrome & ChromeDriver versions
         run: |
           google-chrome --version
