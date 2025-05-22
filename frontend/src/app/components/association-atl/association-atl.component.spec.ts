@@ -144,7 +144,7 @@ describe('AssociationAtlComponent', () => {
   it('should create discipline when form is valid', () => {
     component.disciplineForm.setValue({
       name: 'Nueva',
-      schedule: 'Lunes',
+      description: 'Lunes',
       imageLink: 'link.jpg'
     });
     disciplineServiceSpy.create.and.returnValue(of({
