@@ -112,6 +112,15 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Run Angular unit tests
+      - name: Run Angular unit tests and collect coverage
         working-directory: frontend
-        run: npm test -- --watch=false --browsers=ChromeHeadless
+        run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+      # ----------------------------
+      # SonarCloud Analysis
+      # ----------------------------
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v1
+        with:
+          organization: codeurjc-students
+          token: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
