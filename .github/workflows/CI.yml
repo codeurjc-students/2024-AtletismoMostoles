@@ -121,6 +121,5 @@ jobs:
       # ----------------------------
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
-        with:
-          organization: codeurjc-students
-          token: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
+        env:
+          SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
