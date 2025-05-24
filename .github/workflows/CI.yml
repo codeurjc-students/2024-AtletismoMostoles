@@ -117,9 +117,20 @@ jobs:
         run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 
       # ----------------------------
-      # SonarCloud Analysis
+      # SonarCloud Analysis (CLI)
       # ----------------------------
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v1
+      - name: Download SonarScanner CLI
+        run: |
+          wget -O scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+          unzip scanner.zip
+          echo "SONAR_SCANNER_HOME=$(pwd)/sonar-scanner-4.7.0.2747-linux" >> $GITHUB_ENV
+          echo "$SONAR_SCANNER_HOME/bin" >> $GITHUB_PATH
+
+      - name: Run SonarScanner
         env:
           SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
+        run: |
+          sonar-scanner \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${SONAR_TOKEN}
+          
