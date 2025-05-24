@@ -116,21 +116,25 @@ jobs:
         working-directory: frontend
         run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 
-            # ----------------------------
+      # ----------------------------
       # SonarCloud Analysis (CLI)
       # ----------------------------
       - name: Download and unzip SonarScanner CLI
         run: |
           wget -O scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
           unzip scanner.zip
-          # Exportamos la ruta para usarla en el siguiente step
           echo "SONAR_SCANNER_HOME=$(pwd)/sonar-scanner-4.7.0.2747-linux" >> $GITHUB_ENV
 
       - name: Run SonarScanner
         env:
-          SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
+          SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088 
         run: |
-          # Invocamos directamente el binario sin depender del PATH
+          echo "Java antes de override: $(java -version)"
+          export PATH="$JAVA_HOME/bin:$PATH"
+          echo "Java después de override: $(java -version)"
+          
+          # Invocamos directamente el binario del scanner
           $SONAR_SCANNER_HOME/bin/sonar-scanner \
             -D "sonar.host.url=https://sonarcloud.io" \
             -D "sonar.login=${SONAR_TOKEN}"
+
