@@ -119,9 +119,10 @@ jobs:
       # ----------------------------
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
+        env:
+          SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
         with:
           args: >
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.organization=codeurjc-students
             -Dsonar.projectKey=codeurjc-students_2024-AtletismoMostoles
-            -Dsonar.login=4dd5c6a7ea10044d985b5bf2ff03c431625e8088
