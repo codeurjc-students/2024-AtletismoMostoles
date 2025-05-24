@@ -9,7 +9,7 @@ on:
 jobs:
   setup-and-test:
     name: Setup and Run Tests
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
@@ -97,7 +97,7 @@ jobs:
         run: |
           cd backend
           mvn clean test -Dtest="com.example.TFG_WebApp.Unit_TESTs.**"
-          
+
       # ----------------------------
       # Angular Frontend
       # ----------------------------
@@ -114,23 +114,22 @@ jobs:
         working-directory: frontend
         run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 
-            # ----------------------------
-      # SonarCloud Analysis (manual)
       # ----------------------------
-      - name: Download and unzip SonarScanner CLI
+      # SonarCloud Analysis (manual CLI compatible con Java 11)
+      # ----------------------------
+      - name: Download SonarScanner CLI 4.6.2
         run: |
-          wget -O scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.1.3023-linux.zip
+          wget -O scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
           unzip scanner.zip
-          echo "Adding scanner to PATH"
-          echo "${{ github.workspace }}/sonar-scanner-4.8.1.3023-linux/bin" >> $GITHUB_PATH
+          echo "${{ github.workspace }}/sonar-scanner-4.6.2.2472-linux/bin" >> $GITHUB_PATH
 
       - name: Run SonarScanner
         env:
           SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
         run: |
-          # Verificamos que usamos Java 17
+          # Verificamos la JVM por defecto (debe ser Java 11)
           java -version
-          # Ejecutamos el scanner directo, usando el Java17 del runner
+          # Ejecutamos el scanner, que usará esa Java 11 del runner
           sonar-scanner \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=codeurjc-students \
