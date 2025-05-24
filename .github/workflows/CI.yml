@@ -58,9 +58,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y wget curl unzip google-chrome-stable
-          
           CHROMEDRIVER_VERSION="133.0.6943.126"
-          echo "Instalando ChromeDriver versión: $CHROMEDRIVER_VERSION"
           wget -N "https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip"
           unzip chromedriver-linux64.zip
           sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
@@ -74,16 +72,16 @@ jobs:
       - name: Configure headless Chrome options
         run: |
           if [[ "$RUNNER_OS" == "Linux" ]]; then
-              echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --window-size=1920,1080" >> $GITHUB_ENV
+            echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --window-size=1920,1080" >> $GITHUB_ENV
           fi
-          
+
       - name: Verify Chrome & ChromeDriver versions
         run: |
           google-chrome --version
           chromedriver --version
 
       # ----------------------------
-      # Run all backend tests (unit, REST API, and E2E)
+      # Run all backend tests
       # ----------------------------
       - name: Run API REST Tests with Maven
         run: |
@@ -117,24 +115,13 @@ jobs:
         run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 
       # ----------------------------
-      # SonarCloud Analysis (CLI)
+      # SonarCloud Analysis
       # ----------------------------
-      - name: Download and unzip SonarScanner CLI
-        run: |
-          wget -O scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-          unzip scanner.zip
-          echo "SONAR_SCANNER_HOME=$(pwd)/sonar-scanner-4.7.0.2747-linux" >> $GITHUB_ENV
-
-      - name: Run SonarScanner
-        env:
-          SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088 
-        run: |
-          echo "Java antes de override: $(java -version)"
-          export PATH="$JAVA_HOME/bin:$PATH"
-          echo "Java después de override: $(java -version)"
-          
-          # Invocamos directamente el binario del scanner
-          $SONAR_SCANNER_HOME/bin/sonar-scanner \
-            -D "sonar.host.url=https://sonarcloud.io" \
-            -D "sonar.login=${SONAR_TOKEN}"
-
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v1
+        with:
+          args: >
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.organization=codeurjc-students
+            -Dsonar.projectKey=codeurjc-students_2024-AtletismoMostoles
+            -Dsonar.login=4dd5c6a7ea10044d985b5bf2ff03c431625e8088
