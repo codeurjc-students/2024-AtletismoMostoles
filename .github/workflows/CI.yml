@@ -9,7 +9,7 @@ on:
 jobs:
   setup-and-test:
     name: Setup and Run Tests
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
@@ -58,9 +58,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y wget curl unzip google-chrome-stable
-          
           CHROMEDRIVER_VERSION="133.0.6943.126"
-          echo "Instalando ChromeDriver versión: $CHROMEDRIVER_VERSION"
           wget -N "https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip"
           unzip chromedriver-linux64.zip
           sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
@@ -74,16 +72,16 @@ jobs:
       - name: Configure headless Chrome options
         run: |
           if [[ "$RUNNER_OS" == "Linux" ]]; then
-              echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --window-size=1920,1080" >> $GITHUB_ENV
+            echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --window-size=1920,1080" >> $GITHUB_ENV
           fi
-          
+
       - name: Verify Chrome & ChromeDriver versions
         run: |
           google-chrome --version
           chromedriver --version
 
       # ----------------------------
-      # Run all backend tests (unit, REST API, and E2E)
+      # Run all backend tests
       # ----------------------------
       - name: Run API REST Tests with Maven
         run: |
@@ -99,7 +97,7 @@ jobs:
         run: |
           cd backend
           mvn clean test -Dtest="com.example.TFG_WebApp.Unit_TESTs.**"
-          
+
       # ----------------------------
       # Angular Frontend
       # ----------------------------
@@ -112,6 +110,22 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Run Angular unit tests
+      - name: Run Angular unit tests and collect coverage
         working-directory: frontend
-        run: npm test -- --watch=false --browsers=ChromeHeadless
+        run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+
+      # ----------------------------
+      # SonarCloud Analysis via Docker
+      # ----------------------------
+      - name: Run SonarScanner in Docker
+        env:
+          SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
+        run: |
+          docker run --rm \
+            -e SONAR_HOST_URL="https://sonarcloud.io" \
+            -e SONAR_TOKEN="${SONAR_TOKEN}" \
+            -e SONAR_ORGANIZATION="codeurjc-students" \
+            -e SONAR_PROJECT_KEY="codeurjc-students_2024-AtletismoMostoles" \
+            -v "${{ github.workspace }}:/usr/src" \
+            -w "/usr/src" \
+            sonarsource/sonar-scanner-cli:latest
