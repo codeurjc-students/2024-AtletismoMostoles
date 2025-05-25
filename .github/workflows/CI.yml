@@ -115,23 +115,17 @@ jobs:
         run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 
       # ----------------------------
-      # SonarCloud Analysis (manual CLI compatible con Java 11)
+      # SonarCloud Analysis via Docker
       # ----------------------------
-      - name: Download SonarScanner CLI 4.6.2
-        run: |
-          wget -O scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-          unzip scanner.zip
-          echo "${{ github.workspace }}/sonar-scanner-4.6.2.2472-linux/bin" >> $GITHUB_PATH
-
-      - name: Run SonarScanner
+      - name: Run SonarScanner in Docker
         env:
           SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
         run: |
-          # Verificamos la JVM por defecto (debe ser Java 11)
-          java -version
-          # Ejecutamos el scanner, que usará esa Java 11 del runner
-          sonar-scanner \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.organization=codeurjc-students \
-            -Dsonar.projectKey=codeurjc-students_2024-AtletismoMostoles \
-            -Dsonar.login=${SONAR_TOKEN}
+          docker run --rm \
+            -e SONAR_HOST_URL="https://sonarcloud.io" \
+            -e SONAR_TOKEN="${SONAR_TOKEN}" \
+            -e SONAR_ORGANIZATION="codeurjc-students" \
+            -e SONAR_PROJECT_KEY="codeurjc-students_2024-AtletismoMostoles" \
+            -v "${{ github.workspace }}:/usr/src" \
+            -w "/usr/src" \
+            sonarsource/sonar-scanner-cli:latest
