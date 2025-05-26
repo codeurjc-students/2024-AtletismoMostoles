@@ -18,6 +18,9 @@ public class DataInitializer {
     private final EventRepository eventRepository;
     private final ResultsRepository resultRepository;
 
+    private static final String DEFAULT_EVENT_IMAGE_URL =
+            "https://www.atletismomadrid.com/images/stories/fam.jpg";
+
     public DataInitializer(AthleteRepository athleteRepository, CoachRepository coachRepository,
                            DisciplineRepository disciplineRepository, EquipmentRepository equipmentRepository,
                            EventRepository eventRepository, ResultsRepository resultRepository) {
@@ -71,9 +74,9 @@ public class DataInitializer {
 
             // Initialize Events
             List<Event> events = eventRepository.saveAll(Arrays.asList(
-                    new Event("Campeonato Nacional", LocalDate.parse("2025-06-10"), "", "https://www.atletismomadrid.com/images/stories/fam.jpg", true, disciplines.subList(0, 3)),
-                    new Event("Maratón Ciudadano", LocalDate.parse("2025-05-01"), "", "https://www.atletismomadrid.com/images/stories/fam.jpg", false, disciplines.subList(3, 6)),
-                    new Event("Copa Juvenil", LocalDate.parse("2025-07-20"), "", "https://www.atletismomadrid.com/images/stories/fam.jpg", true, disciplines.subList(2, 5))
+                    new Event("Campeonato Nacional", LocalDate.parse("2025-06-10"), "", DEFAULT_EVENT_IMAGE_URL, true, disciplines.subList(0, 3)),
+                    new Event("Maratón Ciudadano", LocalDate.parse("2025-05-01"), "", DEFAULT_EVENT_IMAGE_URL, false, disciplines.subList(3, 6)),
+                    new Event("Copa Juvenil", LocalDate.parse("2025-07-20"), "", DEFAULT_EVENT_IMAGE_URL, true, disciplines.subList(2, 5))
             ));
 
             // Initialize Results

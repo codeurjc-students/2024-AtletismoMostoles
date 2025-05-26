@@ -31,15 +31,17 @@ public class UserRestController {
     @Autowired
     private UserService userService;
 
+    private static final String ERROR_MESSAGE = "error";
+
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @JsonView(User.Basic.class) User user) {
+    public ResponseEntity<Object> register(@RequestBody @JsonView(User.Basic.class) User user) {
         try {
             if (userRepository.findByName(user.getName()).isPresent()) {
-                return ResponseEntity.badRequest().body(Map.of("error", "El nombre de usuario ya existe"));
+                return ResponseEntity.badRequest().body(Map.of(ERROR_MESSAGE, "El nombre de usuario ya existe"));
             }
             String rawPassword = user.getRawPassword();
             if (rawPassword == null || rawPassword.isBlank()) {
-                return ResponseEntity.badRequest().body(Map.of("error", "La contraseña no puede estar vacía"));
+                return ResponseEntity.badRequest().body(Map.of(ERROR_MESSAGE, "La contraseña no puede estar vacía"));
             }
 
             String encodedPassword = passwordEncoder.encode(rawPassword);
@@ -49,7 +51,7 @@ public class UserRestController {
 
             User userSaved = userService.addUser(user);
             if (userSaved == null) {
-                return ResponseEntity.internalServerError().body(Map.of("error", "No se pudo crear el usuario"));
+                return ResponseEntity.internalServerError().body(Map.of(ERROR_MESSAGE, "No se pudo crear el usuario"));
             }
             URI location = fromCurrentRequest().path("/{id}")
                     .buildAndExpand(userSaved.getId()).toUri();
@@ -57,20 +59,20 @@ public class UserRestController {
             return ResponseEntity.created(location).body(userSaved);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body(Map.of("error", e.getMessage()));
+            return ResponseEntity.internalServerError().body(Map.of(ERROR_MESSAGE, e.getMessage()));
         }
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Object> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
-            return ResponseEntity.status(401).body(Map.of("error", "No autenticado"));
+            return ResponseEntity.status(401).body(Map.of(ERROR_MESSAGE, "No autenticado"));
         }
 
         Optional<User> user = userRepository.findByName(userDetails.getUsername());
 
         if (user.isEmpty()) {
-            return ResponseEntity.status(404).body(Map.of("error", "Usuario no encontrado"));
+            return ResponseEntity.status(404).body(Map.of(ERROR_MESSAGE, "Usuario no encontrado"));
         }
 
         User currentUser = user.get();
