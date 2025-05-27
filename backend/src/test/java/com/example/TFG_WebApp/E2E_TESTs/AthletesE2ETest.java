@@ -6,8 +6,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 
@@ -17,12 +15,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class AthletesE2ETest {
-    private static final Logger log = LoggerFactory.getLogger(AthletesE2ETest.class);
+class AthletesE2ETest {
     private WebDriver driver;
 
     @BeforeAll
-    public void setup() {
+    void setup() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // ya no necesitas duplicarlo
         options.addArguments("--no-sandbox");
@@ -42,7 +39,7 @@ public class AthletesE2ETest {
 
 
     @BeforeEach
-    public void navigateToPage() {
+    void navigateToPage() {
         driver.get("https://localhost/");
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
@@ -71,30 +68,30 @@ public class AthletesE2ETest {
     }
 
     @AfterAll
-    public void teardown() {
+    void teardown() {
         if (driver != null) {
             driver.quit();
         }
     }
 
     @Test
-    public void testLoadRankingPage() {
+    void testLoadRankingPage() {
         assertTrue(driver.findElement(By.tagName("header")).isDisplayed());
         assertTrue(driver.findElement(By.id("list-section")).isDisplayed());
         assertTrue(driver.findElement(By.tagName("footer")).isDisplayed());
     }
 
     @Test
-    public void testNavigationLinks() {
-        assertEquals(driver.findElement(By.linkText("Inicio")).getAttribute("href"), "https://localhost/");
-        assertEquals(driver.findElement(By.linkText("Miembros del Club")).getAttribute("href"), "https://localhost/miembros");
-        assertEquals(driver.findElement(By.linkText("Ranking")).getAttribute("href"), "https://localhost/ranking");
-        assertEquals(driver.findElement(By.linkText("Eventos")).getAttribute("href"), "https://localhost/eventos");
-        assertEquals(driver.findElement(By.linkText("Calendario")).getAttribute("href"), "https://localhost/calendario");
+    void testNavigationLinks() {
+        assertEquals("https://localhost/", driver.findElement(By.linkText("Inicio")).getAttribute("href"));
+        assertEquals("https://localhost/miembros", driver.findElement(By.linkText("Miembros del Club")).getAttribute("href"));
+        assertEquals("https://localhost/ranking", driver.findElement(By.linkText("Ranking")).getAttribute("href"));
+        assertEquals("https://localhost/eventos", driver.findElement(By.linkText("Eventos")).getAttribute("href"));
+        assertEquals("https://localhost/calendario", driver.findElement(By.linkText("Calendario")).getAttribute("href"));
     }
 
     @Test
-    public void testLoginAndCheckUIChanges() {
+    void testLoginAndCheckUIChanges() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
@@ -118,18 +115,16 @@ public class AthletesE2ETest {
     }
 
     @Test
-    public void testAddAndRemoveAthlete() {
+    void testAddAndRemoveAthlete() {
         login();
         navigateToPage();
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        int initialCount = countAllElements("list-section", "clickable-row");
+        int initialCount = countAllElements("list-section");
 
         WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".list-section button:not([disabled])")));
         addButton.click();
-
-        WebElement modal = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("mat-dialog-container")));
 
         driver.findElement(By.cssSelector("input[formControlName='licenseNumber']")).sendKeys("999999");
         driver.findElement(By.cssSelector("input[formControlName='firstName']")).sendKeys("Test");
@@ -156,12 +151,12 @@ public class AthletesE2ETest {
         handleAlert(wait);
 
         navigateToPage();
-        int updatedCount = countAllElements("list-section", "clickable-row");
+        int updatedCount = countAllElements("list-section");
         assertEquals(initialCount + 1, updatedCount, "❌ The athlete was not added correctly.");
 
         deleteAthleteFromProfile("999999");
 
-        int finalCount = countAllElements("list-section", "clickable-row");
+        int finalCount = countAllElements("list-section");
         assertEquals(initialCount, finalCount, "❌ The athlete was not deleted correctly.");
 
         WebElement logoutButton = driver.findElement(By.cssSelector("button[mat-raised-button][color='warn']"));
@@ -169,18 +164,18 @@ public class AthletesE2ETest {
     }
 
     @Test
-    public void testFilterAthletes() {
+    void testFilterAthletes() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         driver.findElement(By.cssSelector("input[name='licenseNumber']")).sendKeys("A2001");
         driver.findElement(By.cssSelector("button[mat-raised-button][color='primary']")).click();
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("mat-table mat-row")));
-        assertEquals(1, countAllElements("list-section", "clickable-row"));
+        assertEquals(1, countAllElements("list-section"));
     }
 
     @Test
-    public void testPagination() {
+    void testPagination() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         WebElement pageIndicator = driver.findElement(By.xpath("//span[contains(text(), 'Página')]"));
@@ -200,7 +195,7 @@ public class AthletesE2ETest {
         assertNotEquals(initialPageText, pageIndicator.getText(), "❌ The page number did not change after clicking 'Next'.");
     }
 
-    private int countAllElements(String listId, String itemClass) {
+    private int countAllElements(String listId) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         int total = 0;
 
@@ -234,44 +229,32 @@ public class AthletesE2ETest {
         while (true) {
             List<WebElement> athletes = driver.findElements(By.cssSelector("mat-table mat-row"));
             for (WebElement athlete : athletes) {
-                WebElement license = athlete.findElement(By.xpath(".//mat-cell[contains(text(), '" + licenseNum + "')]"));
+                WebElement license = athlete.findElement(
+                        By.xpath(".//mat-cell[contains(text(), '" + licenseNum + "')]")
+                );
                 if (license != null && license.getText().contains(licenseNum)) {
                     license.click();
 
-                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("profile-card")));
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.className("profile-card")
+                    ));
 
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    WebElement deleteButton = wait.until(
+                            ExpectedConditions.elementToBeClickable(
+                                    By.xpath("//button[normalize-space()='Eliminar Perfil']")
+                            )
+                    );
+                    ((JavascriptExecutor) driver)
+                            .executeScript("arguments[0].scrollIntoView({block: 'center'});", deleteButton);
+                    deleteButton.click();
 
-                    WebElement deleteButton = null;
-                    try {
-                        deleteButton = wait.until(ExpectedConditions.presenceOfElementLocated(
-                                By.xpath("//button[normalize-space()='Eliminar Perfil']")));
+                    wait.until(ExpectedConditions.alertIsPresent());
+                    Alert alert = driver.switchTo().alert();
+                    alert.accept();
 
-                        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", deleteButton);
-
-                        wait.until(ExpectedConditions.elementToBeClickable(deleteButton));
-
-                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteButton);
-                    } catch (Exception e) {
-                        System.out.println("❌ No se encontró el botón 'Eliminar Perfil'.");
-                        return;
-                    }
-
-                    try {
-                        wait.until(ExpectedConditions.alertIsPresent());
-                        Alert alert = driver.switchTo().alert();
-                        System.out.println("Confirmando eliminación: " + alert.getText());
-                        alert.accept();
-                    } catch (Exception e) {
-                        System.out.println("No se detectó ninguna alerta de eliminación.");
-                    }
-
-                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("list-section")));
-
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.id("list-section")
+                    ));
                     return;
                 }
             }

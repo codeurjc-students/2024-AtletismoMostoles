@@ -125,13 +125,8 @@ class AthleteServiceTest {
     @Test
     void testGetFilteredAthletes_OnlyFirstName() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Athlete> filteredPage = new PageImpl<>(Collections.singletonList(new Athlete()));
 
-        doAnswer(invocation -> {
-            Specification<?> spec = invocation.getArgument(0);
-            Pageable pg = invocation.getArgument(1);
-            return new PageImpl<>(Collections.singletonList(new Athlete()));
-        }).when(athleteRepository).findAll(any(Specification.class), eq(pageable));
+        doAnswer(invocation -> new PageImpl<>(Collections.singletonList(new Athlete()))).when(athleteRepository).findAll(any(Specification.class), eq(pageable));
 
         Page<Athlete> result = athleteService.getFilteredAthletes("John", null, null, null, null, pageable);
 

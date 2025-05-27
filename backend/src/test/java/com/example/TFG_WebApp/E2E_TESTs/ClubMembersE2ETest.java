@@ -13,11 +13,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ClubMembersE2ETest {
+class ClubMembersE2ETest {
     private WebDriver driver;
 
     @BeforeAll
-    public void setup() {
+    void setup() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         options.addArguments("--no-sandbox");
@@ -35,9 +35,8 @@ public class ClubMembersE2ETest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-
     @BeforeEach
-    public void navigateToPage() {
+    void navigateToPage() {
         driver.get("https://localhost/");
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
@@ -66,21 +65,21 @@ public class ClubMembersE2ETest {
     }
 
     @AfterAll
-    public void teardown() {
+    void teardown() {
         if (driver != null) {
             driver.quit();
         }
     }
 
     @Test
-    public void testLoadClubMembersPage() {
+    void testLoadClubMembersPage() {
         assertTrue(driver.findElement(By.tagName("header")).isDisplayed());
         assertTrue(driver.findElement(By.id("list-section")).isDisplayed());
         assertTrue(driver.findElement(By.tagName("footer")).isDisplayed());
     }
 
     @Test
-    public void testLoginAndCheckUIChanges() {
+    void testLoginAndCheckUIChanges() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
@@ -104,12 +103,12 @@ public class ClubMembersE2ETest {
     }
 
     @Test
-    public void testAddAndRemoveCoach() {
+    void testAddAndRemoveCoach() {
         login();
         navigateToPage();
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        int initialCount = countAllElements("list-section", "clickable-row");
+        int initialCount = countAllElements("list-section");
 
         WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".list-section button:not([disabled])")));
         addButton.click();
@@ -136,30 +135,30 @@ public class ClubMembersE2ETest {
         handleAlert(wait);
 
         navigateToPage();
-        int updatedCount = countAllElements("list-section", "clickable-row");
+        int updatedCount = countAllElements("list-section");
         assertEquals(initialCount + 1, updatedCount);
 
         deleteCoachFromProfile("999999");
 
-        int finalCount = countAllElements("list-section", "clickable-row");
+        int finalCount = countAllElements("list-section");
         assertEquals(initialCount, finalCount);
         WebElement logOutbutton = driver.findElement(By.cssSelector("button[mat-raised-button][color='warn']"));
         logOutbutton.click();
     }
 
     @Test
-    public void testFilterAthletes() {
+    void testFilterAthletes() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         driver.findElement(By.cssSelector("input[name='licenseNumber']")).sendKeys("C1001");
         driver.findElement(By.cssSelector("button[mat-raised-button][color='primary']")).click();
 
         wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("mat-table mat-row")));
-        assertEquals(1, countAllElements("list-section", "clickable-row"));
+        assertEquals(1, countAllElements("list-section"));
     }
 
     @Test
-    public void testPagination() {
+    void testPagination() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         WebElement pageIndicator = driver.findElement(By.xpath("//span[contains(text(), 'Página')]"));
@@ -183,57 +182,45 @@ public class ClubMembersE2ETest {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         while (true) {
-            List<WebElement> athletes = driver.findElements(By.cssSelector("mat-table mat-row"));
-            for (WebElement athlete : athletes) {
-                WebElement license = athlete.findElement(By.xpath(".//mat-cell[contains(text(), '" + licenseNum + "')]"));
+            List<WebElement> rows = driver.findElements(By.cssSelector("mat-table mat-row"));
+            for (WebElement row : rows) {
+                WebElement license = row.findElement(
+                        By.xpath(".//mat-cell[contains(text(), '" + licenseNum + "')]")
+                );
                 if (license != null && license.getText().contains(licenseNum)) {
                     license.click();
 
-                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("profile-card")));
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.className("profile-card")
+                    ));
 
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    WebElement deleteButton = wait.until(
+                            ExpectedConditions.elementToBeClickable(
+                                    By.xpath("//button[normalize-space()='Eliminar Perfil']")
+                            )
+                    );
+                    ((JavascriptExecutor) driver)
+                            .executeScript("arguments[0].scrollIntoView({block: 'center'});", deleteButton);
+                    deleteButton.click();
 
-                    WebElement deleteButton = null;
-                    try {
-                        deleteButton = wait.until(ExpectedConditions.presenceOfElementLocated(
-                                By.xpath("//button[normalize-space()='Eliminar Perfil']")));
+                    wait.until(ExpectedConditions.alertIsPresent());
+                    Alert alert = driver.switchTo().alert();
+                    alert.accept();
 
-                        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block: 'center'});", deleteButton);
-
-                        wait.until(ExpectedConditions.elementToBeClickable(deleteButton));
-
-                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", deleteButton);
-                    } catch (Exception e) {
-                        System.out.println("❌ No se encontró el botón 'Eliminar Perfil'.");
-                        return;
-                    }
-
-                    try {
-                        wait.until(ExpectedConditions.alertIsPresent());
-                        Alert alert = driver.switchTo().alert();
-                        System.out.println("Confirmando eliminación: " + alert.getText());
-                        alert.accept();
-                    } catch (Exception e) {
-                        System.out.println("No se detectó ninguna alerta de eliminación.");
-                    }
-
-                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("list-section")));
-
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(
+                            By.id("list-section")
+                    ));
                     return;
                 }
             }
 
             List<WebElement> nextButtons = driver.findElements(By.id("next_btm"));
             if (nextButtons.isEmpty() || nextButtons.get(0).getAttribute("disabled") != null) {
-                System.out.println("❌ Atleta no encontrado.");
+                System.out.println("❌ Coach not found.");
                 return;
             } else {
                 nextButtons.get(0).click();
-                wait.until(ExpectedConditions.stalenessOf(athletes.get(0)));
+                wait.until(ExpectedConditions.stalenessOf(rows.get(0)));
             }
         }
     }
@@ -248,7 +235,7 @@ public class ClubMembersE2ETest {
         }
     }
 
-    private int countAllElements(String listId, String itemClass) {
+    private int countAllElements(String listId) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         int total = 0;
 

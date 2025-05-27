@@ -45,8 +45,8 @@ public class UserLoginService {
         String username = loginRequest.getUsername();
         UserDetails user = userDetailsService.loadUserByUsername(username);
 
-        Boolean accessTokenValid = jwtTokenProvider.validateToken(accessToken);
-        Boolean refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
+        boolean accessTokenValid = jwtTokenProvider.validateToken(accessToken);
+        boolean refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
 
         HttpHeaders responseHeaders = new HttpHeaders();
         Token newAccessToken;
@@ -79,7 +79,7 @@ public class UserLoginService {
 
         String refreshToken = SecurityCipher.decrypt(encryptedRefreshToken);
 
-        Boolean refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
+        boolean refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
 
         if (!refreshTokenValid) {
             AuthResponse loginResponse = new AuthResponse(AuthResponse.Status.FAILURE,
@@ -93,7 +93,7 @@ public class UserLoginService {
         Token newAccessToken = jwtTokenProvider.generateToken(user);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add(HttpHeaders.SET_COOKIE, cookieUtil
-                .createAccessTokenCookie(newAccessToken.getTokenValue(), newAccessToken.getDuration()).toString());
+                .createAccessTokenCookie(newAccessToken.getTokenValue()).toString());
 
         AuthResponse loginResponse = new AuthResponse(AuthResponse.Status.SUCCESS,
                 "Auth successful. Tokens are created in cookie.");
@@ -109,7 +109,7 @@ public class UserLoginService {
 
     public String logout(HttpServletRequest request, HttpServletResponse response) {
 
-        HttpSession session = request.getSession(false);
+        HttpSession session;
         SecurityContextHolder.clearContext();
         session = request.getSession(false);
         if (session != null) {
@@ -131,11 +131,11 @@ public class UserLoginService {
 
     private void addAccessTokenCookie(HttpHeaders httpHeaders, Token token) {
         httpHeaders.add(HttpHeaders.SET_COOKIE,
-                cookieUtil.createAccessTokenCookie(token.getTokenValue(), token.getDuration()).toString());
+                cookieUtil.createAccessTokenCookie(token.getTokenValue()).toString());
     }
 
     private void addRefreshTokenCookie(HttpHeaders httpHeaders, Token token) {
         httpHeaders.add(HttpHeaders.SET_COOKIE,
-                cookieUtil.createRefreshTokenCookie(token.getTokenValue(), token.getDuration()).toString());
+                cookieUtil.createRefreshTokenCookie(token.getTokenValue()).toString());
     }
 }
