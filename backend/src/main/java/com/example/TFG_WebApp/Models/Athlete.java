@@ -15,7 +15,7 @@ import java.util.Set;
 public class Athlete {
     @Id
     @NotBlank
-    private String licenseNumber; // Unique identifier
+    private String licenseNumber;
     @NotBlank
     private String firstName;
     @NotBlank

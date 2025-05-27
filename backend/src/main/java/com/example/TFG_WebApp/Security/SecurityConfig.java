@@ -13,6 +13,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,8 +29,14 @@ public class SecurityConfig {
 
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
+
     @Autowired
     private UnauthorizedHandlerJwt unauthorizedHandlerJwt;
+
+    private static final String ADMIN = "ADMIN";
+    private static final String ADMIN_URL = "/api/admin/**";
+    private static final String ATHLETES = "/api/athletes**";
+    private static final String COACHES = "/api/coaches**";
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -67,16 +74,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
                         // PRIVATE ENDPOINTS
-                        .requestMatchers(HttpMethod.POST, "/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/athletes**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/athletes**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/athletes**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/coaches**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/coaches**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/coaches**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, ADMIN_URL ).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.PUT, ADMIN_URL).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, ADMIN_URL).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.GET, ADMIN_URL).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.POST, ATHLETES).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.PUT, ATHLETES).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, ATHLETES).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.POST, COACHES).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.PUT, COACHES).hasRole(ADMIN)
+                        .requestMatchers(HttpMethod.DELETE, COACHES).hasRole(ADMIN)
                         .requestMatchers(HttpMethod.DELETE).authenticated()
                         .requestMatchers(HttpMethod.POST).authenticated()
                         .requestMatchers(HttpMethod.PUT).authenticated()
@@ -85,13 +92,13 @@ public class SecurityConfig {
                 );
 
         // Disable Form login Authentication
-        http.formLogin(formLogin -> formLogin.disable());
+        http.formLogin(AbstractHttpConfigurer::disable);
 
         // Disable CSRF protection (it is difficult to implement in REST APIs)
-        http.csrf(csrf -> csrf.disable());
+        http.csrf(AbstractHttpConfigurer::disable);
 
         // Disable Basic Authentication
-        http.httpBasic(httpBasic -> httpBasic.disable());
+        http.httpBasic(AbstractHttpConfigurer::disable);
 
         // Stateless session
         http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
