@@ -52,51 +52,11 @@ jobs:
           java-version: '17'
 
       # ----------------------------
-      # Install Chrome & ChromeDriver for Selenium E2E
+      # Run backend tests + JaCoCo
       # ----------------------------
-      - name: Install Google Chrome and ChromeDriver
-        run: |
-          sudo apt update
-          sudo apt install -y wget curl unzip google-chrome-stable
-          CHROMEDRIVER_VERSION="133.0.6943.126"
-          wget -N "https://storage.googleapis.com/chrome-for-testing-public/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip"
-          unzip chromedriver-linux64.zip
-          sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
-          sudo chmod +x /usr/local/bin/chromedriver
-
-      - name: Set ChromeDriver environment variables
-        run: |
-          echo "webdriver.chrome.driver=/usr/local/bin/chromedriver" >> $GITHUB_ENV
-          echo "WEBDRIVER_CHROME_DRIVER=/usr/local/bin/chromedriver" >> $GITHUB_ENV
-
-      - name: Configure headless Chrome options
-        run: |
-          if [[ "$RUNNER_OS" == "Linux" ]]; then
-            echo "CHROME_OPTIONS=--headless --no-sandbox --disable-dev-shm-usage --disable-gpu --window-size=1920,1080" >> $GITHUB_ENV
-          fi
-
-      - name: Verify Chrome & ChromeDriver versions
-        run: |
-          google-chrome --version
-          chromedriver --version
-
-      # ----------------------------
-      # Run all backend tests
-      # ----------------------------
-      - name: Run API REST Tests with Maven
-        run: |
-          cd backend
-          mvn clean test -Dtest="com.example.TFG_WebApp.API_REST_TESTs.**"
-
-      - name: Run E2E Tests with Maven
-        run: |
-          cd backend
-          mvn clean test -Dtest="com.example.TFG_WebApp.E2E_TESTs.**"
-
-      - name: Run Unit Tests with Maven
-        run: |
-          cd backend
-          mvn clean test -Dtest="com.example.TFG_WebApp.Unit_TESTs.**"
+      - name: Run Maven verify (with JaCoCo)
+        working-directory: backend
+        run: mvn clean verify
 
       # ----------------------------
       # Angular Frontend
@@ -112,7 +72,7 @@ jobs:
 
       - name: Run Angular unit tests and collect coverage
         working-directory: frontend
-        run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+        run: npm ci && npm test
 
       # ----------------------------
       # SonarCloud Analysis via Docker

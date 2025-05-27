@@ -12,6 +12,8 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       retries: 5
+    ports:
+      - "3307:3306"
 
   backend:
     image: saac04/backend:latest
