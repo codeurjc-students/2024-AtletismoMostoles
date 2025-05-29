@@ -9,13 +9,13 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class ResultRestControllerTest {
+class ResultRestControllerTest {
 
     private static int resultId;
     private static String authToken;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.baseURI = "https://localhost:443";
 
@@ -30,7 +30,7 @@ public class ResultRestControllerTest {
     }
 
     @Test
-    public void testGetAllResults() {
+    void testGetAllResults() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -43,7 +43,7 @@ public class ResultRestControllerTest {
     }
 
     @Test
-    public void testCreateResult() {
+    void testCreateResult() {
         Response response = createResult();
 
         response.then()
@@ -82,7 +82,7 @@ public class ResultRestControllerTest {
     }
 
     @Test
-    public void testUpdateResult() {
+    void testUpdateResult() {
         createResult();
         String updatedResultJson = """
         {
@@ -110,7 +110,7 @@ public class ResultRestControllerTest {
 
     @Test
     @Order(4)
-    public void testDeleteResult() {
+    void testDeleteResult() {
         createResult();
         deleteResult()
                 .then()
@@ -126,7 +126,7 @@ public class ResultRestControllerTest {
     }
 
     @Test
-    public void testCreateMultipleResults() {
+    void testCreateMultipleResults() {
         String multipleResultsJson = """
         [
             {
@@ -159,7 +159,7 @@ public class ResultRestControllerTest {
     }
 
     @Test
-    public void testDeleteResult_Unauthorized() {
+    void testDeleteResult_Unauthorized() {
         createResult();
         given()
                 .when()

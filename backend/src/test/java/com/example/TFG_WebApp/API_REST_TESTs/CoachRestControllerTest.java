@@ -9,12 +9,12 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CoachRestControllerTest {
+class CoachRestControllerTest {
 
     private static String authToken;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.baseURI = "https://localhost:443";
 
@@ -29,7 +29,7 @@ public class CoachRestControllerTest {
     }
 
     @Test
-    public void testGetAllCoaches() {
+    void testGetAllCoaches() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -41,7 +41,7 @@ public class CoachRestControllerTest {
     }
 
     @Test
-    public void testCreateCoach() {
+    void testCreateCoach() {
         Response response = createCoach();
 
         response.then()
@@ -54,7 +54,7 @@ public class CoachRestControllerTest {
     }
 
     @Test
-    public void testUpdateCoach() {
+    void testUpdateCoach() {
         createCoach();
 
         String updatedCoachJson = """
@@ -87,7 +87,7 @@ public class CoachRestControllerTest {
 
     @Test
     @Order(4)
-    public void testDeleteCoach() {
+    void testDeleteCoach() {
         createCoach();
 
         Response response = deleteCoach();
@@ -97,7 +97,7 @@ public class CoachRestControllerTest {
     }
 
     @Test
-    public void testGetCoach_NotFound() {
+    void testGetCoach_NotFound() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -108,7 +108,7 @@ public class CoachRestControllerTest {
     }
 
     @Test
-    public void testCreateCoach_InvalidData() {
+    void testCreateCoach_InvalidData() {
         String invalidCoachJson = """
         {
             \"licenseNumber\": \"\",
@@ -128,7 +128,7 @@ public class CoachRestControllerTest {
     }
 
     @Test
-    public void testDeleteCoach_Unauthorized() {
+    void testDeleteCoach_Unauthorized() {
         createCoach();
 
         given()
@@ -141,7 +141,7 @@ public class CoachRestControllerTest {
     }
 
     @Test
-    public void testFilterCoaches() {
+    void testFilterCoaches() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
