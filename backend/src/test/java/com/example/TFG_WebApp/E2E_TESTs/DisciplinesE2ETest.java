@@ -13,11 +13,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class DisciplinesE2ETest {
+class DisciplinesE2ETest {
     private WebDriver driver;
 
     @BeforeAll
-    public void setup() {
+    void setup() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         options.addArguments("--no-sandbox");
@@ -35,9 +35,8 @@ public class DisciplinesE2ETest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-
     @BeforeEach
-    public void navigateToPage() {
+    void navigateToPage() {
         driver.get("https://localhost/");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
@@ -58,30 +57,30 @@ public class DisciplinesE2ETest {
     }
 
     @AfterAll
-    public void teardown() {
+    void teardown() {
         if (driver != null) {
             driver.quit();
         }
     }
 
     @Test
-    public void testPageLoad() {
+    void testPageLoad() {
         assertTrue(driver.findElement(By.tagName("header")).isDisplayed());
         assertTrue(driver.findElement(By.cssSelector(".discipline-list")).isDisplayed());
         assertTrue(driver.findElement(By.tagName("footer")).isDisplayed());
     }
 
     @Test
-    public void testNavigationLinks() {
-        assertEquals(driver.findElement(By.linkText("Inicio")).getAttribute("href"), "https://localhost/");
-        assertEquals(driver.findElement(By.linkText("Miembros del Club")).getAttribute("href"), "https://localhost/miembros");
-        assertEquals(driver.findElement(By.linkText("Ranking")).getAttribute("href"), "https://localhost/ranking");
-        assertEquals(driver.findElement(By.linkText("Eventos")).getAttribute("href"), "https://localhost/eventos");
-        assertEquals(driver.findElement(By.linkText("Calendario")).getAttribute("href"), "https://localhost/calendario");
+    void testNavigationLinks() {
+        assertEquals("https://localhost/", driver.findElement(By.linkText("Inicio")).getAttribute("href"));
+        assertEquals("https://localhost/miembros", driver.findElement(By.linkText("Miembros del Club")).getAttribute("href"));
+        assertEquals("https://localhost/ranking", driver.findElement(By.linkText("Ranking")).getAttribute("href"));
+        assertEquals("https://localhost/eventos", driver.findElement(By.linkText("Eventos")).getAttribute("href"));
+        assertEquals("https://localhost/calendario", driver.findElement(By.linkText("Calendario")).getAttribute("href"));
     }
 
     @Test
-    public void testLoginAndCheckUIChanges() {
+    void testLoginAndCheckUIChanges() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
@@ -101,7 +100,7 @@ public class DisciplinesE2ETest {
     }
 
     @Test
-    public void testAddAndRemoveDiscipline() {
+    void testAddAndRemoveDiscipline() {
         login();
         navigateToPage();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
@@ -112,7 +111,6 @@ public class DisciplinesE2ETest {
         WebElement addButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".add-discipline button")));
         addButton.click();
 
-        WebElement modal = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("mat-dialog-container")));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("mat-dialog-container")));
         System.out.println("✅ Modal opened!");
 
@@ -140,7 +138,7 @@ public class DisciplinesE2ETest {
     }
 
     @Test
-    public void testPagination() {
+    void testPagination() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         WebElement pageIndicator = driver.findElement(By.xpath("//span[contains(text(), 'Página')]"));

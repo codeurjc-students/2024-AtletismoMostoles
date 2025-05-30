@@ -9,12 +9,12 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AthleteRestControllerTest {
+class AthleteRestControllerTest {
 
     private static String authToken;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.baseURI = "https://localhost:443";
 
@@ -29,7 +29,7 @@ public class AthleteRestControllerTest {
     }
 
     @Test
-    public void testGetAllAthletes() {
+    void testGetAllAthletes() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -41,7 +41,7 @@ public class AthleteRestControllerTest {
     }
 
     @Test
-    public void testGetAthlete_NotFound() {
+    void testGetAthlete_NotFound() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -52,7 +52,7 @@ public class AthleteRestControllerTest {
     }
 
     @Test
-    public void testCreateAthlete_InvalidData() {
+    void testCreateAthlete_InvalidData() {
         String invalidAthlete = """
             {
                 \"licenseNumber\": \"\",
@@ -72,7 +72,7 @@ public class AthleteRestControllerTest {
     }
 
     @Test
-    public void testCreateUpdateAndDeleteAthlete() {
+    void testCreateUpdateAndDeleteAthlete() {
         createAthlete().then()
                 .statusCode(anyOf(is(200), is(201)))
                 .body("firstName", equalTo("Daniel"))
@@ -106,7 +106,7 @@ public class AthleteRestControllerTest {
     }
 
     @Test
-    public void testFilterAthletes() {
+    void testFilterAthletes() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -121,7 +121,7 @@ public class AthleteRestControllerTest {
     }
 
     @Test
-    public void testDeleteAthlete_Unauthorized() {
+    void testDeleteAthlete_Unauthorized() {
         createAthlete().then()
                 .statusCode(anyOf(is(200), is(201)));
 

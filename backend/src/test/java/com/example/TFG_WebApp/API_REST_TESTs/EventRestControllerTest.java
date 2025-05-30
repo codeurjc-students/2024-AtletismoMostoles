@@ -9,13 +9,13 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class EventRestControllerTest {
+class EventRestControllerTest {
 
     private static String authToken;
     private static int eventId;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.baseURI = "https://localhost:443";
 
@@ -30,7 +30,7 @@ public class EventRestControllerTest {
     }
 
     @Test
-    public void testGetAllEvents() {
+    void testGetAllEvents() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -42,7 +42,7 @@ public class EventRestControllerTest {
     }
 
     @Test
-    public void testCreateEvent() {
+    void testCreateEvent() {
         Response response = createEvent();
 
         response.then()
@@ -55,7 +55,7 @@ public class EventRestControllerTest {
     }
 
     @Test
-    public void testUpdateEvent() {
+    void testUpdateEvent() {
         createEvent();
         String updatedEventJson = """
         {
@@ -81,7 +81,7 @@ public class EventRestControllerTest {
     }
 
     @Test
-    public void testDeleteEvent() {
+    void testDeleteEvent() {
         createEvent();
         deleteEvent()
                 .then()
@@ -89,7 +89,7 @@ public class EventRestControllerTest {
     }
 
     @Test
-    public void testGetEvent_NotFound() {
+    void testGetEvent_NotFound() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -100,7 +100,7 @@ public class EventRestControllerTest {
     }
 
     @Test
-    public void testCreateEvent_InvalidData() {
+    void testCreateEvent_InvalidData() {
         String invalidEventJson = """
         {
             \"name\": \"\",
@@ -121,7 +121,7 @@ public class EventRestControllerTest {
     }
 
     @Test
-    public void testDeleteEvent_Unauthorized() {
+    void testDeleteEvent_Unauthorized() {
         createEvent();
 
         given()
@@ -134,7 +134,7 @@ public class EventRestControllerTest {
     }
 
     @Test
-    public void testFilterEvents() {
+    void testFilterEvents() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)

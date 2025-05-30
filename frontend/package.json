@@ -6,7 +6,7 @@
     "start": "ng serve --proxy-config proxy.conf.json --ssl --ssl-key key.pem --ssl-cert cert.pem",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test --watch=false --browsers=ChromeHeadless --code-coverage"
   },
   "private": true,
   "dependencies": {

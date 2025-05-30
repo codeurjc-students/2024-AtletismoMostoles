@@ -9,13 +9,13 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class EquipmentRestControllerTest {
+class EquipmentRestControllerTest {
 
     private static int equipmentId;
     private static String authToken;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         RestAssured.baseURI = "https://localhost";
         RestAssured.port = 443;
         RestAssured.useRelaxedHTTPSValidation();
@@ -31,7 +31,7 @@ public class EquipmentRestControllerTest {
     }
 
     @Test
-    public void testGetAllEquipment() {
+    void testGetAllEquipment() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -43,7 +43,7 @@ public class EquipmentRestControllerTest {
     }
 
     @Test
-    public void testCreateEquipment() {
+    void testCreateEquipment() {
         Response response = createEquipment();
 
         response.then()
@@ -55,7 +55,7 @@ public class EquipmentRestControllerTest {
     }
 
     @Test
-    public void testUpdateEquipment() {
+    void testUpdateEquipment() {
         createEquipment();
         String updatedEquipmentJson = """
         {
@@ -81,7 +81,7 @@ public class EquipmentRestControllerTest {
     }
 
     @Test
-    public void testDeleteEquipment() {
+    void testDeleteEquipment() {
         createEquipment();
         deleteEquipment()
                 .then()
@@ -89,7 +89,7 @@ public class EquipmentRestControllerTest {
     }
 
     @Test
-    public void testGetEquipment_NotFound() {
+    void testGetEquipment_NotFound() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -100,7 +100,7 @@ public class EquipmentRestControllerTest {
     }
 
     @Test
-    public void testCreateEquipment_InvalidData() {
+    void testCreateEquipment_InvalidData() {
         String invalidEquipmentJson = """
         {
             \"name\": \"\",
@@ -120,7 +120,7 @@ public class EquipmentRestControllerTest {
     }
 
     @Test
-    public void testDeleteEquipment_Unauthorized() {
+    void testDeleteEquipment_Unauthorized() {
         createEquipment();
 
         given()

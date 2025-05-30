@@ -9,13 +9,13 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DisciplineRestControllerTest {
+class DisciplineRestControllerTest {
 
     private static int disciplineId;
     private static String authToken;
 
     @BeforeAll
-    public static void setup() {
+    static void setup() {
         RestAssured.useRelaxedHTTPSValidation();
         RestAssured.baseURI = "https://localhost:443";
 
@@ -30,7 +30,7 @@ public class DisciplineRestControllerTest {
     }
 
     @Test
-    public void testGetAllDisciplines() {
+    void testGetAllDisciplines() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -42,7 +42,7 @@ public class DisciplineRestControllerTest {
     }
 
     @Test
-    public void testCreateDiscipline() {
+    void testCreateDiscipline() {
         Response response = createDiscipline();
 
         response.then()
@@ -54,7 +54,7 @@ public class DisciplineRestControllerTest {
     }
 
     @Test
-    public void testUpdateDiscipline() {
+    void testUpdateDiscipline() {
         createDiscipline();
         String updatedDisciplineJson = """
         {
@@ -79,7 +79,7 @@ public class DisciplineRestControllerTest {
 
     @Test
     @Order(4)
-    public void testDeleteDiscipline() {
+    void testDeleteDiscipline() {
         createDiscipline();
         deleteDiscipline()
                 .then()
@@ -87,7 +87,7 @@ public class DisciplineRestControllerTest {
     }
 
     @Test
-    public void testGetDiscipline_NotFound() {
+    void testGetDiscipline_NotFound() {
         given()
                 .header("Authorization", "Bearer " + authToken)
                 .cookie("AuthToken", authToken)
@@ -98,7 +98,7 @@ public class DisciplineRestControllerTest {
     }
 
     @Test
-    public void testCreateDiscipline_InvalidData() {
+    void testCreateDiscipline_InvalidData() {
         String invalidDisciplineJson = """
         {
             \"name\": \"\",
@@ -118,7 +118,7 @@ public class DisciplineRestControllerTest {
     }
 
     @Test
-    public void testDeleteDiscipline_Unauthorized() {
+    void testDeleteDiscipline_Unauthorized() {
         createDiscipline();
 
         given()

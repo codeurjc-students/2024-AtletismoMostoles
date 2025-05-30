@@ -13,11 +13,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class EventsE2ETest {
+class EventsE2ETest {
     private WebDriver driver;
 
     @BeforeAll
-    public void setup() {
+    void setup() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // ya no necesitas duplicarlo
         options.addArguments("--no-sandbox");
@@ -36,9 +36,8 @@ public class EventsE2ETest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
     }
 
-
     @BeforeEach
-    public void navigateToPage() {
+    void navigateToPage() {
         driver.get("https://localhost/");
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
@@ -59,14 +58,14 @@ public class EventsE2ETest {
     }
 
     @AfterAll
-    public void teardown() {
+    void teardown() {
         if (driver != null) {
             driver.quit();
         }
     }
 
     @Test
-    public void testLoadEventsPage() {
+    void testLoadEventsPage() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
         // Esperar a que la cabecera, el listado de eventos y el footer sean visibles
@@ -81,7 +80,7 @@ public class EventsE2ETest {
     }
 
     @Test
-    public void testLoginAndCheckUIChanges() {
+    void testLoginAndCheckUIChanges() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         driver.findElement(By.cssSelector("button[mat-raised-button][color='accent']")).click();
@@ -103,12 +102,12 @@ public class EventsE2ETest {
     }
 
     @Test
-    public void testAddAndRemoveEvent() {
+    void testAddAndRemoveEvent() {
         login();
         navigateToPage();
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        int initialCount = countAllElements("events-list", "event-card");
+        int initialCount = countAllElements();
 
         WebElement addButton = wait.until(ExpectedConditions.presenceOfElementLocated(
                 By.xpath("//button[contains(@class, 'mat-mdc-raised-button') and contains(@class, 'mat-primary') and .//span[contains(text(), 'Añadir Evento')]]")));
@@ -139,12 +138,12 @@ public class EventsE2ETest {
 
         navigateToPage();
 
-        int updatedCount = countAllElements("events-list", "event-card");
+        int updatedCount = countAllElements();
         assertEquals(initialCount + 1, updatedCount);
 
         deleteEventFromDetails("Test Event");
 
-        int finalCount = countAllElements("events-list", "event-card");
+        int finalCount = countAllElements();
         assertEquals(initialCount, finalCount);
         WebElement logOutbutton = driver.findElement(By.cssSelector("button[mat-raised-button][color='warn']"));
         logOutbutton.click();
@@ -152,7 +151,7 @@ public class EventsE2ETest {
     }
 
     @Test
-    public void testPagination() {
+    void testPagination() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         WebElement pageIndicator = driver.findElement(By.xpath("//span[contains(text(), 'Página')]"));
@@ -220,7 +219,7 @@ public class EventsE2ETest {
         }
     }
 
-    private int countAllElements(String listId, String itemClass) {
+    private int countAllElements() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         int total = 0;
 
