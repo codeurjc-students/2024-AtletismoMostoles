@@ -177,6 +177,13 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/*Controller.class</exclude>
+								<exclude>**/*TfgWebAppApplication.class</exclude>
+								<exclude>**/controller/**</exclude>
+							</excludes>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
