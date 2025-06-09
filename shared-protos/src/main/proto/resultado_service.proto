@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+option java_package = "com.example.service2.grpc";
+option java_outer_classname = "ResultadoServiceGrpcProto";
+
+// Servicio gRPC para gestionar resultados de atletas y generar PDFs.
+
+service ResultadoService {
+  // 1) Ver resultados de un atleta (lista de resultados)
+  rpc VerResultados(VerResultadosRequest) returns (VerResultadosResponse);
+
+  // 2) Guardar un nuevo resultado para un atleta
+  rpc GuardarResultado(GuardarResultadoRequest) returns (ResultadoMessage);
+
+  // 3) Listar histórico de PDFs generados para un atleta
+  rpc ListaPdfHistorico(ListaPdfRequest) returns (ListaPdfResponse);
+}
+
+
+// ====================== Mensajes para VerResultados ======================
+message VerResultadosRequest {
+  int64 atletaId = 1;
+}
+
+message ResultadoData {
+  int64 id = 1;
+  int64 atletaId = 2;
+  int64 eventoId = 3;
+  double marca = 4;
+  string fecha = 5; // fecha en formato ISO-8601, p.ej. "2025-06-01"
+}
+
+message VerResultadosResponse {
+  repeated ResultadoData resultados = 1;
+}
+
+
+// ====================== Mensajes para GuardarResultado ======================
+message GuardarResultadoRequest {
+  int64 atletaId = 1;
+  int64 eventoId = 2;
+  double marca = 3;
+  string fecha = 4; // fecha en ISO-8601, p.ej. "2025-06-01"
+}
+
+message ResultadoMessage {
+  int64 id = 1;
+  int64 atletaId = 2;
+  int64 eventoId = 3;
+  double marca = 4;
+  string fecha = 5;
+}
+
+
+// ====================== Mensajes para ListaPdfHistorico ======================
+message ListaPdfRequest {
+  int64 atletaId = 1;
+}
+
+message PdfData {
+  string requestId = 1;
+  string timestampGenerado = 2; // p.ej. "2025-06-05T14:30:00"
+  string urlBlob = 3;
+  string estado = 4;          // "PENDIENTE", "GENERADO", "ERROR"
+}
+
+message ListaPdfResponse {
+  repeated PdfData pdfs = 1;
+}

@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+option java_package = "com.example.service3.grpc";
+option java_outer_classname = "EventoServiceGrpcProto";
+
+// Servicio gRPC para gestionar eventos y notificaciones.
+
+service EventoService {
+  // 1) Listar todos los eventos (o filtrados por rango de fechas si lo deseas)
+  rpc ListarEventos(ListarEventosRequest) returns (ListarEventosResponse);
+
+  // 2) Crear un nuevo evento
+  rpc CrearEvento(CrearEventoRequest) returns (EventoMessage);
+
+  // 3) Borrar un evento por su ID
+  rpc BorrarEvento(BorrarEventoRequest) returns (StatusMessage);
+
+  // 4) Obtener notificaciones pendientes de un usuario (desde su última conexión)
+  rpc NotificacionesPendientes(NotificacionesRequest) returns (NotificacionesResponse);
+
+  // 5) Marcar un evento como visto por un usuario
+  rpc MarcarEventoVisto(MarcarEventoVistoRequest) returns (StatusMessage);
+}
+
+
+// ====================== Mensajes para ListarEventos ======================
+message ListarEventosRequest {
+  // Si quisieras filtrar por fechas, descomenta estas líneas:
+  // string fechaDesde = 1;
+  // string fechaHasta = 2;
+}
+
+message EventoMessage {
+  int64 id = 1;
+  string titulo = 2;
+  string descripcion = 3;
+  string fechaInicio = 4;       // ISO-8601, p.ej. "2025-07-01T09:00:00"
+  string fechaFin = 5;          // ISO-8601
+  string ubicacion = 6;
+  int64 creadoPor = 7;          // usuarioId que creó el evento
+  string timestampCreacion = 8; // p.ej. "2025-06-05T15:45:00"
+}
+
+message ListarEventosResponse {
+  repeated EventoMessage eventos = 1;
+}
+
+
+// ====================== Mensajes para CrearEvento ======================
+message CrearEventoRequest {
+  string titulo = 1;
+  string descripcion = 2;
+  string fechaInicio = 3;       // ISO-8601
+  string fechaFin = 4;          // ISO-8601
+  string ubicacion = 5;
+  int64 creadoPor = 6;
+}
+
+
+// ====================== Mensajes para BorrarEvento ======================
+message BorrarEventoRequest {
+  int64 eventoId = 1;
+}
+
+
+// ====================== Mensaje genérico de estado ======================
+message StatusMessage {
+  bool success = 1;
+  string mensaje = 2;
+}
+
+
+// ====================== Mensajes para NotificacionesPendientes ======================
+message NotificacionesRequest {
+  int64 usuarioId = 1;
+  string timestampUltimaConexion = 2; // ISO-8601, p.ej. "2025-06-04T23:59:00"
+}
+
+message NotificacionData {
+  int64 eventoId = 1;
+  string titulo = 2;
+  string descripcion = 3;
+  string fechaInicio = 4;
+  string fechaFin = 5;
+  string ubicacion = 6;
+  string timestampNotificacion = 7; // cuando se creó la notificación
+}
+
+message NotificacionesResponse {
+  repeated NotificacionData notificaciones = 1;
+}
+
+
+// ====================== Mensaje para MarcarEventoVisto ======================
+message MarcarEventoVistoRequest {
+  int64 usuarioId = 1;
+  int64 eventoId = 2;
+}
