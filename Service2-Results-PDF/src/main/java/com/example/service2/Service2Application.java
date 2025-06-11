@@ -1,13 +1,13 @@
-package com.example.Service1.backend;
+package com.example.service2;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Application {
+public class Service2Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(Service2Application.class, args);
 	}
 
 }

@@ -1,6 +1,6 @@
-package com.example.Service1.backend;
+package com.example.service2.Results.PDF;
 
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
