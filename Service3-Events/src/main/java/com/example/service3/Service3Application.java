@@ -1,13 +1,13 @@
-package com.example.Service3.Events;
+package com.example.service3;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Application {
+public class Service3Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(Service3Application.class, args);
 	}
 
 }
