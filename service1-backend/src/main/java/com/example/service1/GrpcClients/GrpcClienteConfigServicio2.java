@@ -1,4 +1,4 @@
-package com.example.service1.GrpcClientes;
+package com.example.service1.GrpcClients;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

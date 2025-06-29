@@ -3,7 +3,7 @@ package com.example.service1.Services;
 
 import com.example.service1.Exceptions.DuplicateResourceException;
 import com.example.service1.Exceptions.ResourceNotFoundException;
-import com.example.service1.Models.Coach;
+import com.example.service1.Entities.Coach;
 import com.example.service1.Repositories.CoachRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

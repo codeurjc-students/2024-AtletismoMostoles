@@ -1,7 +1,7 @@
 package com.example.service1.RestControllers;
 
-import com.example.service1.Models.User;
-import com.example.service1.Models.UserDTO;
+import com.example.service1.Entities.User;
+import com.example.service1.Entities.UserDTO;
 import com.example.service1.Services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;

@@ -8,13 +8,25 @@
     <a mat-button routerLink="/ranking">Ranking</a>
     <a mat-button routerLink="/eventos">Eventos</a>
     <a mat-button routerLink="/calendario">Calendario</a>
-    <a mat-menu-item routerLink="/user-profile">User Profile</a>
-
   </nav>
   <div class="LogSection">
     <button mat-raised-button color="accent" *ngIf="!isLoggedIn" (click)="login()"> LogIn </button>
     <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="logout()"> Log Out </button>
   </div>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <a mat-menu-item routerLink="/">Inicio</a>
+    <a mat-menu-item routerLink="/miembros">Miembros del Club</a>
+    <a mat-menu-item routerLink="/ranking">Ranking</a>
+    <a mat-menu-item routerLink="/eventos">Eventos</a>
+    <a mat-menu-item routerLink="/calendario">Calendario</a>
+    <a mat-menu-item routerLink="/disciplines">Disciplinas</a>
+    <a mat-menu-item routerLink="/login">Inicio de Sesión</a>
+    <a mat-menu-item routerLink="/user-profile">User Profile</a>
+
+  </mat-menu>
 </header>
 
 <section>
@@ -23,7 +35,7 @@
       <mat-card-title class="event-title">{{ event?.name ?? 'Nombre no disponible' }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <img [src]="event?.imageLink ?? 'assets/default-event.jpg'" alt="Imagen del evento" class="event-image">
+      <img [src]="event.imageLink ?? 'assets/default-event.jpg'" alt="Imagen del evento" class="event-image">
       <p><strong>Fecha:</strong> {{ event?.date ?? 'Fecha no disponible' }}</p>
       <p *ngIf="event?.organizedByClub"><strong>Organizado por el club</strong></p>
       <p *ngIf="!event?.organizedByClub"><strong>No organizado por el club</strong></p>

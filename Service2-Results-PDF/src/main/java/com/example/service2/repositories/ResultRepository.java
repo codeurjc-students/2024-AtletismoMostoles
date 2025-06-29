@@ -11,4 +11,7 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
 
     // Find all results by event ID
     List<Result> findByEventoId(Long eventoId);
+
+    // Buscar resultados por evento y disciplina
+    List<Result> findByEventoIdAndDisciplinaId(Long eventoId, Long disciplinaId);
 }

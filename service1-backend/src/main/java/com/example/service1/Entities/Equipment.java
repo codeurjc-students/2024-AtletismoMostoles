@@ -1,11 +1,10 @@
-package com.example.service1.Models;
+package com.example.service1.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity

@@ -51,23 +51,31 @@ public class PdfServiceImpl implements PdfService {
         String fileName = "generated_" + tipo + "_" + id + "_" + requestId + ".txt";
         String fileUrl = "/simulated/azure/blob/" + fileName;
 
-        // Simulate PDF generation by creating a .txt file
         try (FileWriter writer = new FileWriter(fileName)) {
             writer.write("PDF for " + tipo + " ID: " + id + "\n\n");
             for (Result result : resultados) {
-                writer.write(result.toString() + "\n");
+                writer.write("Resultado ID: " + result.getId() + "\n");
+                writer.write("Atleta ID: " + result.getAtletaId() + "\n");
+                writer.write("Evento ID: " + result.getEventoId() + "\n");
+                writer.write("Disciplina ID: " + result.getDisciplinaId() + "\n"); // 🆕
+                writer.write("Marca: " + result.getMarca() + "\n");
+                writer.write("Fecha: " + result.getFecha() + "\n");
+                writer.write("----\n");
             }
 
-            // Save to DB
             PdfRequest pdfRequest = new PdfRequest();
             pdfRequest.setRequestId(requestId);
             pdfRequest.setTimestampGenerado(Instant.now());
             pdfRequest.setUrlBlob(fileUrl);
             pdfRequest.setEstado("GENERADO");
 
-            pdfRequestRepository.save(pdfRequest);
+            if (tipo.equals("athlete")) {
+                pdfRequest.setAtletaId(id);
+            } else {
+                pdfRequest.setEventoId(id);
+            }
 
-            // Notify service1 via RabbitMQ (queue B)
+            pdfRequestRepository.save(pdfRequest);
             confirmationSender.sendConfirmation(pdfRequest);
 
         } catch (IOException e) {
@@ -79,7 +87,14 @@ public class PdfServiceImpl implements PdfService {
             failedRequest.setUrlBlob(null);
             failedRequest.setEstado("ERROR");
 
+            if (tipo.equals("athlete")) {
+                failedRequest.setAtletaId(id);
+            } else {
+                failedRequest.setEventoId(id);
+            }
+
             pdfRequestRepository.save(failedRequest);
         }
     }
+
 }

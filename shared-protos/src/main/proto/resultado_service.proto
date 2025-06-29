@@ -1,80 +1,115 @@
 syntax = "proto3";
 
-import "google/protobuf/timestamp.proto";
+import "evento_service.proto"; // Para usar StatusMessage ya definido
 
 option java_package = "com.example.service2.grpc";
 option java_outer_classname = "ResultadoServiceGrpcProto";
 
-// Servicio gRPC para gestionar resultados de atletas y generar PDFs.
+// Servicio gRPC para gestión de resultados y PDFs
 service ResultadoService {
-  // 1) Ver resultados de un atleta (lista de resultados)
+  // 1) Obtener resultados
   rpc VerResultados(VerResultadosRequest) returns (VerResultadosResponse);
-
-  // 1b) Ver resultados de un evento (nueva operación)
   rpc VerResultadosPorEvento(VerResultadosPorEventoRequest) returns (VerResultadosResponse);
+  rpc VerResultadoPorId(GetResultadoRequest) returns (ResultadoMessage); // 🆕
+  rpc BuscarResultadosFiltrados(ResultadoFiltroRequest) returns (VerResultadosResponse); // 🆕
 
-  // 2) Guardar un nuevo resultado para un atleta
+  // 2) Guardar resultado
   rpc GuardarResultado(GuardarResultadoRequest) returns (ResultadoMessage);
+  rpc GuardarResultadosBatch(BatchGuardarRequest) returns (BatchGuardarResponse); // 🆕
 
-  // 3) Listar histórico de PDFs generados para un atleta
+  // 3) Modificar y eliminar
+  rpc ActualizarResultado(UpdateResultadoRequest) returns (ResultadoMessage); // 🆕
+  rpc BorrarResultado(DeleteResultadoRequest) returns (StatusMessage);
+
+  // 4) Historial de PDFs
   rpc ListaPdfHistorico(ListaPdfRequest) returns (ListaPdfResponse);
 }
 
-// Solicitud para resultados por atleta
+// ========== MENSAJES DE CONSULTA ==========
 message VerResultadosRequest {
-  int64 atleta_id = 1;
+  int64 atletaId = 1;
 }
 
-// Solicitud para resultados por evento (NUEVO)
 message VerResultadosPorEventoRequest {
-  int64 evento_id = 1;
+  int64 eventoId = 1;
 }
 
-// Datos de resultado común
+message GetResultadoRequest {
+  int64 id = 1;
+}
+
+message ResultadoFiltroRequest {
+  int64 eventId = 1;
+  int64 disciplineId = 2;
+}
+
+// ========== MENSAJES DE RESULTADO ==========
 message ResultadoData {
-  int64 id           = 1;
-  int64 atleta_id    = 2;
-  int64 evento_id    = 3;
-  double marca       = 4;
-  google.protobuf.Timestamp fecha = 5;
+  int64 id = 1;
+  int64 atletaId = 2;
+  int64 eventoId = 3;
+  int64 disciplinaId = 4;
+  double marca = 5;
+  string fecha = 6; // ISO-8601
 }
 
-// Respuesta con lista de resultados
 message VerResultadosResponse {
   repeated ResultadoData resultados = 1;
 }
 
-// Solicitud para guardar resultado
 message GuardarResultadoRequest {
-  int64 atleta_id = 1;
-  int64 evento_id = 2;
-  double marca    = 3;
-  google.protobuf.Timestamp fecha = 4;
+  int64 atletaId = 1;
+  int64 eventoId = 2;
+  int64 disciplinaId = 3;
+  double marca = 4;
+  string fecha = 5;
 }
 
-// Confirmación del resultado guardado
+message UpdateResultadoRequest {
+  int64 id = 1;
+  int64 atletaId = 2;
+  int64 eventoId = 3;
+  int64 disciplinaId = 4;
+  double marca = 5;
+  string fecha = 6;
+}
+
+message DeleteResultadoRequest {
+  int64 id = 1;
+}
+
 message ResultadoMessage {
-  int64 id           = 1;
-  int64 atleta_id    = 2;
-  int64 evento_id    = 3;
-  double marca       = 4;
-  google.protobuf.Timestamp fecha = 5;
+  int64 id = 1;
+  int64 atletaId = 2;
+  int64 eventoId = 3;
+  int64 disciplinaId = 4;
+  double marca = 5;
+  string fecha = 6;
 }
 
-// Solicitud de historial de PDFs
+// ========== MENSAJES BATCH ==========
+message BatchGuardarRequest {
+  repeated GuardarResultadoRequest resultados = 1;
+}
+
+message BatchGuardarResponse {
+  repeated ResultadoMessage resultados = 1;
+}
+
+// ========== MENSAJES DE PDF ==========
 message ListaPdfRequest {
-  int64 atleta_id = 1;
+  int64 atletaId = 1;
 }
 
-// Datos de PDF generado
 message PdfData {
-  string request_id                         = 1;
-  google.protobuf.Timestamp timestamp_generado = 2;
-  string url_blob                           = 3;
-  string estado                             = 4;  // "PENDIENTE", "GENERADO", "ERROR"
+  string requestId = 1;
+  int64 atletaId = 2;
+  int64 eventoId = 3;
+  string timestampGenerado = 4;
+  string urlBlob = 5;
+  string estado = 6;
 }
 
-// Respuesta con lista de PDFs
 message ListaPdfResponse {
   repeated PdfData pdfs = 1;
 }

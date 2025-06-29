@@ -2,8 +2,8 @@ package com.example.service1.Services;
 
 
 import com.example.service1.Exceptions.ResourceNotFoundException;
-import com.example.service1.Models.Coach;
-import com.example.service1.Models.Discipline;
+import com.example.service1.Entities.Coach;
+import com.example.service1.Entities.Discipline;
 import com.example.service1.Repositories.CoachRepository;
 import com.example.service1.Repositories.DisciplineRepository;
 import org.springframework.beans.factory.annotation.Autowired;

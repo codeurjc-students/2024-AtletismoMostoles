@@ -1,16 +1,16 @@
-package com.example.service1.Models;
+package com.example.service1.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-public class Athlete {
+public class Coach {
+
     @Id
     @NotBlank
     private String licenseNumber;
@@ -18,35 +18,27 @@ public class Athlete {
     private String firstName;
     @NotBlank
     private String lastName;
-    @NotNull
-    private LocalDate birthDate;
-
-    @ManyToOne
-    @JoinColumn(name = "coach_id")
-    @JsonIgnoreProperties({"athletes", "disciplines"})
-    private Coach coach;
 
     @ManyToMany
     @JoinTable(
-            name = "athlete_discipline",
-            joinColumns = @JoinColumn(name = "athlete_id"),
+            name = "coach_disciplines",
+            joinColumns = @JoinColumn(name = "coach_id"),
             inverseJoinColumns = @JoinColumn(name = "discipline_id")
     )
-    @JsonIgnoreProperties({"athletes", "coaches", "equipment", "events"})
+    @JsonIgnoreProperties({"coaches", "events", "athletes", "equipment"} )
     private Set<Discipline> disciplines = new HashSet<>();
 
+    @OneToMany(mappedBy = "coach")
+    @JsonIgnoreProperties({"coach", "results", "disciplines"})
+    private Set<Athlete> athletes = new HashSet<>();
 
-    public Athlete(String licenseNumber, String firstName, String lastName, LocalDate birthDate, Coach coach, Set<Discipline> disciplines) {
+    public Coach() {}
+
+    public Coach(String licenseNumber, String firstName, String lastName, List<Discipline> disciplines) {
         this.licenseNumber = licenseNumber;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.birthDate = birthDate;
-        this.coach = coach;
-        this.disciplines = disciplines;
-    }
-
-    public Athlete() {
-
+        this.disciplines = new HashSet<>(disciplines);
     }
 
     public String getLicenseNumber() {
@@ -73,22 +65,6 @@ public class Athlete {
         this.lastName = lastName;
     }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public Coach getCoach() {
-        return coach;
-    }
-
-    public void setCoach(Coach coach) {
-        this.coach = coach;
-    }
-
     public Set<Discipline> getDisciplines() {
         return disciplines;
     }
@@ -97,4 +73,11 @@ public class Athlete {
         this.disciplines = disciplines;
     }
 
+    public Set<Athlete> getAthletes() {
+        return athletes;
     }
+
+    public void setAthletes(Set<Athlete> athletes) {
+        this.athletes = athletes;
+    }
+}

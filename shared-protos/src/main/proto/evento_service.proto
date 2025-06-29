@@ -4,90 +4,88 @@ option java_package = "com.example.service3.grpc";
 option java_outer_classname = "EventoServiceGrpcProto";
 
 // Servicio gRPC para la gestión de eventos y notificaciones en tiempo real.
-
 service EventoService {
-  // 1) Listar todos los eventos (futuros o pasados)
   rpc ListarEventos(ListarEventosRequest) returns (ListarEventosResponse);
-
-  // 2) Crear un nuevo evento
   rpc CrearEvento(CrearEventoRequest) returns (EventoMessage);
-
-  // 3) Borrar un evento por su ID
+  rpc ObtenerEventoPorId(GetEventoRequest) returns (EventoMessage);
+  rpc ActualizarEvento(UpdateEventoRequest) returns (EventoMessage);
   rpc BorrarEvento(BorrarEventoRequest) returns (StatusMessage);
-
-  // 4) Obtener notificaciones desde la última conexión del usuario
   rpc NotificacionesPendientes(NotificacionesRequest) returns (NotificacionesResponse);
-
-  // 5) Marcar un evento como visto
   rpc MarcarEventoVisto(MarcarEventoVistoRequest) returns (StatusMessage);
 }
 
-// ========================= MENSAJES =========================
+// ========================= PETICIONES =========================
 
-// ListarEventos
-message ListarEventosRequest {
-  // En el futuro se pueden agregar filtros por fecha
+message ListarEventosRequest {}
+
+message GetEventoRequest {
+  int64 id = 1;
+}
+
+message CrearEventoRequest {
+  string name = 1;
+  string date = 2;             // "YYYY-MM-DD"
+  string mapLink = 3;
+  string imageLink = 4;
+  bool organizedByClub = 5;
+  repeated int64 disciplineIds = 6;  // nuevo
+}
+
+message UpdateEventoRequest {
+  int64 id = 1;
+  string name = 2;
+  string date = 3;
+  string mapLink = 4;
+  string imageLink = 5;
+  bool organizedByClub = 6;
+  repeated int64 disciplineIds = 7;  // nuevo
+}
+
+message BorrarEventoRequest {
+  int64 eventoId = 1;
+}
+
+message MarcarEventoVistoRequest {
+  int64 usuarioId = 1;
+  int64 eventoId = 2;
+}
+
+message NotificacionesRequest {
+  int64 usuarioId = 1;
+  string timestampUltimaConexion = 2;
+}
+
+// ========================= RESPUESTAS =========================
+
+message EventoMessage {
+  int64 id = 1;
+  string name = 2;
+  string date = 3;
+  string mapLink = 4;
+  string imageLink = 5;
+  bool organizedByClub = 6;
+  repeated int64 disciplineIds = 7;  // nuevo
 }
 
 message ListarEventosResponse {
   repeated EventoMessage eventos = 1;
 }
 
-// CrearEvento
-message CrearEventoRequest {
-  string titulo = 1;
-  string descripcion = 2;
-  string fechaInicio = 3;   // ISO-8601: "2025-07-01T09:00:00"
-  string fechaFin = 4;      // ISO-8601
-  string ubicacion = 5;
-  int64 creadoPor = 6;
-  string imagenUrl = 7;     // Nuevo campo opcional
-}
-
-message EventoMessage {
-  int64 id = 1;
-  string titulo = 2;
-  string descripcion = 3;
-  string fechaInicio = 4;
-  string fechaFin = 5;
-  string ubicacion = 6;
-  int64 creadoPor = 7;
-  string timestampCreacion = 8;
-  string imagenUrl = 9;
-}
-
-// BorrarEvento
-message BorrarEventoRequest {
-  int64 eventoId = 1;
-}
-
-// MarcarEventoVisto
-message MarcarEventoVistoRequest {
-  int64 usuarioId = 1;
-  int64 eventoId = 2;
-}
-
-// Notificaciones
-message NotificacionesRequest {
-  int64 usuarioId = 1;
-  string timestampUltimaConexion = 2;
-}
-
 message NotificacionData {
   int64 eventoId = 1;
-  string titulo = 2;
-  string descripcion = 3;
-  string fechaInicio = 4;
-  string fechaFin = 5;
-  string ubicacion = 6;
+  string name = 2;
+  string date = 3;
+  string mapLink = 4;
+  string imageLink = 5;
+  bool organizedByClub = 6;
   string timestampNotificacion = 7;
+  repeated int64 disciplineIds = 8;  // opcional
 }
 
 message NotificacionesResponse {
   repeated NotificacionData notificaciones = 1;
 }
 
-// Mensaje de estado genérico
 message StatusMessage {
   bool success = 1;
   string mensaje = 2;

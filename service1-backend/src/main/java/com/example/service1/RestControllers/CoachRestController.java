@@ -1,6 +1,6 @@
 package com.example.service1.RestControllers;
 
-import com.example.service1.Models.Coach;
+import com.example.service1.Entities.Coach;
 import com.example.service1.Services.CoachService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

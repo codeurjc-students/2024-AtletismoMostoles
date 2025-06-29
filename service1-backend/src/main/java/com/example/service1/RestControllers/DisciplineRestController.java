@@ -1,7 +1,7 @@
 package com.example.service1.RestControllers;
 
-import com.example.service1.Models.Discipline;
-import com.example.service1.Models.Coach;
+import com.example.service1.Entities.Discipline;
+import com.example.service1.Entities.Coach;
 import com.example.service1.Services.DisciplineService;
 import com.example.service1.Services.CoachService;
 import jakarta.validation.Valid;

@@ -1,6 +1,6 @@
 package com.example.service1.Security;
 
-import com.example.service1.Models.User;
+import com.example.service1.Entities.User;
 import com.example.service1.Repositories.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;

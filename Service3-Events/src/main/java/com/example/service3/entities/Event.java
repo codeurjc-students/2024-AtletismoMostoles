@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "events")
@@ -27,14 +29,21 @@ public class Event {
     @NotNull
     private boolean isOrganizedByClub;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "event_discipline", joinColumns = @JoinColumn(name = "event_id"))
+    @Column(name = "discipline_id")
+    private Set<Long> disciplineIds = new HashSet<>();
+
+
     public Event() {}
 
-    public Event(String name, LocalDate date, String mapLink, String imageLink, boolean isOrganizedByClub) {
+    public Event(String name, LocalDate date, String mapLink, String imageLink, boolean isOrganizedByClub, Set<Long> disciplineIds) {
         this.name = name;
         this.date = date;
         this.mapLink = mapLink;
         this.imageLink = imageLink;
         this.isOrganizedByClub = isOrganizedByClub;
+        this.disciplineIds = disciplineIds;
     }
 
     public Long getId() {
@@ -83,5 +92,13 @@ public class Event {
 
     public void setOrganizedByClub(boolean organizedByClub) {
         isOrganizedByClub = organizedByClub;
+    }
+
+    public Set<Long> getDisciplineIds() {
+        return disciplineIds;
+    }
+
+    public void setDisciplineIds(Set<Long> disciplineIds) {
+        this.disciplineIds = disciplineIds;
     }
 }

@@ -1,5 +1,7 @@
 package com.example.service3.dto;
 
+import java.util.Set;
+
 public class EventNotification {
 
     private Long eventoId;
@@ -7,19 +9,20 @@ public class EventNotification {
     private String descripcion;
     private String fecha;
     private String ubicacion;
+    private Set<Long> disciplineIds;
 
     public EventNotification() {}
 
-    public EventNotification(Long eventoId, String titulo, String descripcion, String fecha, String ubicacion) {
+    public EventNotification(Long eventoId, String titulo, String descripcion, String fecha, String ubicacion, Set<Long> disciplineIds) {
         this.eventoId = eventoId;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.fecha = fecha;
         this.ubicacion = ubicacion;
+        this.disciplineIds = disciplineIds;
     }
 
     // Getters and setters
-
     public Long getEventoId() {
         return eventoId;
     }
@@ -58,5 +61,13 @@ public class EventNotification {
 
     public void setUbicacion(String ubicacion) {
         this.ubicacion = ubicacion;
+    }
+
+    public Set<Long> getDisciplineIds() {
+        return disciplineIds;
+    }
+
+    public void setDisciplineIds(Set<Long> disciplineIds) {
+        this.disciplineIds = disciplineIds;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.service1.Models;
+package com.example.service1.Entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;

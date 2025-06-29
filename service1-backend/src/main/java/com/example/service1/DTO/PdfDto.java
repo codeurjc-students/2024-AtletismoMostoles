@@ -1,29 +1,55 @@
 package com.example.service1.DTO;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public class PdfDto {
     private String requestId;
-    private LocalDateTime timestampGenerado;
+    private Long atletaId;
+    private Long eventoId;
+    private Instant timestampGenerado;
     private String urlBlob;
     private String estado;
 
-    public PdfDto() { }
-
-    public PdfDto(String requestId, LocalDateTime timestampGenerado, String urlBlob, String estado) {
+    // Getters y setters
+    public String getRequestId() {
+        return requestId;
+    }
+    public void setRequestId(String requestId) {
         this.requestId = requestId;
-        this.timestampGenerado = timestampGenerado;
-        this.urlBlob = urlBlob;
-        this.estado = estado;
     }
 
-    // getters y setters...
-    public String getRequestId() { return requestId; }
-    public void setRequestId(String requestId) { this.requestId = requestId; }
-    public LocalDateTime getTimestampGenerado() { return timestampGenerado; }
-    public void setTimestampGenerado(LocalDateTime timestampGenerado) { this.timestampGenerado = timestampGenerado; }
-    public String getUrlBlob() { return urlBlob; }
-    public void setUrlBlob(String urlBlob) { this.urlBlob = urlBlob; }
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public Long getAtletaId() {
+        return atletaId;
+    }
+    public void setAtletaId(Long atletaId) {
+        this.atletaId = atletaId;
+    }
+
+    public Long getEventoId() {
+        return eventoId;
+    }
+    public void setEventoId(Long eventoId) {
+        this.eventoId = eventoId;
+    }
+
+    public Instant getTimestampGenerado() {
+        return timestampGenerado;
+    }
+    public void setTimestampGenerado(Instant timestampGenerado) {
+        this.timestampGenerado = timestampGenerado;
+    }
+
+    public String getUrlBlob() {
+        return urlBlob;
+    }
+    public void setUrlBlob(String urlBlob) {
+        this.urlBlob = urlBlob;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 }

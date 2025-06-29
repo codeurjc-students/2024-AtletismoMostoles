@@ -1,6 +1,6 @@
 package com.example.service1.RestControllers;
 
-import com.example.service1.Models.User;
+import com.example.service1.Entities.User;
 import com.example.service1.Repositories.UserRepository;
 import com.example.service1.Services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;

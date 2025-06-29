@@ -1,42 +1,80 @@
 package com.example.service1.DTO;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NotificacionDto {
-    private Long eventoId;
-    private String titulo;
-    private String descripcion;
-    private LocalDateTime fechaInicio;
-    private LocalDateTime fechaFin;
-    private String ubicacion;
-    private LocalDateTime timestampNotificacion;
+    private Long id;
+    private String name;
+    private LocalDate date;
+    private String mapLink;
+    private String imageLink;
+    private boolean organizedByClub;
+    private String timestampNotificacion;
+    private Set<Long> disciplineIds = new HashSet<>(); // NUEVO CAMPO
 
-    public NotificacionDto() { }
+    public Long getId() {
+        return id;
+    }
 
-    public NotificacionDto(Long eventoId, String titulo, String descripcion,
-                           LocalDateTime fechaInicio, LocalDateTime fechaFin,
-                           String ubicacion, LocalDateTime timestampNotificacion) {
-        this.eventoId = eventoId;
-        this.titulo = titulo;
-        this.descripcion = descripcion;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-        this.ubicacion = ubicacion;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public String getMapLink() {
+        return mapLink;
+    }
+
+    public void setMapLink(String mapLink) {
+        this.mapLink = mapLink;
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
+    }
+
+    public boolean isOrganizedByClub() {
+        return organizedByClub;
+    }
+
+    public void setOrganizedByClub(boolean organizedByClub) {
+        this.organizedByClub = organizedByClub;
+    }
+
+    public String getTimestampNotificacion() {
+        return timestampNotificacion;
+    }
+
+    public void setTimestampNotificacion(String timestampNotificacion) {
         this.timestampNotificacion = timestampNotificacion;
     }
 
-    public Long getEventoId() { return eventoId; }
-    public void setEventoId(Long eventoId) { this.eventoId = eventoId; }
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-    public LocalDateTime getFechaInicio() { return fechaInicio; }
-    public void setFechaInicio(LocalDateTime fechaInicio) { this.fechaInicio = fechaInicio; }
-    public LocalDateTime getFechaFin() { return fechaFin; }
-    public void setFechaFin(LocalDateTime fechaFin) { this.fechaFin = fechaFin; }
-    public String getUbicacion() { return ubicacion; }
-    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
-    public LocalDateTime getTimestampNotificacion() { return timestampNotificacion; }
-    public void setTimestampNotificacion(LocalDateTime timestampNotificacion) { this.timestampNotificacion = timestampNotificacion; }
+    public Set<Long> getDisciplineIds() {
+        return disciplineIds;
+    }
+
+    public void setDisciplineIds(Set<Long> disciplineIds) {
+        this.disciplineIds = disciplineIds;
+    }
 }

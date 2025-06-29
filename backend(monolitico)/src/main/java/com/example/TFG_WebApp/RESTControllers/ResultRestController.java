@@ -68,5 +68,4 @@ public class ResultRestController {
                     .body("Error al guardar los resultados: " + e.getMessage());
         }
     }
-
 }

@@ -1,6 +1,6 @@
 package com.example.service1.RestControllers;
 
-import com.example.service1.Models.Equipment;
+import com.example.service1.Entities.Equipment;
 import com.example.service1.Services.EquipmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.example.service1.Repositories;
 
-import com.example.service1.Models.User;
+import com.example.service1.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

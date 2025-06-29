@@ -1,7 +1,7 @@
 package com.example.service1.Services;
 
 
-import com.example.service1.Models.User;
+import com.example.service1.Entities.User;
 import com.example.service1.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

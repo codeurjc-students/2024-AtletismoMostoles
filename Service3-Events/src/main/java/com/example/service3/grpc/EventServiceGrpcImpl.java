@@ -4,18 +4,19 @@ import com.example.service3.entities.Event;
 import com.example.service3.services.EventService;
 import com.example.service3.grpc.EventoServiceGrpcProto.*;
 import com.example.service3.grpc.EventoServiceGrpc.EventoServiceImplBase;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @GrpcService
 public class EventServiceGrpcImpl extends EventoServiceImplBase {
 
     private final EventService eventService;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     public EventServiceGrpcImpl(EventService eventService) {
         this.eventService = eventService;
@@ -35,18 +36,61 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
+    public void obtenerEventoPorId(GetEventoRequest request, StreamObserver<EventoMessage> responseObserver) {
+        Optional<Event> optional = eventService.findById(request.getId());
+
+        if (optional.isPresent()) {
+            EventoMessage msg = convertToMessage(optional.get());
+            responseObserver.onNext(msg);
+            responseObserver.onCompleted();
+        } else {
+            responseObserver.onError(
+                    Status.NOT_FOUND
+                            .withDescription("Evento con ID " + request.getId() + " no encontrado.")
+                            .asRuntimeException()
+            );
+        }
+    }
+
+    @Override
     public void crearEvento(CrearEventoRequest request, StreamObserver<EventoMessage> responseObserver) {
         Event event = new Event();
-        event.setName(request.getTitulo());
-        event.setDate(LocalDateTime.parse(request.getFechaInicio(), formatter).toLocalDate());
-        event.setMapLink(request.getUbicacion());
-        event.setImageLink(request.getImagenUrl());
-        event.setOrganizedByClub(true); // Puedes adaptarlo según tu lógica
+        event.setName(request.getName());
+        event.setDate(LocalDate.parse(request.getDate()));
+        event.setMapLink(request.getMapLink());
+        event.setImageLink(request.getImageLink());
+        event.setOrganizedByClub(request.getOrganizedByClub());
+        event.setDisciplineIds(new java.util.HashSet<>(request.getDisciplineIdsList()));
 
         Event saved = eventService.save(event);
 
         EventoMessage message = convertToMessage(saved);
         responseObserver.onNext(message);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void actualizarEvento(UpdateEventoRequest request, StreamObserver<EventoMessage> responseObserver) {
+        Optional<Event> optional = eventService.findById(request.getId());
+
+        if (optional.isPresent()) {
+            Event event = optional.get();
+            event.setName(request.getName());
+            event.setDate(LocalDate.parse(request.getDate()));
+            event.setMapLink(request.getMapLink());
+            event.setImageLink(request.getImageLink());
+            event.setOrganizedByClub(request.getOrganizedByClub());
+            event.setDisciplineIds(new java.util.HashSet<>(request.getDisciplineIdsList()));
+
+            Event updated = eventService.save(event);
+            EventoMessage message = convertToMessage(updated);
+            responseObserver.onNext(message);
+        } else {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription("Evento no encontrado")
+                    .asRuntimeException());
+        }
+
         responseObserver.onCompleted();
     }
 
@@ -67,19 +111,19 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
         responseObserver.onCompleted();
     }
 
-    // Métodos de notificación se implementarán más adelante
-
     private EventoMessage convertToMessage(Event event) {
-        return EventoMessage.newBuilder()
+        EventoMessage.Builder builder = EventoMessage.newBuilder()
                 .setId(event.getId())
-                .setTitulo(event.getName())
-                .setDescripcion("") // si lo agregas como campo opcional
-                .setFechaInicio(event.getDate().atStartOfDay().format(formatter))
-                .setFechaFin(event.getDate().plusDays(1).atStartOfDay().format(formatter)) // solo ejemplo
-                .setUbicacion(event.getMapLink() != null ? event.getMapLink() : "")
-                .setCreadoPor(0) // por ahora hardcoded
-                .setTimestampCreacion(LocalDateTime.now().format(formatter))
-                .setImagenUrl(event.getImageLink() != null ? event.getImageLink() : "")
-                .build();
+                .setName(event.getName())
+                .setDate(event.getDate().toString())
+                .setMapLink(event.getMapLink() != null ? event.getMapLink() : "")
+                .setImageLink(event.getImageLink() != null ? event.getImageLink() : "")
+                .setOrganizedByClub(event.isOrganizedByClub());
+
+        if (event.getDisciplineIds() != null) {
+            builder.addAllDisciplineIds(event.getDisciplineIds());
+        }
+
+        return builder.build();
     }
 }
