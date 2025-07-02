@@ -2,6 +2,8 @@ package com.example.service2.services;
 
 import com.example.service2.entities.Result;
 import com.example.service2.repositories.ResultRepository;
+import com.example.resultados.service.ResultService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,55 +11,31 @@ import java.util.List;
 @Service
 public class ResultServiceImpl implements ResultService {
 
-    private final ResultRepository resultRepository;
+    @Autowired
+    private ResultRepository resultsRepository;
 
-    public ResultServiceImpl(ResultRepository resultRepository) {
-        this.resultRepository = resultRepository;
+    @Override
+    public Result saveResult(Result result) {
+        return null;
     }
 
     @Override
-    public List<Result> findByAtletaId(Long atletaId) {
-        return resultRepository.findByAtletaId(atletaId);
+    public void saveAll(List<Result> results) {
+
     }
 
     @Override
-    public List<Result> findByEventoId(Long eventoId) {
-        return resultRepository.findByEventoId(eventoId);
+    public List<Result> getResultsByAthleteId(Long athleteId) {
+        return List.of();
     }
 
     @Override
-    public Result save(Result result) {
-        return resultRepository.save(result);
+    public List<Result> getResultsByEventId(Long eventId) {
+        return resultsRepository.findByEventId(eventId);
     }
 
     @Override
-    public Result findById(Long id) {
-        return resultRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Resultado no encontrado con ID: " + id));
+    public List<Result> getAllResults() {
+        return resultsRepository.findAll();
     }
-
-    @Override
-    public List<Result> findByEventoIdAndDisciplinaId(Long eventoId, Long disciplinaId) {
-        return resultRepository.findByEventoIdAndDisciplinaId(eventoId, disciplinaId);
-    }
-
-    @Override
-    public Result update(Long id, Result updatedResult) {
-        Result existing = resultRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Resultado no encontrado con ID: " + id));
-
-        existing.setAtletaId(updatedResult.getAtletaId());
-        existing.setEventoId(updatedResult.getEventoId());
-        existing.setDisciplinaId(updatedResult.getDisciplinaId());
-        existing.setMarca(updatedResult.getMarca());
-        existing.setFecha(updatedResult.getFecha());
-
-        return resultRepository.save(existing);
-    }
-
-    @Override
-    public void delete(Long id) {
-        resultRepository.deleteById(id);
-    }
-
 }

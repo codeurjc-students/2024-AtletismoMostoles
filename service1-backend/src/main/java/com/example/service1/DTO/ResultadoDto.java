@@ -1,14 +1,12 @@
 package com.example.service1.DTO;
 
-import java.time.LocalDate;
 
 public class ResultadoDto {
     private Long id;
     private Long atletaId;
     private Long eventoId;
     private Long disciplinaId;
-    private double marca;
-    private LocalDate fecha;
+    private String valor;
 
     // Getters y setters
     public Long getId() {
@@ -38,18 +36,11 @@ public class ResultadoDto {
     public void setDisciplinaId(Long disciplinaId) {
         this.disciplinaId = disciplinaId;
     }
+    public String getValor() {
+        return valor;
+    }
+    public void setValor(String valor) {
+        this.valor = valor;
+    }
 
-    public double getMarca() {
-        return marca;
-    }
-    public void setMarca(double marca) {
-        this.marca = marca;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
-    }
 }

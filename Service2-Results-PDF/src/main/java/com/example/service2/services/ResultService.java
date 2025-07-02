@@ -1,4 +1,4 @@
-package com.example.service2.services;
+package com.example.resultados.service;
 
 import com.example.service2.entities.Result;
 
@@ -6,18 +6,13 @@ import java.util.List;
 
 public interface ResultService {
 
-    List<Result> findByAtletaId(Long atletaId);
+    Result saveResult(Result result);
 
-    List<Result> findByEventoId(Long eventoId);
+    void saveAll(List<Result> results);
 
-    Result save(Result result);
+    List<Result> getResultsByAthleteId(Long athleteId);
 
-    Result findById(Long id);
+    List<Result> getResultsByEventId(Long eventId);
 
-    List<Result> findByEventoIdAndDisciplinaId(Long eventoId, Long disciplinaId);
-
-    Result update(Long id, Result result);
-
-    void delete(Long id);
-
+    List<Result> getAllResults();
 }

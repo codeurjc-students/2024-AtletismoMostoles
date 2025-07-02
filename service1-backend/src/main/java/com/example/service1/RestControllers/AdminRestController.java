@@ -1,7 +1,7 @@
 package com.example.service1.RestControllers;
 
 import com.example.service1.Entities.User;
-import com.example.service1.Entities.UserDTO;
+import com.example.service1.DTO.UserDTO;
 import com.example.service1.Services.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
@@ -19,7 +19,6 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 @RestController
 @RequestMapping("/api/admin")
 public class AdminRestController {
-
 
     @Autowired
     private UserService userService;

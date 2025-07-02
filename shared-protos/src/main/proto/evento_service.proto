@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "common.proto";
+
 option java_package = "com.example.service3.grpc";
 option java_outer_classname = "EventoServiceGrpcProto";
 
@@ -86,7 +88,4 @@ message NotificacionesResponse {
   repeated NotificacionData notificaciones = 1;
 }
 
-message StatusMessage {
-  bool success = 1;
-  string mensaje = 2;
-}
+

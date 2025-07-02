@@ -2,16 +2,14 @@ package com.example.service2.repositories;
 
 import com.example.service2.entities.Result;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
+@Repository
 public interface ResultRepository extends JpaRepository<Result, Long> {
 
-    // Find all results by athlete ID
-    List<Result> findByAtletaId(Long atletaId);
+    List<Result> findByAthleteId(Long athleteId);
 
-    // Find all results by event ID
-    List<Result> findByEventoId(Long eventoId);
-
-    // Buscar resultados por evento y disciplina
-    List<Result> findByEventoIdAndDisciplinaId(Long eventoId, Long disciplinaId);
+    List<Result> findByEventId(Long eventId);
 }

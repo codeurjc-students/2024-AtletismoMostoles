@@ -3,6 +3,7 @@ package com.example.service1.GrpcClients;
 import com.example.service1.DTO.EventDto;
 import com.example.service3.grpc.EventoServiceGrpc;
 import com.example.service3.grpc.EventoServiceGrpcProto.*;
+import com.example.shared.CommonProto;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import io.grpc.ManagedChannel;
@@ -56,7 +57,7 @@ public class EventoGrpcClient {
         return eventoStub.actualizarEvento(builder.build());
     }
 
-    public StatusMessage borrarEvento(long eventoId) {
+    public CommonProto.StatusMessage borrarEvento(long eventoId) {
         BorrarEventoRequest request = BorrarEventoRequest.newBuilder().setEventoId(eventoId).build();
         return eventoStub.borrarEvento(request);
     }
@@ -69,7 +70,7 @@ public class EventoGrpcClient {
         return eventoStub.notificacionesPendientes(request);
     }
 
-    public StatusMessage marcarEventoVisto(long usuarioId, long eventoId) {
+    public CommonProto.StatusMessage marcarEventoVisto(long usuarioId, long eventoId) {
         MarcarEventoVistoRequest request = MarcarEventoVistoRequest.newBuilder()
                 .setUsuarioId(usuarioId)
                 .setEventoId(eventoId)

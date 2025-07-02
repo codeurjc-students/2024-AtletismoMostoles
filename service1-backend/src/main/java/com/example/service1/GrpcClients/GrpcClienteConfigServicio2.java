@@ -1,13 +1,12 @@
 package com.example.service1.GrpcClients;
 
+import com.example.service2.grpc.PdfServiceGrpc;
+import com.example.service2.grpc.ResultServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-// IMPORTA el stub generado por shared-protos a partir de resultado_service.proto,
-// según el java_package que definiste en ese .proto:
-import com.example.service2.grpc.ResultadoServiceGrpc;
 
 @Configuration
 public class GrpcClienteConfigServicio2 {
@@ -22,8 +21,14 @@ public class GrpcClienteConfigServicio2 {
     }
 
     @Bean
-    public ResultadoServiceGrpc.ResultadoServiceBlockingStub resultadoStub(ManagedChannel channelServicio2) {
-        // Crea el BlockingStub para invocar RPCs de ResultadoService
-        return ResultadoServiceGrpc.newBlockingStub(channelServicio2);
+    public PdfServiceGrpc.PdfServiceBlockingStub pdfServiceStub(ManagedChannel channelServicio2) {
+        return PdfServiceGrpc.newBlockingStub(channelServicio2);
     }
+
+    @Bean
+    public ResultServiceGrpc.ResultServiceBlockingStub resultServiceStub(ManagedChannel channelServicio2) {
+        return ResultServiceGrpc.newBlockingStub(channelServicio2);
+    }
+
+
 }

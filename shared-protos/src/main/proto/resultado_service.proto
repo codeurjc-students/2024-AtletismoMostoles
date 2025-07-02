@@ -1,115 +1,70 @@
 syntax = "proto3";
 
-import "evento_service.proto"; // Para usar StatusMessage ya definido
+import "common.proto";
 
+option java_multiple_files = true;
 option java_package = "com.example.service2.grpc";
 option java_outer_classname = "ResultadoServiceGrpcProto";
 
-// Servicio gRPC para gestión de resultados y PDFs
-service ResultadoService {
-  // 1) Obtener resultados
-  rpc VerResultados(VerResultadosRequest) returns (VerResultadosResponse);
-  rpc VerResultadosPorEvento(VerResultadosPorEventoRequest) returns (VerResultadosResponse);
-  rpc VerResultadoPorId(GetResultadoRequest) returns (ResultadoMessage); // 🆕
-  rpc BuscarResultadosFiltrados(ResultadoFiltroRequest) returns (VerResultadosResponse); // 🆕
+// ------------------------
+// Servicio de Resultados
+// ------------------------
+service ResultService {
+  rpc SaveResult(ResultRequest) returns (StatusMessage);
+  rpc SaveMultipleResults(ResultListRequest) returns (StatusMessage);
+  rpc GetResultsByAthleteId(AthleteIdRequest) returns (ResultListResponse);
+  rpc GetResultsByEventId(EventIdRequest) returns (ResultListResponse);
+  rpc GetAllResults(Empty) returns (ResultListResponse);
+  rpc GetResultadoById(ResultIdRequest) returns (ResultResponse);
 
-  // 2) Guardar resultado
-  rpc GuardarResultado(GuardarResultadoRequest) returns (ResultadoMessage);
-  rpc GuardarResultadosBatch(BatchGuardarRequest) returns (BatchGuardarResponse); // 🆕
-
-  // 3) Modificar y eliminar
-  rpc ActualizarResultado(UpdateResultadoRequest) returns (ResultadoMessage); // 🆕
-  rpc BorrarResultado(DeleteResultadoRequest) returns (StatusMessage);
-
-  // 4) Historial de PDFs
-  rpc ListaPdfHistorico(ListaPdfRequest) returns (ListaPdfResponse);
 }
 
-// ========== MENSAJES DE CONSULTA ==========
-message VerResultadosRequest {
-  int64 atletaId = 1;
+// ------------------------
+// Servicio de PDFs
+// ------------------------
+service PdfService {
+  rpc RequestPdfGeneration(AthleteIdRequest) returns (StatusMessage);
+  rpc GetPdfHistory(AthleteIdRequest) returns (PdfListResponse);
 }
 
-message VerResultadosPorEventoRequest {
-  int64 eventoId = 1;
-}
-
-message GetResultadoRequest {
-  int64 id = 1;
-}
-
-message ResultadoFiltroRequest {
+// ------------------------
+// Mensajes comunes
+// ------------------------
+message ResultRequest {
   int64 eventId = 1;
   int64 disciplineId = 2;
+  int64 athleteId = 3;
+  string value = 4;
 }
 
-// ========== MENSAJES DE RESULTADO ==========
-message ResultadoData {
-  int64 id = 1;
-  int64 atletaId = 2;
-  int64 eventoId = 3;
-  int64 disciplinaId = 4;
-  double marca = 5;
-  string fecha = 6; // ISO-8601
-}
-
-message VerResultadosResponse {
-  repeated ResultadoData resultados = 1;
-}
-
-message GuardarResultadoRequest {
-  int64 atletaId = 1;
-  int64 eventoId = 2;
-  int64 disciplinaId = 3;
-  double marca = 4;
-  string fecha = 5;
-}
-
-message UpdateResultadoRequest {
-  int64 id = 1;
-  int64 atletaId = 2;
-  int64 eventoId = 3;
-  int64 disciplinaId = 4;
-  double marca = 5;
-  string fecha = 6;
-}
-
-message DeleteResultadoRequest {
+message ResultIdRequest {
   int64 id = 1;
 }
 
-message ResultadoMessage {
+
+message ResultResponse {
   int64 id = 1;
-  int64 atletaId = 2;
-  int64 eventoId = 3;
-  int64 disciplinaId = 4;
-  double marca = 5;
-  string fecha = 6;
+  ResultRequest result = 2;
 }
 
-// ========== MENSAJES BATCH ==========
-message BatchGuardarRequest {
-  repeated GuardarResultadoRequest resultados = 1;
+message ResultListRequest {
+  repeated ResultRequest results = 1;
 }
 
-message BatchGuardarResponse {
-  repeated ResultadoMessage resultados = 1;
+message ResultListResponse {
+  repeated ResultResponse results = 1;
 }
 
-// ========== MENSAJES DE PDF ==========
-message ListaPdfRequest {
-  int64 atletaId = 1;
+message AthleteIdRequest {
+  int64 athleteId = 1;
 }
 
-message PdfData {
-  string requestId = 1;
-  int64 atletaId = 2;
-  int64 eventoId = 3;
-  string timestampGenerado = 4;
-  string urlBlob = 5;
-  string estado = 6;
+message EventIdRequest {
+  int64 eventId = 1;
 }
 
-message ListaPdfResponse {
-  repeated PdfData pdfs = 1;
+message PdfListResponse {
+  repeated string urls = 1;
 }
+
+message Empty {}

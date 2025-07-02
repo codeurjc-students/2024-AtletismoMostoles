@@ -1,4 +1,4 @@
-package com.example.service1.Entities;
+package com.example.service1.DTO;
 
 import java.util.List;
 

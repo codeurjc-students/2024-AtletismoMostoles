@@ -4,12 +4,12 @@ import com.example.service3.entities.Event;
 import com.example.service3.services.EventService;
 import com.example.service3.grpc.EventoServiceGrpcProto.*;
 import com.example.service3.grpc.EventoServiceGrpc.EventoServiceImplBase;
+import com.example.shared.CommonProto;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,15 +95,15 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void borrarEvento(BorrarEventoRequest request, StreamObserver<StatusMessage> responseObserver) {
+    public void borrarEvento(BorrarEventoRequest request, StreamObserver<CommonProto.StatusMessage> responseObserver) {
         try {
             eventService.deleteById(request.getEventoId());
-            responseObserver.onNext(StatusMessage.newBuilder()
+            responseObserver.onNext(CommonProto.StatusMessage.newBuilder()
                     .setSuccess(true)
                     .setMensaje("Evento eliminado correctamente.")
                     .build());
         } catch (Exception e) {
-            responseObserver.onNext(StatusMessage.newBuilder()
+            responseObserver.onNext(CommonProto.StatusMessage.newBuilder()
                     .setSuccess(false)
                     .setMensaje("Error al eliminar el evento.")
                     .build());

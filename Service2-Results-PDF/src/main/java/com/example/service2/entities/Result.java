@@ -1,25 +1,31 @@
 package com.example.service2.entities;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 
 @Entity
-@Table(name = "results")
 public class Result {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long atletaId;
-    private Long eventoId;
-    private Long disciplinaId;
+    private Long eventId;
+    private Long disciplineId;
+    private Long athleteId;
+    private String value;
 
-    private double marca;
+    // Constructores
+    public Result() {}
 
-    private LocalDate fecha;
+    public Result(Long id, Long eventId, Long disciplineId, Long athleteId, String value) {
+        this.id = id;
+        this.eventId = eventId;
+        this.disciplineId = disciplineId;
+        this.athleteId = athleteId;
+        this.value = value;
+    }
 
-    // Getters y setters
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -28,43 +34,35 @@ public class Result {
         this.id = id;
     }
 
-    public Long getAtletaId() {
-        return atletaId;
+    public Long getEventId() {
+        return eventId;
     }
 
-    public void setAtletaId(Long atletaId) {
-        this.atletaId = atletaId;
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
     }
 
-    public Long getEventoId() {
-        return eventoId;
+    public Long getDisciplineId() {
+        return disciplineId;
     }
 
-    public void setEventoId(Long eventoId) {
-        this.eventoId = eventoId;
+    public void setDisciplineId(Long disciplineId) {
+        this.disciplineId = disciplineId;
     }
 
-    public Long getDisciplinaId() {
-        return disciplinaId;
+    public Long getAthleteId() {
+        return athleteId;
     }
 
-    public void setDisciplinaId(Long disciplinaId) {
-        this.disciplinaId = disciplinaId;
+    public void setAthleteId(Long athleteId) {
+        this.athleteId = athleteId;
     }
 
-    public double getMarca() {
-        return marca;
+    public String getValue() {
+        return value;
     }
 
-    public void setMarca(double marca) {
-        this.marca = marca;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
+    public void setValue(String value) {
+        this.value = value;
     }
 }
