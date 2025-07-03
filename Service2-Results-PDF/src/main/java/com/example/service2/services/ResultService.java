@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ResultService {
 
-    Result saveResult(Result result);
+    void saveResult(Result result);
 
     void saveAll(List<Result> results);
 

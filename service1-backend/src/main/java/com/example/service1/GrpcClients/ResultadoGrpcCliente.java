@@ -67,7 +67,6 @@ public class ResultadoGrpcCliente {
 
         CommonProto.StatusMessage rpcResp = resultadoStub.saveResult(grpcReq);
 
-        // Si el backend no devuelve el resultado guardado, devuelves el dto original con éxito asumido
         ResultadoDto dto = new ResultadoDto();
         dto.setAtletaId(atletaId);
         dto.setEventoId(eventoId);
@@ -76,8 +75,8 @@ public class ResultadoGrpcCliente {
         return dto;
     }
 
-    public List<ResultadoDto> guardarResultadosBatch(List<ResultadoDto> dtos) {
-        List<ResultRequest> requests = dtos.stream()
+    public List<ResultadoDto> guardarResultadosBatch(List<ResultadoDto> DTos) {
+        List<ResultRequest> requests = DTos.stream()
                 .map(dto -> ResultRequest.newBuilder()
                         .setAthleteId(dto.getAtletaId())
                         .setEventId(dto.getEventoId())
@@ -85,15 +84,13 @@ public class ResultadoGrpcCliente {
                         .setValue(dto.getValor())
                         .build())
                 .collect(Collectors.toList());
-
         ResultListRequest batch = ResultListRequest.newBuilder()
                 .addAllResults(requests)
                 .build();
 
-        CommonProto.StatusMessage status = resultadoStub.saveMultipleResults(batch);
+        resultadoStub.saveMultipleResults(batch);
 
-        // Devolvemos los DTOs originales (simulado porque el backend no devuelve ResultResponse)
-        return dtos;
+        return DTos;
     }
 
     public List<ResultadoDto> getAllResultados() {

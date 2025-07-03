@@ -14,13 +14,15 @@ public class ResultServiceImpl implements ResultService {
     private ResultRepository resultsRepository;
 
     @Override
-    public Result saveResult(Result result) {
-        return null;
+    public void saveResult(Result result) {
+        System.out.println("saveResult" + result);
+        resultsRepository.save(result);
     }
 
     @Override
     public void saveAll(List<Result> results) {
-
+        System.out.println("saveAll" + results);
+        resultsRepository.saveAll(results);
     }
 
     @Override

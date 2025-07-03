@@ -76,10 +76,11 @@ public class ResultRestController {
     }
 
     @PostMapping("/batch")
-    public ResponseEntity<List<ResultadoDto>> createMultipleResults(@Valid @RequestBody List<ResultadoDto> dtos) {
-        List<ResultadoDto> saved = resultService.guardarResultadosBatchDesdeDto(dtos);
+    public ResponseEntity<List<ResultadoDto>> createMultipleResults(@RequestBody List<ResultadoDto> DTos) {
+        List<ResultadoDto> saved = resultService.guardarResultadosBatchDesdeDto(DTos);
         return ResponseEntity.ok(saved);
     }
+
 
     @PostMapping("/pdf/{atletaId}")
     public ResponseEntity<Void> solicitarGeneracionPdf(@PathVariable String atletaId) {

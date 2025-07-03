@@ -206,23 +206,26 @@ export class EventDetailsComponent implements OnInit {
     this.athleteService.getAll(0, 1000).subscribe((response) => {
       const athletes: Athlete[] = response.content;
 
-      this.dialog.open(AddResultsDialogComponent, {
-        width: '600px',
-        data: {
-          eventId: this.event.id,
-          disciplines: this.event.disciplines || [],
-          athletes: athletes
-        }
-      }).afterClosed().subscribe((resultsToSave: any[]) => {
-        if (resultsToSave?.length) {
-          this.resultService.createMultiple(resultsToSave).subscribe(() => {
-            alert('Resultados agregados correctamente');
-            this.loadEvent();
-          }, error => {
-            console.error('Error al guardar resultados:', error);
-            alert('Error al guardar resultados');
-          });
-        }
+      this.disciplineService.getAll().subscribe((disciplines) => {
+        this.dialog.open(AddResultsDialogComponent, {
+          width: '600px',
+          data: {
+            eventId: this.event.id,
+            disciplines: disciplines.content || [],
+            athletes: athletes
+          }
+        }).afterClosed().subscribe((resultsToSave: any[]) => {
+          if (resultsToSave?.length) {
+            this.resultService.createMultiple(resultsToSave).subscribe(() => {
+              alert('Resultados agregados correctamente');
+              this.loadEvent();
+            }, error => {
+              console.log("New Result:", resultsToSave);
+              console.error('Error al guardar resultados:', error);
+              alert('Error al guardar resultados');
+            });
+          }
+        });
       });
     });
   }

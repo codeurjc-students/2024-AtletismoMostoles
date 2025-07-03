@@ -35,8 +35,8 @@ public class ResultService {
         return grpcClient.guardarResultado(atletaId, eventoId, disciplinaId, valor);
     }
 
-    public List<ResultadoDto> guardarResultadosBatchDesdeDto(List<ResultadoDto> dtos) {
-        return grpcClient.guardarResultadosBatch(dtos);
+    public List<ResultadoDto> guardarResultadosBatchDesdeDto(List<ResultadoDto> DTos) {
+        return grpcClient.guardarResultadosBatch(DTos);
     }
 
     public ResultadoDto getResultadoPorId(Long id) {
