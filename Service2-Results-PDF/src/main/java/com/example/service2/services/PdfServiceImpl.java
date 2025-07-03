@@ -21,7 +21,7 @@ public class PdfServiceImpl implements PdfService {
     private RabbitTemplate rabbitTemplate;
 
     @Override
-    public List<String> getUrlsByAthleteId(Long athleteId) {
+    public List<String> getUrlsByAthleteId(String athleteId) {
         return pdfHistoryRepository.findByAthleteId(athleteId)
                 .stream()
                 .map(PdfHistory::getUrl)
@@ -29,7 +29,7 @@ public class PdfServiceImpl implements PdfService {
     }
 
     @Override
-    public void generarPdfParaAtleta(Long athleteId) {
+    public void generarPdfParaAtleta(String athleteId) {
         String url = "https://fake.storage.net/pdfs/atleta-" + athleteId + "-" + Instant.now().toEpochMilli() + ".pdf";
 
         PdfHistory pdf = new PdfHistory(athleteId, url);
@@ -40,7 +40,7 @@ public class PdfServiceImpl implements PdfService {
     }
 
     @Override
-    public void saveUrlForAthlete(Long athleteId, String url) {
+    public void saveUrlForAthlete(String athleteId, String url) {
         PdfHistory entry = new PdfHistory();
         entry.setAthleteId(athleteId);
         entry.setUrl(url);

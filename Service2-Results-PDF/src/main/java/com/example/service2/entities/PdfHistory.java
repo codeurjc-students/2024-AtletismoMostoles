@@ -9,14 +9,14 @@ public class PdfHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long athleteId;
+    private String athleteId;
 
     private String url;
 
     // Constructors
     public PdfHistory() {}
 
-    public PdfHistory(Long athleteId, String url) {
+    public PdfHistory(String athleteId, String url) {
         this.athleteId = athleteId;
         this.url = url;
     }
@@ -30,11 +30,11 @@ public class PdfHistory {
         this.id = id;
     }
 
-    public Long getAthleteId() {
+    public String getAthleteId() {
         return athleteId;
     }
 
-    public void setAthleteId(Long athleteId) {
+    public void setAthleteId(String athleteId) {
         this.athleteId = athleteId;
     }
 

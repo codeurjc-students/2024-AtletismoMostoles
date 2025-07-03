@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { Results } from '../models/results.model';
 import { Page } from '../models/page.model';
 import { Router } from '@angular/router';
+import { PdfHistory } from '../models/pdf-history.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,17 +18,12 @@ export class ResultService {
   getAll(
     page: number = 0,
     size: number = 10,
-    sortBy: string = 'date',
-    eventId?: number,
-    disciplineId?: number
+    sortBy: string = 'id'
   ): Observable<Page<Results>> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString())
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
       .set('sortBy', sortBy);
-
-    if (eventId) params = params.set('eventId', eventId.toString());
-    if (disciplineId) params = params.set('disciplineId', disciplineId.toString());
 
     return this.http
       .get<Page<Results>>(this.apiUrl, { params, withCredentials: true })
@@ -40,9 +36,78 @@ export class ResultService {
       .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
+  getByAthleteId(
+    atletaId: string,
+    page: number = 0,
+    size: number = 10,
+    sortBy: string = 'id'
+  ): Observable<Page<Results>> {
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('sortBy', sortBy);
+
+    return this.http
+      .get<Page<Results>>(`${this.apiUrl}/athlete/${atletaId}`, {
+        params,
+        withCredentials: true,
+      })
+      .pipe(catchError((err) => this.handleAuthError(err)));
+  }
+
+  getByEventId(
+    eventId: number,
+    page: number = 0,
+    size: number = 10,
+    sortBy: string = 'id'
+  ): Observable<Page<Results>> {
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('sortBy', sortBy);
+
+    return this.http
+      .get<Page<Results>>(`${this.apiUrl}/event/${eventId}`, {
+        params,
+        withCredentials: true,
+      })
+      .pipe(catchError((err) => this.handleAuthError(err)));
+  }
+
+  getPdfHistory(
+    atletaId: number,
+    page: number = 0,
+    size: number = 10,
+    sortBy: string = 'timestampGenerado'
+  ): Observable<Page<PdfHistory>> {
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size)
+      .set('sortBy', sortBy);
+
+    return this.http
+      .get<Page<PdfHistory>>(`${this.apiUrl}/pdf/history/${atletaId}`, {
+        params,
+        withCredentials: true,
+      })
+      .pipe(catchError((err) => this.handleAuthError(err)));
+  }
+
+  solicitarGeneracionPdf(atletaId: number): Observable<void> {
+    return this.http
+      .post<void>(`${this.apiUrl}/pdf/${atletaId}`, {}, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
+  }
+
   create(data: Results): Observable<Results> {
     return this.http
       .post<Results>(this.apiUrl, data, { withCredentials: true })
+      .pipe(catchError((err) => this.handleAuthError(err)));
+  }
+
+  createMultiple(results: Results[]): Observable<Results[]> {
+    return this.http
+      .post<Results[]>(`${this.apiUrl}/batch`, results, { withCredentials: true })
       .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
@@ -60,17 +125,10 @@ export class ResultService {
 
   private handleAuthError(error: any): Observable<never> {
     if (error.status === 401 || error.status === 403) {
-      // Redirigir al login si no está autorizado
       this.router.navigate(['/login'], {
         queryParams: { returnUrl: this.router.url },
       });
     }
     return throwError(() => error);
   }
-  createMultiple(results: any[]): Observable<Results[]> {
-    return this.http
-      .post<Results[]>(`${this.apiUrl}/batch`, results, { withCredentials: true })
-      .pipe(catchError((err) => this.handleAuthError(err)));
-  }
-
 }

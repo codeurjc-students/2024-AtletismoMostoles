@@ -2,7 +2,7 @@ package com.example.service1.RestControllers;
 
 import com.example.service1.DTO.PdfDto;
 import com.example.service1.DTO.ResultadoDto;
-import com.example.service1.Services.ResultadoService;
+import com.example.service1.Services.ResultService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -17,7 +17,7 @@ import java.util.List;
 public class ResultRestController {
 
     @Autowired
-    private ResultadoService resultService;
+    private ResultService resultService;
 
     @GetMapping
     public ResponseEntity<Page<ResultadoDto>> getAllResults(
@@ -31,7 +31,7 @@ public class ResultRestController {
 
     @GetMapping("/athlete/{atletaId}")
     public ResponseEntity<Page<ResultadoDto>> getResultsByAthlete(
-            @PathVariable Long atletaId,
+            @PathVariable String atletaId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy
@@ -53,7 +53,7 @@ public class ResultRestController {
 
     @GetMapping("/pdf/history/{atletaId}")
     public ResponseEntity<Page<PdfDto>> getHistorialPdf(
-            @PathVariable Long atletaId,
+            @PathVariable String atletaId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "timestampGenerado") String sortBy
@@ -82,7 +82,7 @@ public class ResultRestController {
     }
 
     @PostMapping("/pdf/{atletaId}")
-    public ResponseEntity<Void> solicitarGeneracionPdf(@PathVariable Long atletaId) {
+    public ResponseEntity<Void> solicitarGeneracionPdf(@PathVariable String atletaId) {
         resultService.solicitarGeneracionPdf(atletaId);
         return ResponseEntity.accepted().build();
     }

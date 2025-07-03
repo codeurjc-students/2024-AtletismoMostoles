@@ -4,7 +4,7 @@ import java.time.Instant;
 
 public class PdfDto {
     private String requestId;
-    private Long atletaId;
+    private String atletaId;
     private Long eventoId;
     private Instant timestampGenerado;
     private String urlBlob;
@@ -18,10 +18,10 @@ public class PdfDto {
         this.requestId = requestId;
     }
 
-    public Long getAtletaId() {
+    public String getAtletaId() {
         return atletaId;
     }
-    public void setAtletaId(Long atletaId) {
+    public void setAtletaId(String atletaId) {
         this.atletaId = atletaId;
     }
 

@@ -89,11 +89,11 @@ export class NewEventFormComponent implements OnInit {
 
     const newEvent:EventCreate = {
       name: formValue.name!,
-      imageUrl: formValue.imageUrl!,
-      mapUrl: formValue.mapUrl!,
+      imageLink: formValue.imageUrl!,
+      mapLink: formValue.mapUrl!,
       date: formValue.date!,
-      isOrganizedByClub: formValue.organizedByClub || false,
-      disciplines: formValue.disciplines!.map((id: number) => ({ id }))
+      organizedByClub: formValue.organizedByClub || false,
+      disciplineIds: formValue.disciplines!.map((id: number) => ({ id }))
     };
 
     this.eventService.create(newEvent).subscribe({

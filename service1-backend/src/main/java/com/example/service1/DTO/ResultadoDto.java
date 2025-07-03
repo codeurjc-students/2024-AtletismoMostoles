@@ -3,7 +3,7 @@ package com.example.service1.DTO;
 
 public class ResultadoDto {
     private Long id;
-    private Long atletaId;
+    private String atletaId;
     private Long eventoId;
     private Long disciplinaId;
     private String valor;
@@ -16,10 +16,10 @@ public class ResultadoDto {
         this.id = id;
     }
 
-    public Long getAtletaId() {
+    public String getAtletaId() {
         return atletaId;
     }
-    public void setAtletaId(Long atletaId) {
+    public void setAtletaId(String atletaId) {
         this.atletaId = atletaId;
     }
 

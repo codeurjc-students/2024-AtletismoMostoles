@@ -20,7 +20,8 @@ export class EventService {
     size: number = 10,
     sortBy: string = 'date',
     startDate?: string,
-    endDate?: string
+    endDate?: string,
+    organizedByClub?: boolean
   ): Observable<Page<Event>> {
     let params = new HttpParams()
       .set('page', page.toString())
@@ -29,6 +30,8 @@ export class EventService {
 
     if (startDate) params = params.set('startDate', startDate);
     if (endDate) params = params.set('endDate', endDate);
+    if (organizedByClub !== undefined)
+      params = params.set('organizedByClub', organizedByClub.toString());
 
     return this.http
       .get<Page<Event>>(this.apiUrl, { params, withCredentials: true })

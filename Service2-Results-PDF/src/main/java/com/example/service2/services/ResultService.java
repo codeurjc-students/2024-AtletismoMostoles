@@ -1,4 +1,4 @@
-package com.example.resultados.service;
+package com.example.service2.services;
 
 import com.example.service2.entities.Result;
 
@@ -10,7 +10,7 @@ public interface ResultService {
 
     void saveAll(List<Result> results);
 
-    List<Result> getResultsByAthleteId(Long athleteId);
+    List<Result> getResultsByAthleteId(String athleteId);
 
     List<Result> getResultsByEventId(Long eventId);
 

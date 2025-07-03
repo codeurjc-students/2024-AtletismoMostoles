@@ -33,7 +33,7 @@ service PdfService {
 message ResultRequest {
   int64 eventId = 1;
   int64 disciplineId = 2;
-  int64 athleteId = 3;
+  string athleteId = 3;
   string value = 4;
 }
 
@@ -56,7 +56,7 @@ message ResultListResponse {
 }
 
 message AthleteIdRequest {
-  int64 athleteId = 1;
+  string athleteId = 1;
 }
 
 message EventIdRequest {

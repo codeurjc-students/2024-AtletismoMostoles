@@ -2,7 +2,6 @@ package com.example.service2.services;
 
 import com.example.service2.entities.Result;
 import com.example.service2.repositories.ResultRepository;
-import com.example.resultados.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +24,8 @@ public class ResultServiceImpl implements ResultService {
     }
 
     @Override
-    public List<Result> getResultsByAthleteId(Long athleteId) {
-        return List.of();
+    public List<Result> getResultsByAthleteId(String athleteId) {
+        return resultsRepository.findByAthleteId(athleteId);
     }
 
     @Override

@@ -17,7 +17,7 @@ public class PdfConfirmationSender {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void sendConfirmation(Long athleteId, String url) {
+    public void sendConfirmation(String athleteId, String url) {
         PdfHistory confirmation = new PdfHistory(athleteId, url);
         rabbitTemplate.convertAndSend(RabbitMQConfig.PDF_CONFIRMATION_QUEUE, confirmation);
         logger.info("✅ Confirmation sent to queue B for athlete ID: {}", athleteId);

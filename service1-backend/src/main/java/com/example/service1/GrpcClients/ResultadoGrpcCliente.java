@@ -22,7 +22,7 @@ public class ResultadoGrpcCliente {
         this.pdfStub = pdfStub;
     }
 
-    public List<ResultadoDto> getResultadosPorAtleta(Long atletaId) {
+    public List<ResultadoDto> getResultadosPorAtleta(String atletaId) {
         AthleteIdRequest request = AthleteIdRequest.newBuilder()
                 .setAthleteId(atletaId)
                 .build();
@@ -57,7 +57,7 @@ public class ResultadoGrpcCliente {
     }
 
 
-    public ResultadoDto guardarResultado(Long atletaId, Long eventoId, Long disciplinaId, String valor) {
+    public ResultadoDto guardarResultado(String atletaId, Long eventoId, Long disciplinaId, String valor) {
         ResultRequest grpcReq = ResultRequest.newBuilder()
                 .setAthleteId(atletaId)
                 .setEventId(eventoId)
@@ -102,7 +102,7 @@ public class ResultadoGrpcCliente {
         return response.getResultsList().stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
-    public List<PdfDto> listaPdfHistorico(Long atletaId) {
+    public List<PdfDto> listaPdfHistorico(String atletaId) {
         AthleteIdRequest request = AthleteIdRequest.newBuilder()
                 .setAthleteId(atletaId)
                 .build();

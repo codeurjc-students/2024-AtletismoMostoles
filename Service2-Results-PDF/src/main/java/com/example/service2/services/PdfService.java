@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface PdfService {
 
-    List<String> getUrlsByAthleteId(Long athleteId);
+    List<String> getUrlsByAthleteId(String athleteId);
 
-    void generarPdfParaAtleta(Long athleteId);
+    void generarPdfParaAtleta(String athleteId);
 
-    void saveUrlForAthlete(Long athleteId, String url);
+    void saveUrlForAthlete(String athleteId, String url);
 }

@@ -11,13 +11,13 @@ public class Result {
 
     private Long eventId;
     private Long disciplineId;
-    private Long athleteId;
+    private String athleteId;
     private String value;
 
     // Constructores
     public Result() {}
 
-    public Result(Long id, Long eventId, Long disciplineId, Long athleteId, String value) {
+    public Result(Long id, Long eventId, Long disciplineId, String athleteId, String value) {
         this.id = id;
         this.eventId = eventId;
         this.disciplineId = disciplineId;
@@ -50,11 +50,11 @@ public class Result {
         this.disciplineId = disciplineId;
     }
 
-    public Long getAthleteId() {
+    public String getAthleteId() {
         return athleteId;
     }
 
-    public void setAthleteId(Long athleteId) {
+    public void setAthleteId(String athleteId) {
         this.athleteId = athleteId;
     }
 

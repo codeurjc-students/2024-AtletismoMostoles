@@ -1,19 +1,19 @@
 package com.example.service2.dto;
 
 public class PdfGenerationRequest {
-    private Long athleteId;
+    private String athleteId;
 
     public PdfGenerationRequest() {}
 
-    public PdfGenerationRequest(Long athleteId) {
+    public PdfGenerationRequest(String athleteId) {
         this.athleteId = athleteId;
     }
 
-    public Long getAthleteId() {
+    public String getAthleteId() {
         return athleteId;
     }
 
-    public void setAthleteId(Long athleteId) {
+    public void setAthleteId(String athleteId) {
         this.athleteId = athleteId;
     }
 }

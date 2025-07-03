@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface PdfHistoryRepository extends JpaRepository<PdfHistory, Long> {
 
-    List<PdfHistory> findByAthleteId(Long athleteId);
+    List<PdfHistory> findByAthleteId(String athleteId);
 }

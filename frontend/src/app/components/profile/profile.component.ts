@@ -6,7 +6,7 @@ import { CoachService } from '../../services/coach.service';
 import { Athlete } from '../../models/athlete.model';
 import { Coach } from '../../models/coach.model';
 import { Results } from '../../models/results.model';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Discipline } from '../../models/discipline.model';
 import { AuthService } from '../../services/auth.service';
@@ -21,6 +21,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
+import { ResultService } from '../../services/result.service';
+import { EventService } from '../../services/event.service';
+import { DisciplineService } from '../../services/discipline.service';
+import { ExtendedResults } from '../../models/extendedResults.model';
 
 @Component({
   selector: 'app-profile',
@@ -53,6 +57,7 @@ export class ProfileComponent implements OnInit {
   paginatedResults: Results[] = [];
   disciplines: Discipline[] = [];
   availableDisciplines: Discipline[] = [];
+  extendedResults: ExtendedResults[] = [];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
@@ -69,7 +74,10 @@ export class ProfileComponent implements OnInit {
     private athleteService: AthleteService,
     private coachService: CoachService,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private resultService: ResultService,
+    public eventService: EventService,
+    public disciplineService: DisciplineService
   ) {}
 
   ngOnInit(): void {
@@ -86,6 +94,7 @@ export class ProfileComponent implements OnInit {
 
   loadProfile(id: number): void {
     const service = this.isAthlete ? this.athleteService : this.coachService;
+
     (service.getById(id.toString()) as Observable<Athlete | Coach>).subscribe(
       (response) => {
         this.profile = response;
@@ -93,15 +102,51 @@ export class ProfileComponent implements OnInit {
 
         if (this.isAthlete) {
           const athlete = response as Athlete;
-          this.results = athlete.results || [];
-          this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
-          this.updatePagination();
+
+          this.resultService.getByAthleteId(athlete.licenseNumber).subscribe({
+            next: (page) => {
+              const rawResults = page.content;
+
+              // Obtener nombres de evento y disciplina
+              const enrichment$ = rawResults.map(result =>
+                forkJoin({
+                  eventName: this.eventService.getById(result.eventoId).pipe(
+                    map(event => event?.name || 'Evento desconocido')
+                  ),
+                  disciplineName: this.disciplineService.getById(result.disciplinaId).pipe(
+                    map(disc => disc?.name || 'Sin disciplina')
+                  ),
+                }).pipe(
+                  map(({ eventName, disciplineName }) => ({
+                    ...result,
+                    eventName,
+                    disciplineName,
+                  }))
+                )
+              );
+
+              forkJoin(enrichment$).subscribe({
+                next: (enrichedResults) => {
+                  this.results = enrichedResults;
+                  this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
+                  this.updatePagination();
+                  console.log('Resultados enriquecidos:', this.results);
+                },
+                error: (err) => {
+                  console.error('Error al enriquecer resultados:', err);
+                  this.results = [];
+                }
+              });
+            },
+            error: (err) => {
+              console.error('Error al cargar resultados:', err);
+              this.results = [];
+            }
+          });
         } else {
           const coach = response as Coach;
           this.coachedAthletes = coach.athletes || [];
         }
-        console.log('Resultados:', this.results);
-        console.log('Ejemplo evento:', this.results[0]?.event);
       },
       (error) => {
         console.error('Error loading profile:', error);

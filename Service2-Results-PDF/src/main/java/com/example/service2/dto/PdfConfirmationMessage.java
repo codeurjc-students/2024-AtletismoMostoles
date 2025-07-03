@@ -1,21 +1,21 @@
 package com.example.service2.dto;
 
 public class PdfConfirmationMessage {
-    private Long athleteId;
+    private String athleteId;
     private String url;
 
     public PdfConfirmationMessage() {}
 
-    public PdfConfirmationMessage(Long athleteId, String url) {
+    public PdfConfirmationMessage(String athleteId, String url) {
         this.athleteId = athleteId;
         this.url = url;
     }
 
-    public Long getAthleteId() {
+    public String getAthleteId() {
         return athleteId;
     }
 
-    public void setAthleteId(Long athleteId) {
+    public void setAthleteId(String athleteId) {
         this.athleteId = athleteId;
     }
 

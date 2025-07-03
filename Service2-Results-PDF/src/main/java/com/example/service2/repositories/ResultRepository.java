@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ResultRepository extends JpaRepository<Result, Long> {
 
-    List<Result> findByAthleteId(Long athleteId);
+    List<Result> findByAthleteId(String athleteId);
 
     List<Result> findByEventId(Long eventId);
 }

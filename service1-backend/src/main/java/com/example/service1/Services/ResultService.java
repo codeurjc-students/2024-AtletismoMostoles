@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ResultadoService {
+public class ResultService {
 
     @Autowired
     private ResultadoGrpcCliente grpcClient;
@@ -23,7 +23,7 @@ public class ResultadoService {
         return grpcClient.getAllResultados();
     }
 
-    public List<ResultadoDto> getResultadosDeAtleta(Long atletaId) {
+    public List<ResultadoDto> getResultadosDeAtleta(String atletaId) {
         return grpcClient.getResultadosPorAtleta(atletaId);
     }
 
@@ -31,7 +31,7 @@ public class ResultadoService {
         return grpcClient.verResultadosPorEvento(eventoId);
     }
 
-    public ResultadoDto guardarResultado(Long atletaId, Long eventoId, Long disciplinaId, String valor) {
+    public ResultadoDto guardarResultado(String atletaId, Long eventoId, Long disciplinaId, String valor) {
         return grpcClient.guardarResultado(atletaId, eventoId, disciplinaId, valor);
     }
 
@@ -43,11 +43,11 @@ public class ResultadoService {
         return grpcClient.getResultadoPorId(id);
     }
 
-    public List<PdfDto> getHistorialPdf(Long atletaId) {
+    public List<PdfDto> getHistorialPdf(String atletaId) {
         return grpcClient.listaPdfHistorico(atletaId);
     }
 
-    public void solicitarGeneracionPdf(Long atletaId) {
+    public void solicitarGeneracionPdf(String atletaId) {
         pdfRequestSender.sendRequest(new PdfGenerationRequest(atletaId));
     }
 }
