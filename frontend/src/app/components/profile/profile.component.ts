@@ -25,6 +25,7 @@ import { ResultService } from '../../services/result.service';
 import { EventService } from '../../services/event.service';
 import { DisciplineService } from '../../services/discipline.service';
 import { ExtendedResults } from '../../models/extendedResults.model';
+import { WebSocketService } from '../../services/web-socket.service';
 
 @Component({
   selector: 'app-profile',
@@ -67,6 +68,8 @@ export class ProfileComponent implements OnInit {
   errorMessage: string = '';
   isAdmin: boolean = false;
   isLoggedIn: boolean = false;
+  generatingPdf: boolean = false;
+  generatedPdfLink: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -76,8 +79,9 @@ export class ProfileComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private resultService: ResultService,
-    public eventService: EventService,
-    public disciplineService: DisciplineService
+    private eventService: EventService,
+    private disciplineService: DisciplineService,
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -268,5 +272,20 @@ export class ProfileComponent implements OnInit {
     return `${this.profile.coach.firstName} ${this.profile.coach.lastName}`;
   }
 
+  requestPdf(): void {
+    if (!this.profile?.licenseNumber) return;
 
+    this.resultService.solicitarGeneracionPdf(this.profile.licenseNumber).subscribe({
+      next: () => {
+        this.generatingPdf = true;
+        this.webSocketService.escucharConfirmacionPdf(this.profile.licenseNumber, (url: string) => {
+          this.generatingPdf = false;
+          this.generatedPdfLink = url;
+        });
+      },
+      error: (err) => {
+        console.error('Error al solicitar PDF:', err);
+      }
+    });
+  }
 }

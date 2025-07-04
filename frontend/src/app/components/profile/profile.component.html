@@ -90,6 +90,14 @@
 
       <button mat-raised-button color="primary" *ngIf="isAdmin && !isEditing" (click)="enableEdit()">Editar Perfil</button>
       <button mat-raised-button color="warn" *ngIf="isAdmin" (click)="deleteProfile()">Eliminar Perfil</button>
+      <button mat-raised-button color="warn" (click)="requestPdf()">Pdf de Resultados</button>
+
+      <div *ngIf="generatingPdf">Generando PDF... Por favor, espera.</div>
+      <div *ngIf="generatedPdfLink">
+        <a [href]="generatedPdfLink" target="_blank">Descargar PDF generado</a>
+      </div>
+
+
     </mat-card-content>
   </mat-card>
 

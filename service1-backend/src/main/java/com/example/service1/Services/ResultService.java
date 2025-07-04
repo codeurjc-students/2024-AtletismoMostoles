@@ -1,14 +1,16 @@
 package com.example.service1.Services;
 
+import com.example.service1.Configuration.RabbitMQConfig;
 import com.example.service1.DTO.PdfDto;
 import com.example.service1.DTO.ResultadoDto;
 import com.example.service1.GrpcClients.ResultadoGrpcCliente;
-import com.example.service1.Sender.PdfRequestSender;
-import com.example.service1.DTO.PdfGenerationRequest;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ResultService {
@@ -17,7 +19,7 @@ public class ResultService {
     private ResultadoGrpcCliente grpcClient;
 
     @Autowired
-    private PdfRequestSender pdfRequestSender;
+    private RabbitTemplate rabbitTemplate;
 
     public List<ResultadoDto> getAllResultados() {
         return grpcClient.getAllResultados();
@@ -48,6 +50,9 @@ public class ResultService {
     }
 
     public void solicitarGeneracionPdf(String atletaId) {
-        pdfRequestSender.sendRequest(new PdfGenerationRequest(atletaId));
+        Map<String, String> message = new HashMap<>();
+        message.put("atletaId", atletaId);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.PDF_REQUEST_QUEUE, message);
     }
 }

@@ -5,6 +5,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class PdfConfirmationListener {
 
@@ -15,9 +17,11 @@ public class PdfConfirmationListener {
     }
 
     @RabbitListener(queues = "pdf.confirmation.queue")
-    public void handlePdfConfirmation(PdfConfirmationMessage confirmation) {
-        String destino = "/topic/pdf/" + confirmation.getAtletaId();
-        messagingTemplate.convertAndSend(destino, confirmation);
-        System.out.println("📨 Enviado PDF a WebSocket para atleta " + confirmation.getAtletaId());
+    public void handleConfirmation(Map<String, String> message) {
+        String atletaId = message.get("atletaId");
+        String url = message.get("url");
+
+        // Enviar por WebSocket a: /topic/pdf/A001 (por ejemplo)
+        messagingTemplate.convertAndSend("/topic/pdf/" + atletaId, url);
     }
 }

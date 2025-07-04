@@ -73,6 +73,7 @@ public class SecurityConfig {
                         // PUBLIC ENDPOINTS
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/results/pdf/*").permitAll()
                         // PRIVATE ENDPOINTS
                         .requestMatchers(HttpMethod.POST, ADMIN_URL ).hasRole(ADMIN)
                         .requestMatchers(HttpMethod.PUT, ADMIN_URL).hasRole(ADMIN)

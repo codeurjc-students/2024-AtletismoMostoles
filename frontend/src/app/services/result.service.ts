@@ -93,7 +93,7 @@ export class ResultService {
       .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
-  solicitarGeneracionPdf(atletaId: number): Observable<void> {
+  solicitarGeneracionPdf(atletaId: string): Observable<void> {
     return this.http
       .post<void>(`${this.apiUrl}/pdf/${atletaId}`, {}, { withCredentials: true })
       .pipe(catchError((err) => this.handleAuthError(err)));

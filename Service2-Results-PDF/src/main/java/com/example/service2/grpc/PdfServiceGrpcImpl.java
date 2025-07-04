@@ -1,5 +1,6 @@
 package com.example.service2.grpc;
 
+import com.example.service2.config.RabbitMQConfig;
 import com.example.service2.services.PdfService;
 import com.example.shared.CommonProto.StatusMessage;
 import io.grpc.stub.StreamObserver;
@@ -20,8 +21,8 @@ public class PdfServiceGrpcImpl extends PdfServiceGrpc.PdfServiceImplBase {
 
     @Override
     public void requestPdfGeneration(AthleteIdRequest request, StreamObserver<StatusMessage> responseObserver) {
-        // Enviar solicitud a la cola A
-        rabbitTemplate.convertAndSend("cola.A", request.getAthleteId());
+        rabbitTemplate.convertAndSend(RabbitMQConfig.PDF_REQUEST_QUEUE, request.getAthleteId());
+
         StatusMessage response = StatusMessage.newBuilder()
                 .setSuccess(true)
                 .setMensaje("Solicitud de generación enviada")
@@ -33,6 +34,7 @@ public class PdfServiceGrpcImpl extends PdfServiceGrpc.PdfServiceImplBase {
     @Override
     public void getPdfHistory(AthleteIdRequest request, StreamObserver<PdfListResponse> responseObserver) {
         List<String> urls = pdfHistoryService.getUrlsByAthleteId(request.getAthleteId());
+
         PdfListResponse response = PdfListResponse.newBuilder()
                 .addAllUrls(urls)
                 .build();

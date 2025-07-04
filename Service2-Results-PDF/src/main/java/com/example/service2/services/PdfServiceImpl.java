@@ -1,5 +1,6 @@
 package com.example.service2.services;
 
+import com.example.service2.config.RabbitMQConfig;
 import com.example.service2.dto.PdfConfirmationMessage;
 import com.example.service2.entities.PdfHistory;
 import com.example.service2.repositories.PdfHistoryRepository;
@@ -8,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,22 +24,24 @@ public class PdfServiceImpl implements PdfService {
     private RabbitTemplate rabbitTemplate;
 
     @Override
-    public List<String> getUrlsByAthleteId(String athleteId) {
-        return pdfHistoryRepository.findByAthleteId(athleteId)
-                .stream()
-                .map(PdfHistory::getUrl)
-                .collect(Collectors.toList());
+    public void generarPdfParaAtleta(String atletaId) {
+        String url = "https://fake.storage.net/pdfs/" + atletaId + "-" + Instant.now().toEpochMilli() + ".pdf";
+
+        PdfHistory pdf = new PdfHistory(atletaId, url);
+        pdfHistoryRepository.save(pdf);
+
+        Map<String, String> confirmation = new HashMap<>();
+        confirmation.put("atletaId", atletaId);
+        confirmation.put("url", url);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.PDF_CONFIRMATION_QUEUE, confirmation);
     }
 
     @Override
-    public void generarPdfParaAtleta(String athleteId) {
-        String url = "https://fake.storage.net/pdfs/atleta-" + athleteId + "-" + Instant.now().toEpochMilli() + ".pdf";
-
-        PdfHistory pdf = new PdfHistory(athleteId, url);
-        pdfHistoryRepository.save(pdf);
-
-        PdfConfirmationMessage message = new PdfConfirmationMessage(athleteId, url);
-        rabbitTemplate.convertAndSend("cola.B", message);
+    public List<String> getUrlsByAthleteId(String atletaId) {
+        return pdfHistoryRepository.findByAthleteId(atletaId).stream()
+                .map(PdfHistory::getUrl)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -1,6 +1,11 @@
 package com.example.service1.DTO;
 
-public class PdfGenerationRequest {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class PdfGenerationRequest implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private String athleteId;
 
     public PdfGenerationRequest() {}
