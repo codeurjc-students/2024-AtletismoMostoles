@@ -10,6 +10,7 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,6 +110,40 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
                     .build());
         }
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public void notificacionesPendientes(NotificacionesRequest request, StreamObserver<NotificacionesResponse> responseObserver) {
+        try {
+            String fechaStr = request.getTimestampUltimaConexion();
+            LocalDate date = LocalDateTime.parse(fechaStr).toLocalDate();
+
+            List<Event> nuevosEventos = eventService.findEventsAfter(date);
+
+            List<NotificacionData> notificaciones = nuevosEventos.stream().map(event ->
+                    NotificacionData.newBuilder()
+                            .setEventoId(event.getId())
+                            .setName(event.getName())
+                            .setDate(event.getDate().toString())
+                            .setMapLink(event.getMapLink())
+                            .setImageLink(event.getImageLink())
+                            .setOrganizedByClub(event.isOrganizedByClub())
+                            .setTimestampNotificacion(LocalDateTime.now().toString())
+                            .addAllDisciplineIds(event.getDisciplineIds()) // si existe
+                            .build()
+            ).toList();
+
+            NotificacionesResponse response = NotificacionesResponse.newBuilder()
+                    .addAllNotificaciones(notificaciones)
+                    .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseObserver.onError(Status.INTERNAL.withDescription("Error interno").asRuntimeException());
+        }
     }
 
     private EventoMessage convertToMessage(Event event) {

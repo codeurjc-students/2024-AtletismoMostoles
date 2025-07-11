@@ -18,4 +18,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
      * Returns all events ordered by date ascending.
      */
     List<Event> findAllByOrderByDateAsc();
+
 }

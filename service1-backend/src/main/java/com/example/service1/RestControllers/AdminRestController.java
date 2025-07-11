@@ -30,8 +30,6 @@ public class AdminRestController {
     public Page<UserDTO> seeUsers(Pageable page) {
         Page<User> users = userService.getUsers(page);
 
-
-        // Convert Page<User> result to Page<UserDTO>
         return users.map(user -> {
             UserDTO userDTO = new UserDTO();
             BeanUtils.copyProperties(user, userDTO);
@@ -40,12 +38,12 @@ public class AdminRestController {
     }
 
     @GetMapping("/user/{idUser}")
-    public ResponseEntity<User> seeUser(@PathVariable long idUser) {
-
+    public ResponseEntity<UserDTO> seeUser(@PathVariable long idUser) {
         User user = userService.getUser(idUser);
         if (user != null) {
-            return ResponseEntity.ok(user);
-
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(user, userDTO);
+            return ResponseEntity.ok(userDTO);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -53,7 +51,6 @@ public class AdminRestController {
 
     @PostMapping("/users")
     public ResponseEntity<User> createUser(@RequestBody @JsonView(User.ViewUsers.class) User user) {
-
         String pass = user.getEncodedPassword();
         String encoded_pass = passwordEncoder.encode(pass);
         user.setEncodedPassword(encoded_pass);
@@ -64,16 +61,12 @@ public class AdminRestController {
                 .buildAndExpand(user1.getId()).toUri();
 
         return ResponseEntity.created(location).body(user1);
-
     }
 
     @PutMapping("/user/{idUser}")
     public ResponseEntity<User> modifyUser(@PathVariable long idUser, @RequestBody @JsonView(User.ViewUsers.class) User newUser) {
-
-
         User user = userService.getUser(idUser);
         if (user != null) {
-
             newUser.setId(idUser);
             String pass = newUser.getEncodedPassword();
             String encoded_pass = passwordEncoder.encode(pass);
@@ -83,13 +76,10 @@ public class AdminRestController {
         } else {
             return ResponseEntity.notFound().build();
         }
-
     }
 
     @DeleteMapping("/user/{idUser}")
     public ResponseEntity<User> deleteUser(@PathVariable long idUser) {
-
-
         User user = userService.getUser(idUser);
         if (user != null) {
             userService.deleteUser(idUser);
@@ -98,6 +88,4 @@ public class AdminRestController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 }

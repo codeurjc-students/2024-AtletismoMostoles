@@ -4,19 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 public class User {
 
-    public interface Basic {
-    }
+    public interface Basic {}
+    public interface Prem {}
+    public interface ViewUsers extends Basic, Prem {}
 
-    public interface Prem {
-    }
-
-    public interface ViewUsers extends Basic, Prem {
-    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -36,53 +33,33 @@ public class User {
     @JsonView(Basic.class)
     private String rawPassword;
 
-    public User() {
-    }
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
+
+    public User() {}
 
     public User(String name, String encodedPassword, String... roles) {
         this.name = name;
         this.encodedPassword = encodedPassword;
         this.roles = List.of(roles);
     }
-    public String getRawPassword() {
-        return rawPassword;
-    }
 
-    public void setRawPassword(String rawPassword) {
-        this.rawPassword = rawPassword;
-    }
+    public String getRawPassword() { return rawPassword; }
+    public void setRawPassword(String rawPassword) { this.rawPassword = rawPassword; }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getEncodedPassword() { return encodedPassword; }
+    public void setEncodedPassword(String encodedPassword) { this.encodedPassword = encodedPassword; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public List<String> getRoles() { return roles; }
+    public void setRoles(List<String> roles) { this.roles = roles; }
 
-    public String getEncodedPassword() {
-        return encodedPassword;
-    }
-
-    public void setEncodedPassword(String encodedPassword) {
-        this.encodedPassword = encodedPassword;
-    }
-
-    public List<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<String> roles) {
-        this.roles = roles;
-    }
-
+    public LocalDateTime getLastLogin() { return lastLogin; }
+    public void setLastLogin(LocalDateTime lastLogin) { this.lastLogin = lastLogin; }
 }
 

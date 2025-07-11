@@ -4,6 +4,17 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+export interface NotificacionData {
+  eventoId: number;
+  name: string;
+  date: string;
+  mapLink: string;
+  imageLink: string;
+  organizedByClub: boolean;
+  timestampNotificacion: string;
+  disciplineIds: number[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -12,6 +23,9 @@ export class AuthService {
   private userSubject: BehaviorSubject<any | null>;
   public user: Observable<any | null>;
 
+  // ✅ Nuevas notificaciones recibidas tras login
+  public notificacionesPendientes: NotificacionData[] = [];
+
   constructor(private http: HttpClient, private router: Router) {
     this.userSubject = new BehaviorSubject<any | null>(null);
     this.user = this.userSubject.asObservable();
@@ -19,9 +33,6 @@ export class AuthService {
     this.loadAuthenticatedUser(); // Cargar usuario desde backend
   }
 
-  /**
-   * Carga el usuario autenticado usando la cookie del backend.
-   */
   private loadAuthenticatedUser(): void {
     this.http.get<any>(`/api/users/me`, { withCredentials: true }).subscribe(
       user => {
@@ -35,46 +46,35 @@ export class AuthService {
     );
   }
 
-  /**
-   * Inicia sesión usando la cookie del backend.
-   */
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.authUrl}/login`, { username, password }, { withCredentials: true }).pipe(
       map(response => {
         console.log('✅ Login exitoso:', response);
-        this.loadAuthenticatedUser(); // Cargar usuario desde backend después del login
+        this.loadAuthenticatedUser();
+
+        this.notificacionesPendientes = response.notificacionesPendientes || [];
+
         return response;
       })
     );
   }
 
-  /**
-   * Cierra sesión eliminando la cookie del backend.
-   */
   logout(): void {
     this.http.post(`${this.authUrl}/logout`, {}, { withCredentials: true }).subscribe(() => {
       this.userSubject.next(null);
+      this.notificacionesPendientes = [];
       this.router.navigate(['/login']);
     });
   }
 
-  /**
-   * Verifica si el usuario está autenticado.
-   */
   isAuthenticated(): boolean {
     return !!this.userSubject.value;
   }
 
-  /**
-   * Retorna los datos del usuario actual.
-   */
   getCurrentUser(): any | null {
     return this.userSubject.value;
   }
 
-  /**
-   * Verifica si el usuario es administrador.
-   */
   isAdmin(): boolean {
     const user = this.getCurrentUser();
     return user && user.roles.includes('ADMIN');

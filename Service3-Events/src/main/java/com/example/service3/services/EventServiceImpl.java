@@ -56,7 +56,6 @@ public class EventServiceImpl implements EventService {
         return savedEvent;
     }
 
-
     @Override
     public void deleteById(Long id) {
         eventRepository.deleteById(id);

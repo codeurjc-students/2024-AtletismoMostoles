@@ -1,6 +1,5 @@
 package com.example.service1.Services;
 
-
 import com.example.service1.Entities.User;
 import com.example.service1.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +19,16 @@ public class RepositoryUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         User user = userRepository.findByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        userService.updateLastLogin(user);
 
         List<GrantedAuthority> roles = new ArrayList<>();
         for (String role : user.getRoles()) {
@@ -33,6 +37,5 @@ public class RepositoryUserDetailsService implements UserDetailsService {
 
         return new org.springframework.security.core.userdetails.User(user.getName(),
                 user.getEncodedPassword(), roles);
-
     }
 }

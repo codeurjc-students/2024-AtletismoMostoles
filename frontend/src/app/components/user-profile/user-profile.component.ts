@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, NotificacionData } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { NewUserDialogComponent } from '../../modals/NewUserDialogComponent';
-import { NgIf } from '@angular/common';
+import { NgIf, NgForOf } from '@angular/common';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -16,7 +16,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
-
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
@@ -24,6 +23,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   standalone: true,
   imports: [
     NgIf,
+    NgForOf,
     MatIconModule,
     MatMenuModule,
     MatToolbarModule,
@@ -43,6 +43,7 @@ export class UserProfileComponent implements OnInit {
   isAdmin = false;
   users: any[] = [];
   selection = new SelectionModel<any>(true, []);
+  notificacionesPendientes: NotificacionData[] = [];
 
   constructor(
     private authService: AuthService,
@@ -57,15 +58,21 @@ export class UserProfileComponent implements OnInit {
       this.isLoggedIn = this.authService.isAuthenticated();
       this.isAdmin = this.authService.isAdmin();
 
+      this.notificacionesPendientes = this.authService.notificacionesPendientes;
+
       if (this.isAdmin) {
         this.loadUsers();
       }
     });
   }
 
+  verDetalles(eventoId: number): void {
+    this.router.navigate([`/eventos/${eventoId}`]);
+  }
+
   loadUsers(): void {
     this.userService.getUsersAdmin().subscribe(users => {
-      this.users = users.content; // porque es paginado
+      this.users = users.content;
     });
   }
 
@@ -117,5 +124,4 @@ export class UserProfileComponent implements OnInit {
     const numRows = this.users.length;
     return numSelected === numRows;
   }
-
 }

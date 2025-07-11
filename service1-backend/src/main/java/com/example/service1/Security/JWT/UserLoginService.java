@@ -1,6 +1,9 @@
 package com.example.service1.Security.JWT;
 
-
+import com.example.service1.DTO.EventNotificationDto;
+import com.example.service1.Entities.User;
+import com.example.service1.Services.UserService;
+import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionData;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.List;
 
 @Service
 public class UserLoginService {
@@ -31,8 +38,10 @@ public class UserLoginService {
     @Autowired
     private JwtCookieManager cookieUtil;
 
-    public ResponseEntity<AuthResponse> login(LoginRequest loginRequest, String encryptedAccessToken, String
-            encryptedRefreshToken) {
+    @Autowired
+    private UserService userService;
+
+    public ResponseEntity<AuthResponse> login(LoginRequest loginRequest, String encryptedAccessToken, String encryptedRefreshToken) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -45,25 +54,46 @@ public class UserLoginService {
         String username = loginRequest.getUsername();
         UserDetails user = userDetailsService.loadUserByUsername(username);
 
+        User dbUser = userService.getUserByName(username);
+
+        List<EventNotificationDto> notificaciones = List.of();
+
+        if (dbUser != null) {
+            // Obtener notificaciones nuevas desde el último login
+            List<NotificacionData> rawNotificaciones = userService.getPendingNotifications(dbUser);
+            notificaciones = rawNotificaciones.stream().map(data -> {
+                EventNotificationDto dto = new EventNotificationDto();
+                dto.setEventoId(data.getEventoId());
+                dto.setName(data.getName());
+                dto.setDate(LocalDate.parse(data.getDate()));
+                dto.setMapLink(data.getMapLink());
+                dto.setImageLink(data.getImageLink());
+                dto.setOrganizedByClub(data.getOrganizedByClub());
+                dto.setTimestampNotificacion(data.getTimestampNotificacion());
+                dto.setDisciplineIds(new HashSet<>(data.getDisciplineIdsList()));
+                return dto;
+            }).toList();
+
+            // Actualizar último login
+            userService.updateLastLogin(dbUser);
+        }
+
         boolean accessTokenValid = jwtTokenProvider.validateToken(accessToken);
         boolean refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
 
         HttpHeaders responseHeaders = new HttpHeaders();
         Token newAccessToken;
         Token newRefreshToken;
+
         if (!accessTokenValid && !refreshTokenValid) {
             newAccessToken = jwtTokenProvider.generateToken(user);
             newRefreshToken = jwtTokenProvider.generateRefreshToken(user);
             addAccessTokenCookie(responseHeaders, newAccessToken);
             addRefreshTokenCookie(responseHeaders, newRefreshToken);
-        }
-
-        if (!accessTokenValid && refreshTokenValid) {
+        } else if (!accessTokenValid) {
             newAccessToken = jwtTokenProvider.generateToken(user);
             addAccessTokenCookie(responseHeaders, newAccessToken);
-        }
-
-        if (accessTokenValid && refreshTokenValid) {
+        } else {
             newAccessToken = jwtTokenProvider.generateToken(user);
             newRefreshToken = jwtTokenProvider.generateRefreshToken(user);
             addAccessTokenCookie(responseHeaders, newAccessToken);
@@ -72,11 +102,12 @@ public class UserLoginService {
 
         AuthResponse loginResponse = new AuthResponse(AuthResponse.Status.SUCCESS,
                 "Auth successful. Tokens are created in cookie.");
+        loginResponse.setNotificacionesPendientes(notificaciones);
+
         return ResponseEntity.ok().headers(responseHeaders).body(loginResponse);
     }
 
     public ResponseEntity<AuthResponse> refresh(String encryptedRefreshToken) {
-
         String refreshToken = SecurityCipher.decrypt(encryptedRefreshToken);
 
         boolean refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
@@ -101,14 +132,11 @@ public class UserLoginService {
     }
 
     public String getUserName() {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         return authentication.getName();
     }
 
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-
         HttpSession session;
         SecurityContextHolder.clearContext();
         session = request.getSession(false);

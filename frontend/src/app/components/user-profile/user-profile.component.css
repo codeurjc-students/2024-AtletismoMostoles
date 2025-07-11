@@ -187,4 +187,17 @@ button:hover {
   background-color: white;
 }
 
+.notificaciones-card {
+  margin-top: 20px;
+  background-color: #f1f8e9;
+  border: 1px solid #aed581;
+}
+
+.evento-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+
 

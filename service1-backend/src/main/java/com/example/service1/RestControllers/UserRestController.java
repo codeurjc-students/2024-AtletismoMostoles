@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -79,7 +79,8 @@ public class UserRestController {
 
         return ResponseEntity.ok(Map.of(
                 "username", currentUser.getName(),
-                "roles", currentUser.getRoles()
+                "roles", currentUser.getRoles(),
+                "lastLogin", currentUser.getLastLogin()
         ));
     }
 }

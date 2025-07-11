@@ -26,11 +26,11 @@ message GetEventoRequest {
 
 message CrearEventoRequest {
   string name = 1;
-  string date = 2;             // "YYYY-MM-DD"
+  string date = 2;
   string mapLink = 3;
   string imageLink = 4;
   bool organizedByClub = 5;
-  repeated int64 disciplineIds = 6;  // nuevo
+  repeated int64 disciplineIds = 6;
 }
 
 message UpdateEventoRequest {
@@ -40,7 +40,7 @@ message UpdateEventoRequest {
   string mapLink = 4;
   string imageLink = 5;
   bool organizedByClub = 6;
-  repeated int64 disciplineIds = 7;  // nuevo
+  repeated int64 disciplineIds = 7;
 }
 
 message BorrarEventoRequest {
@@ -66,7 +66,7 @@ message EventoMessage {
   string mapLink = 4;
   string imageLink = 5;
   bool organizedByClub = 6;
-  repeated int64 disciplineIds = 7;  // nuevo
+  repeated int64 disciplineIds = 7;
 }
 
 message ListarEventosResponse {
@@ -81,7 +81,7 @@ message NotificacionData {
   string imageLink = 5;
   bool organizedByClub = 6;
   string timestampNotificacion = 7;
-  repeated int64 disciplineIds = 8;  // opcional
+  repeated int64 disciplineIds = 8;
 }
 
 message NotificacionesResponse {
