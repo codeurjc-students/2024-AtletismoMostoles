@@ -4,22 +4,23 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-public class NotificacionDto {
-    private Long id;
+public class EventNotificationDto {
+    private Long eventoId;
     private String name;
     private LocalDate date;
     private String mapLink;
     private String imageLink;
     private boolean organizedByClub;
+    private Set<Long> disciplineIds = new HashSet<>();
     private String timestampNotificacion;
-    private Set<Long> disciplineIds = new HashSet<>(); // NUEVO CAMPO
 
-    public Long getId() {
-        return id;
+
+    public Long getEventoId() {
+        return eventoId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEventoId(Long id) {
+        this.eventoId = id;
     }
 
     public String getName() {

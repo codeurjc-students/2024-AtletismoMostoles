@@ -1,6 +1,8 @@
 package com.example.service3.services;
 
+import com.example.service3.dto.EventNotification;
 import com.example.service3.entities.Event;
+import com.example.service3.messaging.EventNotificationSender;
 import com.example.service3.repositories.EventRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +15,12 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
 
-    public EventServiceImpl(EventRepository eventRepository) {
+    private final EventNotificationSender notificationSender;
+
+    public EventServiceImpl(EventRepository eventRepository,
+                            EventNotificationSender notificationSender) {
         this.eventRepository = eventRepository;
+        this.notificationSender = notificationSender;
     }
 
     @Override
@@ -34,8 +40,22 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event save(Event event) {
-        return eventRepository.save(event);
+        Event savedEvent = eventRepository.save(event);
+
+        EventNotification notification = new EventNotification();
+        notification.setEventoId(savedEvent.getId());
+        notification.setName(savedEvent.getName());
+        notification.setDate(savedEvent.getDate().toString());
+        notification.setMapLink(savedEvent.getMapLink());
+        notification.setImageLink(savedEvent.getImageLink());
+        notification.setOrganizedByClub(savedEvent.isOrganizedByClub());
+
+        // Enviar por RabbitMQ y WebSocket
+        notificationSender.sendNotification(notification);
+
+        return savedEvent;
     }
+
 
     @Override
     public void deleteById(Long id) {

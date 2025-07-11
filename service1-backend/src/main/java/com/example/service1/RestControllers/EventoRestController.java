@@ -1,7 +1,7 @@
 package com.example.service1.RestControllers;
 
 import com.example.service1.DTO.EventDto;
-import com.example.service1.DTO.NotificacionDto;
+import com.example.service1.DTO.EventNotificationDto;
 import com.example.service1.Services.EventoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -80,7 +80,7 @@ public class EventoRestController {
     }
 
     @GetMapping("/notificaciones")
-    public List<NotificacionDto> getNotificaciones(@RequestParam long usuarioId, @RequestParam String ultimaConexion) {
+    public List<EventNotificationDto> getNotificaciones(@RequestParam long usuarioId, @RequestParam String ultimaConexion) {
         return eventoService.obtenerNotificaciones(usuarioId, ultimaConexion);
     }
 }

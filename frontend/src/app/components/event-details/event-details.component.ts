@@ -109,7 +109,6 @@ export class EventDetailsComponent implements OnInit {
           imageLink: this.event.imageLink
         });
 
-        // ✅ Ahora sí: usamos el service de resultados directamente
         this.resultService.getByEventId(eventId).subscribe({
           next: (page) => {
             const rawResults = page.content;

@@ -14,6 +14,8 @@ import { EventCreate } from '../../models/event-create.model';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 
 @Component({
   selector: 'app-new-event-form',
@@ -24,6 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    MatCheckboxModule,
     MatSelectModule,
     MatMenuModule,
     MatIconModule,
@@ -93,12 +96,12 @@ export class NewEventFormComponent implements OnInit {
       mapLink: formValue.mapUrl!,
       date: formValue.date!,
       organizedByClub: formValue.organizedByClub || false,
-      disciplineIds: formValue.disciplines!.map((id: number) => ({ id }))
+      disciplineIds: formValue.disciplines!.map((id: number) =>  id )
     };
 
     this.eventService.create(newEvent).subscribe({
       next: () => {
-        alert('Evento creado correctamente');
+        //alert('Evento creado correctamente');
         this.router.navigate(['/eventos']);
       },
       error: (error) => {

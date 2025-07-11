@@ -1,7 +1,7 @@
 package com.example.service1.Services;
 
 import com.example.service1.DTO.EventDto;
-import com.example.service1.DTO.NotificacionDto;
+import com.example.service1.DTO.EventNotificationDto;
 import com.example.service1.GrpcClients.EventoGrpcClient;
 import com.example.service3.grpc.EventoServiceGrpcProto.EventoMessage;
 import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionData;
@@ -47,7 +47,7 @@ public class EventoService {
         grpcClient.borrarEvento(id);
     }
 
-    public List<NotificacionDto> obtenerNotificaciones(long usuarioId, String timestampUltimaConexion) {
+    public List<EventNotificationDto> obtenerNotificaciones(long usuarioId, String timestampUltimaConexion) {
         NotificacionesResponse response = grpcClient.notificacionesPendientes(usuarioId, timestampUltimaConexion);
         return response.getNotificacionesList()
                 .stream()
@@ -67,16 +67,16 @@ public class EventoService {
         return dto;
     }
 
-    private NotificacionDto mapToNotificacionDto(NotificacionData notif) {
-        NotificacionDto dto = new NotificacionDto();
-        dto.setId(notif.getEventoId());
+    private EventNotificationDto mapToNotificacionDto(NotificacionData notif) {
+        EventNotificationDto dto = new EventNotificationDto();
+        dto.setEventoId(notif.getEventoId());
         dto.setName(notif.getName());
         dto.setDate(LocalDate.parse(notif.getDate()));
         dto.setMapLink(notif.getMapLink());
         dto.setImageLink(notif.getImageLink());
         dto.setOrganizedByClub(notif.getOrganizedByClub());
         dto.setTimestampNotificacion(notif.getTimestampNotificacion());
-        dto.setDisciplineIds(new HashSet<>(notif.getDisciplineIdsList())); // NUEVO
+        dto.setDisciplineIds(new HashSet<>(notif.getDisciplineIdsList()));
         return dto;
     }
 }

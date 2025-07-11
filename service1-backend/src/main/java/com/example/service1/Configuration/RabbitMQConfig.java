@@ -12,10 +12,16 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     public static final String PDF_REQUEST_QUEUE = "pdf.request.queue";
+    public static final String EVENT_NOTIFICATION_QUEUE = "event.notification.queue";
 
     @Bean
     public Queue pdfRequestQueue() {
-        return new Queue(PDF_REQUEST_QUEUE, true); // durable = true
+        return new Queue(PDF_REQUEST_QUEUE, true);
+    }
+
+    @Bean
+    public Queue eventNotificationQueue() {
+        return new Queue(EVENT_NOTIFICATION_QUEUE, true);
     }
 
     @Bean
