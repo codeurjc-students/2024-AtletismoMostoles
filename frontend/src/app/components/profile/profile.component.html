@@ -88,6 +88,28 @@
         <mat-paginator [length]="results.length" [pageSize]="itemsPerPage" (page)="nextPage()"></mat-paginator>
       </div>
 
+      <div *ngIf="isAthlete && pdfHistory.length" class="results-section">
+        <h3>Historial de PDFs Generados</h3>
+        <mat-list>
+          <mat-list-item *ngFor="let pdf of paginatedPdfHistory">
+            <div class="pdf-entry">
+              <p class="pdf-link">
+                <strong>Link de descarga:</strong>
+                <a [href]="pdf.urlBlob" target="_blank" rel="noopener">
+                  {{ pdf.urlBlob }}
+                </a>
+              </p>
+            </div>
+          </mat-list-item>
+          </mat-list>
+        <mat-paginator
+          [length]="pdfHistory.length"
+          [pageSize]="pdfPageSize"
+          [pageSizeOptions]="[5, 10]"
+          (page)="onPdfPageChange($event)">
+        </mat-paginator>
+      </div>
+
       <button mat-raised-button color="primary" *ngIf="isAdmin && !isEditing" (click)="enableEdit()">Editar Perfil</button>
       <button mat-raised-button color="warn" *ngIf="isAdmin" (click)="deleteProfile()">Eliminar Perfil</button>
       <button mat-raised-button color="warn" (click)="requestPdf()">Pdf de Resultados</button>
@@ -96,8 +118,6 @@
       <div *ngIf="generatedPdfLink">
         <a [href]="generatedPdfLink" target="_blank">Descargar PDF generado</a>
       </div>
-
-
     </mat-card-content>
   </mat-card>
 

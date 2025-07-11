@@ -95,7 +95,7 @@ nav a {
 
 mat-list-item {
   border-bottom: 1px solid #ddd;
-  padding: 8px 0;
+  padding: 10px 0;
 }
 
 footer {
@@ -105,3 +105,21 @@ footer {
   padding: 8px;
   margin-top: 10px;
 }
+
+.pdf-entry {
+  margin-top: 25px;
+  padding: 20px;
+  word-wrap: break-word;
+  word-break: break-all;
+  white-space: normal;
+}
+
+.pdf-link a {
+  color: #02bd12;
+  font-size: 14px;
+  text-decoration: underline;
+  display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+

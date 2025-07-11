@@ -70,6 +70,11 @@ export class ProfileComponent implements OnInit {
   isLoggedIn: boolean = false;
   generatingPdf: boolean = false;
   generatedPdfLink: string = '';
+  pdfHistory: any[] = [];
+  paginatedPdfHistory: any[] = [];
+  pdfPageSize = 5;
+  pdfPageIndex = 0;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -147,6 +152,7 @@ export class ProfileComponent implements OnInit {
               this.results = [];
             }
           });
+          this.loadPdfHistory(athlete.licenseNumber);
         } else {
           const coach = response as Coach;
           this.coachedAthletes = coach.athletes || [];
@@ -168,6 +174,19 @@ export class ProfileComponent implements OnInit {
         console.error('Error cargando disciplinas:', error);
       }
     );
+  }
+
+  loadPdfHistory(licenseNumber: string): void {
+     this.resultService.getPdfHistory(licenseNumber).subscribe({
+      next: (response) => {
+        this.pdfHistory = response.content;
+        this.updatePaginatedPdfHistory();
+        console.log("Historial de resultados.")
+      },
+      error: (err) => {
+        console.error('Error al cargar historial de PDFs', err);
+      },
+    });
   }
 
   enableEdit(): void {
@@ -216,6 +235,17 @@ export class ProfileComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  updatePaginatedPdfHistory(): void {
+    const start = this.pdfPageIndex * this.pdfPageSize;
+    const end = start + this.pdfPageSize;
+    this.paginatedPdfHistory = this.pdfHistory.slice(start, end);
+  }
+
+  onPdfPageChange(event: any): void {
+    this.pdfPageIndex = event.pageIndex;
+    this.updatePaginatedPdfHistory();
   }
 
   updatePagination(): void {
