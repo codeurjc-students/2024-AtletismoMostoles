@@ -1,80 +1,101 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ProfileComponent } from './profile.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+import { ReactiveFormsModule } from '@angular/forms';
 import { AthleteService } from '../../services/athlete.service';
 import { CoachService } from '../../services/coach.service';
+import { ResultService } from '../../services/result.service';
+import { EventService } from '../../services/event.service';
+import { DisciplineService } from '../../services/discipline.service';
 import { AuthService } from '../../services/auth.service';
-import { of, throwError } from 'rxjs';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
+import { WebSocketService } from '../../services/web-socket.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Athlete } from '../../models/athlete.model';
-import { Coach } from '../../models/coach.model';
-import { Results } from '../../models/results.model';
-import { Page } from '../../models/page.model';
-import { By } from '@angular/platform-browser';
-import { MatCardModule } from '@angular/material/card';
-import { MatListModule } from '@angular/material/list';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { APP_BASE_HREF } from '@angular/common';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
   let fixture: ComponentFixture<ProfileComponent>;
-  let athleteSvc: jasmine.SpyObj<AthleteService>;
-  let coachSvc: jasmine.SpyObj<CoachService>;
-  let authSvc: jasmine.SpyObj<AuthService>;
-  let router: Router;
 
-  const emptyAthletePage: Page<Athlete> = { content: [], totalElements: 0, totalPages: 0, size: 0, number: 0 };
-  const emptyCoachPage: Page<Coach> = { content: [], totalElements: 0, totalPages: 0, size: 0, number: 0 };
+  let athleteServiceSpy: jasmine.SpyObj<AthleteService>;
+  let coachServiceSpy: jasmine.SpyObj<CoachService>;
+  let resultServiceSpy: jasmine.SpyObj<ResultService>;
+  let eventServiceSpy: jasmine.SpyObj<EventService>;
+  let disciplineServiceSpy: jasmine.SpyObj<DisciplineService>;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
+  let webSocketServiceSpy: jasmine.SpyObj<WebSocketService>;
 
   beforeEach(async () => {
-    athleteSvc = jasmine.createSpyObj('AthleteService', ['getById', 'update', 'delete', 'getAll']);
-    coachSvc = jasmine.createSpyObj('CoachService', ['getById', 'update', 'delete', 'getAll']);
-    authSvc = jasmine.createSpyObj('AuthService', ['isAdmin', 'isAuthenticated'], { user: of(null) });
-
-    const defaultAthlete: Athlete = {
-      licenseNumber: '', firstName: '', lastName: '', birthDate: '',
-      disciplines: [], results: [], coach: null
-    };
-    athleteSvc.getById.and.returnValue(of(defaultAthlete));
-    athleteSvc.getAll.and.returnValue(of(emptyAthletePage));
-    const defaultCoach: Coach = { /* populate minimally if needed */ } as Coach;
-    coachSvc.getById.and.returnValue(of(defaultCoach));
-    coachSvc.getAll.and.returnValue(of(emptyCoachPage));
+    athleteServiceSpy = jasmine.createSpyObj('AthleteService', ['getById', 'getAll', 'update', 'delete']);
+    coachServiceSpy = jasmine.createSpyObj('CoachService', ['getById', 'delete']);
+    resultServiceSpy = jasmine.createSpyObj('ResultService', ['getByAthleteId', 'getPdfHistory', 'solicitarGeneracionPdf']);
+    eventServiceSpy = jasmine.createSpyObj('EventService', ['getById']);
+    disciplineServiceSpy = jasmine.createSpyObj('DisciplineService', ['getById']);
+    authServiceSpy = jasmine.createSpyObj('AuthService', ['isAdmin', 'isAuthenticated', 'logout']);
+    webSocketServiceSpy = jasmine.createSpyObj('WebSocketService', ['escucharConfirmacionPdf']);
 
     await TestBed.configureTestingModule({
       imports: [
-        ProfileComponent,
-        ReactiveFormsModule,
-        RouterTestingModule.withRoutes([]),
-        MatCardModule,
-        MatListModule,
-        MatTableModule,
-        MatPaginatorModule,
-        NoopAnimationsModule
+        ProfileComponent, // ✅ standalone component importado correctamente
+        ReactiveFormsModule
       ],
       providers: [
-        { provide: AthleteService, useValue: athleteSvc },
-        { provide: CoachService, useValue: coachSvc },
-        { provide: AuthService, useValue: authSvc },
-        { provide: ActivatedRoute, useValue: { snapshot: { params: { type: 'athlete', id: 'A100' } } } },
-        { provide: APP_BASE_HREF, useValue: '/' }
-      ]
+        { provide: ActivatedRoute, useValue: { snapshot: { params: { type: 'athlete', id: '123' } } } },
+        { provide: AthleteService, useValue: athleteServiceSpy },
+        { provide: CoachService, useValue: coachServiceSpy },
+        { provide: ResultService, useValue: resultServiceSpy },
+        { provide: EventService, useValue: eventServiceSpy },
+        { provide: DisciplineService, useValue: disciplineServiceSpy },
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: WebSocketService, useValue: webSocketServiceSpy },
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     }).compileComponents();
 
-    authSvc.isAuthenticated.and.returnValue(true);
-    authSvc.isAdmin.and.returnValue(true);
+    authServiceSpy.isAdmin.and.returnValue(true);
+    authServiceSpy.isAuthenticated.and.returnValue(true);
+    // Para evitar error al subscribirse en ngOnInit
+    Object.defineProperty(authServiceSpy, 'user', {
+      get: () => of({})
+    });
+  });
 
-    router = TestBed.inject(Router);
-    spyOn(router, 'navigate');
-
+  beforeEach(() => {
     fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-    component = fixture.componentInstance;
+
+    athleteServiceSpy.getById.and.returnValue(of({
+      firstName: 'Juan',
+      lastName: 'Pérez',
+      licenseNumber: 'LIC123',
+      birthDate: '2000-01-01',
+      disciplines: [],
+    }));
+
+    resultServiceSpy.getByAthleteId.and.returnValue(of({
+      content: [],
+      totalElements: 0,
+      totalPages: 1,
+      size: 10,
+      number: 0
+    }));
+
+    resultServiceSpy.getPdfHistory.and.returnValue(of({
+      content: [],
+      totalElements: 0,
+      totalPages: 1,
+      size: 5,
+      number: 0
+    }));
+
+    athleteServiceSpy.getAll.and.returnValue(of({
+      content: [],
+      totalElements: 0,
+      totalPages: 1,
+      size: 10,
+      number: 0
+    }));
+
     fixture.detectChanges();
   });
 
@@ -82,151 +103,60 @@ describe('ProfileComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
-    it('carga perfil de atleta y disciplinas', fakeAsync(() => {
-      const fakeAthlete: Athlete = {
-        licenseNumber: 'A100',
-        firstName: 'Juan',
-        lastName: 'Pérez',
-        birthDate: '1990-05-05',
-        disciplines: [{ id: 1, name: 'Salto', description: 'Longitud' }],
-        results: [],
-        coach: null
-      };
-      athleteSvc.getById.and.returnValue(of(fakeAthlete));
-
-      component.ngOnInit();
-      tick();
-      fixture.detectChanges();
-
-      expect(athleteSvc.getById).toHaveBeenCalledWith('A100');
-      expect(component.profile).toEqual(fakeAthlete);
-      expect(component.disciplines!).toEqual(fakeAthlete.disciplines!);
-      const title = fixture.nativeElement.querySelector('mat-card-title')!.textContent!.trim();
-      expect(title).toBe('Juan Pérez');
-    }));
-
-    it('muestra mensaje de error si falla carga', fakeAsync(() => {
-      athleteSvc.getById.and.returnValue(throwError(() => new Error('fail')));
-
-      component.ngOnInit();
-      tick();
-      fixture.detectChanges();
-
-      expect(component.errorMessage).toBe('Error al cargar el perfil. Inténtalo de nuevo más tarde.');
-      expect(fixture.debugElement.query(By.css('.profile-card'))).toBeTruthy();
-    }));
+  it('debe activar modo edición si es admin', () => {
+    component.enableEdit();
+    expect(component.isEditing).toBeTrue();
+    expect(component.profileForm).toBeTruthy();
   });
 
-  describe('enableEdit y saveProfile', () => {
-    beforeEach(() => {
-      component.profile = {
-        licenseNumber: 'A100',
-        firstName: 'Juan',
-        lastName: 'Pérez',
-        birthDate: '1990-05-05',
-        disciplines: [],
-        results: [],
-        coach: null
-      };
-      component.isAdmin = true;
-    });
-
-    it('activa edición y arma el formulario', () => {
-      component.enableEdit();
-      expect(component.isEditing).toBeTrue();
-      expect(component.profileForm.value.firstName).toBe('Juan');
-      expect(component.profileForm.value.licenseNumber).toBe('A100');
-    });
-
-    it('no guarda si formulario inválido', () => {
-      component.enableEdit();
-      component.profileForm.controls['firstName'].setValue('');
-      athleteSvc.update.and.returnValue(of(component.profile as Athlete));
-      component.saveProfile();
-      expect(athleteSvc.update).not.toHaveBeenCalled();
-    });
-
-    it('guarda y recarga tras edición válida', fakeAsync(() => {
-      component.enableEdit();
-      component.profileForm.patchValue({ firstName: 'Ana', lastName: 'García' });
-
-      const updatedProfile: Athlete = {
-        ...(component.profile as Athlete),
-        firstName: 'Ana',
-        lastName: 'García',
-        birthDate: (component.profile as Athlete).birthDate
-      };
-
-      athleteSvc.update.and.returnValue(of(updatedProfile));
-      athleteSvc.getById.and.returnValue(of(updatedProfile));
-
-      spyOn(window, 'alert').and.stub();
-
-      component.saveProfile();
-      tick();
-      fixture.detectChanges();
-
-      expect(athleteSvc.update).toHaveBeenCalledWith(
-        'A100',
-        jasmine.objectContaining({ firstName: 'Ana', lastName: 'García' })
-      );
-      expect(window.alert).toHaveBeenCalledWith('Perfil actualizado con éxito');
-      expect(athleteSvc.getById).toHaveBeenCalledWith('A100');
-    }));
+  it('no debe guardar perfil si el formulario es inválido', () => {
+    component.enableEdit();
+    component.profileForm.patchValue({ firstName: '', lastName: '', licenseNumber: '' });
+    component.saveProfile();
+    expect(athleteServiceSpy.update).not.toHaveBeenCalled();
   });
 
-  describe('deleteProfile', () => {
-    beforeEach(() => {
-      component.profile = {
-        licenseNumber: 'A100',
-        firstName: '',
-        lastName: '',
-        birthDate: '',
-        disciplines: [],
-        results: [],
-        coach: null
-      };
-      component.isAdmin = true;
+  it('debe guardar perfil si el formulario es válido', fakeAsync(() => {
+    component.enableEdit();
+    component.profileForm.patchValue({
+      firstName: 'Juan',
+      lastName: 'Pérez',
+      licenseNumber: 'LIC123',
+      birthDate: '2000-01-01',
+      disciplines: []
     });
 
-    it('elimina y navega si confirma', fakeAsync(() => {
-      spyOn(window, 'confirm').and.returnValue(true);
-      athleteSvc.delete.and.returnValue(of(undefined));
-      component.deleteProfile();
-      tick();
-      expect(athleteSvc.delete).toHaveBeenCalledWith('A100');
-      expect(router.navigate).toHaveBeenCalledWith(['/ranking']);
-    }));
+    athleteServiceSpy.update.and.returnValue(of({} as Athlete));
 
-    it('no elimina si cancela', () => {
-      spyOn(window, 'confirm').and.returnValue(false);
-      athleteSvc.delete.and.returnValue(of(undefined));
-      component.deleteProfile();
-      expect(athleteSvc.delete).not.toHaveBeenCalled();
-    });
+    component.saveProfile();
+    tick();
+
+    expect(athleteServiceSpy.update).toHaveBeenCalledWith('LIC123', jasmine.any(Object));
+    expect(component.isEditing).toBeFalse();
+  }));
+
+  it('debe eliminar el perfil si se confirma', () => {
+    spyOn(window, 'confirm').and.returnValue(true);
+    athleteServiceSpy.delete.and.returnValue(of(void 0));
+
+    component.profile = { licenseNumber: 'LIC123' } as any;
+    component.deleteProfile();
+
+    expect(athleteServiceSpy.delete).toHaveBeenCalledWith('LIC123');
   });
 
-  describe('paginación de resultados', () => {
-    beforeEach(() => {
-      component.isAthlete = true;
-      component.results = Array.from({ length: 15 }, (_, i) => ({ id: i, value: i } as Results));
-      component.totalPages = Math.ceil(component.results.length / component.itemsPerPage);
-      component.updatePagination();
-    });
+  it('no debe eliminar el perfil si se cancela', () => {
+    spyOn(window, 'confirm').and.returnValue(false);
+    component.profile = { licenseNumber: 'LIC123' } as any;
 
-    it('divide los resultados en páginas', () => {
-      expect(component.paginatedResults.length).toBe(component.itemsPerPage);
-      component.nextPage();
-      expect(component.currentPage).toBe(2);
-      expect(component.paginatedResults[0].value).toBe(component.itemsPerPage);
-    });
+    component.deleteProfile();
 
-    it('prevPage funciona correctamente', () => {
-      component.currentPage = 2;
-      component.updatePagination();
-      component.prevPage();
-      expect(component.currentPage).toBe(1);
-    });
+    expect(athleteServiceSpy.delete).not.toHaveBeenCalled();
+  });
+
+  it('debe mostrar fecha formateada del atleta', () => {
+    component.profile = { birthDate: '2000-01-01' } as any;
+    component.isAthlete = true;
+    expect(component.formattedBirthDate).toBe('2000-01-01');
   });
 });

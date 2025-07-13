@@ -39,24 +39,33 @@ describe('ResultService', () => {
       number: 0
     };
 
-    service.getAll(0, 10, 'date', 1, 2).subscribe(response => {
+    service.getAll(0, 10, 'date').subscribe(response => {
       expect(response).toEqual(dummyResponse);
     });
 
-    const req = httpMock.expectOne(r =>
-      r.method === 'GET' &&
-      r.url === '/api/results' &&
-      r.params.get('page') === '0' &&
-      r.params.get('size') === '10' &&
-      r.params.get('sortBy') === 'date' &&
-      r.params.get('eventId') === '1' &&
-      r.params.get('disciplineId') === '2'
+    const req = httpMock.expectOne(req =>
+      req.method === 'GET' &&
+      req.url === '/api/results' &&
+      req.params.get('page') === '0' &&
+      req.params.get('size') === '10' &&
+      req.params.get('sortBy') === 'date'
     );
+
+    expect(req.request.method).toBe('GET');
     req.flush(dummyResponse);
   });
 
+
   it('should fetch result by ID', () => {
-    const dummyResult: Results = { id: 1, value: 12.5 } as Results;
+    const dummyResult: Results = {
+      id: 1,
+      atletaId: 'A100',
+      eventoId: 1,
+      disciplinaId: 2,
+      valor: '12.5',
+      athlete: { firstName: 'Juan', lastName: 'Pérez' },
+      discipline: { name: '100m' }
+    };
 
     service.getById(1).subscribe(response => {
       expect(response).toEqual(dummyResult);
@@ -68,7 +77,12 @@ describe('ResultService', () => {
   });
 
   it('should create a new result', () => {
-    const newResult: Results = { id: 1, value: 13.5 } as Results;
+    const newResult: Results = {
+      atletaId: 'A100',
+      eventoId: 1,
+      disciplinaId: 2,
+      valor: '13.5'
+    };
 
     service.create(newResult).subscribe(response => {
       expect(response).toEqual(newResult);
@@ -81,7 +95,13 @@ describe('ResultService', () => {
   });
 
   it('should update a result', () => {
-    const updatedResult: Results = { id: 1, value: 14.0 } as Results;
+    const updatedResult: Results = {
+      id: 1,
+      atletaId: 'A100',
+      eventoId: 1,
+      disciplinaId: 2,
+      valor: '14.0'
+    };
 
     service.update(1, updatedResult).subscribe(response => {
       expect(response).toEqual(updatedResult);
@@ -105,8 +125,18 @@ describe('ResultService', () => {
 
   it('should create multiple results', () => {
     const newResults: Results[] = [
-      { id: 1, value: 15.0 } as Results,
-      { id: 2, value: 16.0 } as Results
+      {
+        atletaId: 'A100',
+        eventoId: 1,
+        disciplinaId: 2,
+        valor: '15.0'
+      },
+      {
+        atletaId: 'A101',
+        eventoId: 1,
+        disciplinaId: 2,
+        valor: '16.0'
+      }
     ];
 
     service.createMultiple(newResults).subscribe(response => {

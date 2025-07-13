@@ -84,13 +84,24 @@ describe('EventsCalendarComponent', () => {
   it('should fetch events and mark dates', () => {
     const mockPage = {
       content: [
-        { id: 1, name: 'Evento A', date: '2025-10-10', organizedByClub: true }
+        {
+          id: 1,
+          name: 'Evento A',
+          date: '2025-10-10',
+          creationTime: '2025-01-01T12:00:00',
+          organizedByClub: true,
+          mapLink: '',
+          imageLink: '',
+          disciplines: [],
+          results: []
+        }
       ],
       totalElements: 1,
       totalPages: 1,
       size: 100,
       number: 0
     };
+
     eventServiceSpy.getAll.and.returnValue(of(mockPage));
 
     component.fetchEventsForMonth(new Date('2025-10-01'));
