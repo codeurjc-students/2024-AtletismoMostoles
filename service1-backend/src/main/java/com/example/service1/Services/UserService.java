@@ -80,12 +80,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public List<NotificacionData> getPendingNotifications(User user) {
-        if (user == null || user.getLastLogin() == null) {
+    public List<NotificacionData> getPendingNotifications(User user, LocalDateTime lastLogin) {
+        if (user == null || lastLogin == null) {
             return List.of();
         }
-        String timestamp = user.getLastLogin().toString();
-        NotificacionesResponse response = eventoGrpcClient.notificacionesPendientes(user.getId(), timestamp);
+        System.out.println("Service Timestamp: " + lastLogin );
+        NotificacionesResponse response = eventoGrpcClient.notificacionesPendientes(user.getId(), lastLogin.toString());
         return response.getNotificacionesList();
     }
 

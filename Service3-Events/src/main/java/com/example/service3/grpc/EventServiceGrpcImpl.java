@@ -11,6 +11,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,6 +63,7 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
         event.setImageLink(request.getImageLink());
         event.setOrganizedByClub(request.getOrganizedByClub());
         event.setDisciplineIds(new java.util.HashSet<>(request.getDisciplineIdsList()));
+        event.setCreationTime(LocalDateTime.parse(request.getCreationTime()));
 
         Event saved = eventService.save(event);
 
@@ -82,6 +84,7 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
             event.setImageLink(request.getImageLink());
             event.setOrganizedByClub(request.getOrganizedByClub());
             event.setDisciplineIds(new java.util.HashSet<>(request.getDisciplineIdsList()));
+            event.setCreationTime(LocalDateTime.parse(request.getCreationTime()));
 
             Event updated = eventService.save(event);
             EventoMessage message = convertToMessage(updated);
@@ -116,7 +119,8 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     public void notificacionesPendientes(NotificacionesRequest request, StreamObserver<NotificacionesResponse> responseObserver) {
         try {
             String fechaStr = request.getTimestampUltimaConexion();
-            LocalDate date = LocalDateTime.parse(fechaStr).toLocalDate();
+            System.out.println("fecha: " + fechaStr);
+            LocalDateTime date = LocalDateTime.parse(fechaStr);
 
             List<Event> nuevosEventos = eventService.findEventsAfter(date);
 
@@ -129,7 +133,7 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
                             .setImageLink(event.getImageLink())
                             .setOrganizedByClub(event.isOrganizedByClub())
                             .setTimestampNotificacion(LocalDateTime.now().toString())
-                            .addAllDisciplineIds(event.getDisciplineIds()) // si existe
+                            .addAllDisciplineIds(event.getDisciplineIds())
                             .build()
             ).toList();
 
@@ -157,6 +161,12 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
 
         if (event.getDisciplineIds() != null) {
             builder.addAllDisciplineIds(event.getDisciplineIds());
+        }
+
+        if (event.getCreationTime() != null) {
+            builder.setCreationTime(
+                    event.getCreationTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+            );
         }
 
         return builder.build();

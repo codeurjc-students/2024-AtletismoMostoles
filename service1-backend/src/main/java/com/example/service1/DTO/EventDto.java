@@ -1,6 +1,8 @@
 package com.example.service1.DTO;
 
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,20 +14,10 @@ public class EventDto {
     private String imageLink;
     private boolean organizedByClub;
     private Set<Long> disciplineIds = new HashSet<>();
+    private LocalDateTime creationTime;
 
     public EventDto() {}
 
-    public EventDto(Long id, String name, LocalDate date, String mapLink, String imageLink, boolean organizedByClub, Set<Long> disciplineIds) {
-        this.id = id;
-        this.name = name;
-        this.date = date;
-        this.mapLink = mapLink;
-        this.imageLink = imageLink;
-        this.organizedByClub = organizedByClub;
-        this.disciplineIds = disciplineIds;
-    }
-
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -80,5 +72,13 @@ public class EventDto {
 
     public void setDisciplineIds(Set<Long> disciplineIds) {
         this.disciplineIds = disciplineIds;
+    }
+
+    public void setCreationTime(LocalDateTime creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public LocalDateTime getCreationTime() {
+        return creationTime;
     }
 }

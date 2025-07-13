@@ -3,6 +3,7 @@ package com.example.service1.RestControllers;
 import com.example.service1.Security.JWT.AuthResponse;
 import com.example.service1.Security.JWT.LoginRequest;
 import com.example.service1.Security.JWT.UserLoginService;
+import com.example.service1.Services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class LoginRestController {
 
     @Autowired
     private UserLoginService userService;
+
+    @Autowired
+    private UserService userServiceSimple;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(

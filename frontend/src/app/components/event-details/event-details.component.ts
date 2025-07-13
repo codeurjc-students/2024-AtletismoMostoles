@@ -82,7 +82,8 @@ export class EventDetailsComponent implements OnInit {
       name: ['', Validators.required],
       date: ['', Validators.required],
       isOrganizedByClub: [false],
-      imageLink: ['']
+      imageLink: [''],
+      createTime: [new Date().toISOString().replace('Z', '')]
     });
   }
 
@@ -168,7 +169,7 @@ export class EventDetailsComponent implements OnInit {
     if (this.eventForm.valid) {
       const updatedEvent = {
         ...this.event,
-        ...this.eventForm.value  // toma los valores del form directamente
+        ...this.eventForm.value
       };
 
       console.log('Datos enviados a la API:', updatedEvent);
@@ -176,7 +177,7 @@ export class EventDetailsComponent implements OnInit {
       this.eventService.update(updatedEvent.id, updatedEvent).subscribe(() => {
         alert('Evento actualizado con éxito');
         this.isEditing = false;
-        this.loadEvent(); // recarga datos actualizados
+        this.loadEvent();
       });
     }
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 
 export interface NotificacionData {
   eventoId: number;
@@ -23,14 +23,13 @@ export class AuthService {
   private userSubject: BehaviorSubject<any | null>;
   public user: Observable<any | null>;
 
-  // ✅ Nuevas notificaciones recibidas tras login
   public notificacionesPendientes: NotificacionData[] = [];
 
   constructor(private http: HttpClient, private router: Router) {
     this.userSubject = new BehaviorSubject<any | null>(null);
     this.user = this.userSubject.asObservable();
 
-    this.loadAuthenticatedUser(); // Cargar usuario desde backend
+    this.loadAuthenticatedUser();
   }
 
   private loadAuthenticatedUser(): void {
@@ -48,13 +47,16 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.authUrl}/login`, { username, password }, { withCredentials: true }).pipe(
-      map(response => {
-        console.log('✅ Login exitoso:', response);
-        this.loadAuthenticatedUser();
-
+      switchMap(response => {
         this.notificacionesPendientes = response.notificacionesPendientes || [];
 
-        return response;
+        return this.http.get<any>(`/api/users/me`, { withCredentials: true }).pipe(
+          tap(user => {
+            console.log('✅ Usuario autenticado:', user);
+            this.userSubject.next(user);
+          }),
+          map(() => response)
+        );
       })
     );
   }

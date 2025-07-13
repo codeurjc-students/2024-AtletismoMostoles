@@ -10,4 +10,5 @@ export interface Event {
   imageLink?: string;
   disciplines?: Discipline[];
   results?: Results[];
+  creationTime: string;
 }

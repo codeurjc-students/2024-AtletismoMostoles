@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 
@@ -43,6 +44,13 @@ public class UserLoginService {
 
     public ResponseEntity<AuthResponse> login(LoginRequest loginRequest, String encryptedAccessToken, String encryptedRefreshToken) {
 
+        // Capturar el lastLogin antes de cualquier autenticación
+        User dbUser = userService.getUserByName(loginRequest.getUsername());
+        LocalDateTime lastLoginPrevio = dbUser.getLastLogin();
+
+        System.out.println("TimeStamp Login (previo): " + lastLoginPrevio);
+
+        // Autenticación
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -54,13 +62,11 @@ public class UserLoginService {
         String username = loginRequest.getUsername();
         UserDetails user = userDetailsService.loadUserByUsername(username);
 
-        User dbUser = userService.getUserByName(username);
-
+        // Ya tienes dbUser cargado arriba
         List<EventNotificationDto> notificaciones = List.of();
 
         if (dbUser != null) {
-            // Obtener notificaciones nuevas desde el último login
-            List<NotificacionData> rawNotificaciones = userService.getPendingNotifications(dbUser);
+            List<NotificacionData> rawNotificaciones = userService.getPendingNotifications(dbUser, lastLoginPrevio);
             notificaciones = rawNotificaciones.stream().map(data -> {
                 EventNotificationDto dto = new EventNotificationDto();
                 dto.setEventoId(data.getEventoId());
@@ -74,10 +80,11 @@ public class UserLoginService {
                 return dto;
             }).toList();
 
-            // Actualizar último login
+            // Actualizar último login después de recoger las notificaciones
             userService.updateLastLogin(dbUser);
         }
 
+        // Resto igual...
         boolean accessTokenValid = jwtTokenProvider.validateToken(accessToken);
         boolean refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
 

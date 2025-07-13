@@ -5,4 +5,5 @@ export interface EventCreate {
   date: string;
   organizedByClub: boolean;
   disciplineIds: number[];
+  creationTime: string;
 }

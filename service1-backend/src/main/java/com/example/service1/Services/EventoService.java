@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,7 +64,8 @@ public class EventoService {
         dto.setMapLink(msg.getMapLink());
         dto.setImageLink(msg.getImageLink());
         dto.setOrganizedByClub(msg.getOrganizedByClub());
-        dto.setDisciplineIds(new HashSet<>(msg.getDisciplineIdsList())); // NUEVO
+        dto.setDisciplineIds(new HashSet<>(msg.getDisciplineIdsList()));
+        dto.setCreationTime(LocalDateTime.parse(msg.getCreationTime()));
         return dto;
     }
 

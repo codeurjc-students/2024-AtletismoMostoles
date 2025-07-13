@@ -96,9 +96,9 @@ export class NewEventFormComponent implements OnInit {
       mapLink: formValue.mapUrl!,
       date: formValue.date!,
       organizedByClub: formValue.organizedByClub || false,
-      disciplineIds: formValue.disciplines!.map((id: number) =>  id )
+      disciplineIds: formValue.disciplines!.map((id: number) =>  id ),
+      creationTime: this.getLocalDateTime()
     };
-
     this.eventService.create(newEvent).subscribe({
       next: () => {
         //alert('Evento creado correctamente');
@@ -109,6 +109,13 @@ export class NewEventFormComponent implements OnInit {
         this.errorMessage = 'Error creando evento, inténtalo más tarde.';
       }
     });
+  }
+
+  getLocalDateTime(): string {
+    const now = new Date();
+    const offsetMs = now.getTimezoneOffset() * 60000;
+    const local = new Date(now.getTime() - offsetMs);
+    return local.toISOString().slice(0, 23); // sin Z
   }
 
 

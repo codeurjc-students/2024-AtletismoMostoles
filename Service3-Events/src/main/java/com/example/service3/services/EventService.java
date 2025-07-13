@@ -3,6 +3,7 @@ package com.example.service3.services;
 import com.example.service3.entities.Event;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public interface EventService {
      * Returns all events created after a given date.
      * Used to get "new" events since last login.
      */
-    List<Event> findEventsAfter(LocalDate date);
+    List<Event> findEventsAfter(LocalDateTime date);
 
     /**
      * Finds an event by its ID.

@@ -97,6 +97,13 @@ mat-list-item {
   transition: background-color 0.2s ease-in-out;
 }
 
+mat-list-item h3 {
+  margin-bottom: 2px;
+}
+mat-list-item p {
+  margin-top: 0;
+}
+
 mat-list-item:hover {
   background-color: rgba(2, 189, 18, 0.72);
   border-radius: 10px;

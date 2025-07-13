@@ -31,6 +31,7 @@ message CrearEventoRequest {
   string imageLink = 4;
   bool organizedByClub = 5;
   repeated int64 disciplineIds = 6;
+  string creationTime = 8;
 }
 
 message UpdateEventoRequest {
@@ -41,6 +42,7 @@ message UpdateEventoRequest {
   string imageLink = 5;
   bool organizedByClub = 6;
   repeated int64 disciplineIds = 7;
+  string creationTime = 8;
 }
 
 message BorrarEventoRequest {
@@ -67,6 +69,7 @@ message EventoMessage {
   string imageLink = 5;
   bool organizedByClub = 6;
   repeated int64 disciplineIds = 7;
+  string creationTime = 8;
 }
 
 message ListarEventosResponse {

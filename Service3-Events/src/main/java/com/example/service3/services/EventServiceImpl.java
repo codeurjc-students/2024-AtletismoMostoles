@@ -7,6 +7,7 @@ import com.example.service3.repositories.EventRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +30,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<Event> findEventsAfter(LocalDate date) {
-        return eventRepository.findByDateAfter(date);
+    public List<Event> findEventsAfter(LocalDateTime date) {
+        return eventRepository.findByCreationTimeAfter(date);
     }
 
     @Override

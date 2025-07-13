@@ -1,10 +1,12 @@
 package com.example.service3.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,16 +36,19 @@ public class Event {
     @Column(name = "discipline_id")
     private Set<Long> disciplineIds = new HashSet<>();
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime creationTime;
 
     public Event() {}
 
-    public Event(String name, LocalDate date, String mapLink, String imageLink, boolean isOrganizedByClub, Set<Long> disciplineIds) {
+    public Event(String name, LocalDate date, String mapLink, String imageLink, boolean isOrganizedByClub, Set<Long> disciplineIds, LocalDateTime creationTime) {
         this.name = name;
         this.date = date;
         this.mapLink = mapLink;
         this.imageLink = imageLink;
         this.isOrganizedByClub = isOrganizedByClub;
         this.disciplineIds = disciplineIds;
+        this.creationTime = creationTime;
     }
 
     public Long getId() {
@@ -100,5 +105,13 @@ public class Event {
 
     public void setDisciplineIds(Set<Long> disciplineIds) {
         this.disciplineIds = disciplineIds;
+    }
+
+    public LocalDateTime getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(LocalDateTime creationTime) {
+        this.creationTime = creationTime;
     }
 }

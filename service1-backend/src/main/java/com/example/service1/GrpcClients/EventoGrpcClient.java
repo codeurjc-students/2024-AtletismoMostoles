@@ -27,7 +27,8 @@ public class EventoGrpcClient {
                 .setDate(dto.getDate().toString())
                 .setMapLink(dto.getMapLink() != null ? dto.getMapLink() : "")
                 .setImageLink(dto.getImageLink() != null ? dto.getImageLink() : "")
-                .setOrganizedByClub(dto.isOrganizedByClub());
+                .setOrganizedByClub(dto.isOrganizedByClub())
+                .setCreationTime(dto.getCreationTime().toString());
 
         if (dto.getDisciplineIds() != null) {
             builder.addAllDisciplineIds(dto.getDisciplineIds());
@@ -48,7 +49,8 @@ public class EventoGrpcClient {
                 .setDate(dto.getDate().toString())
                 .setMapLink(dto.getMapLink() != null ? dto.getMapLink() : "")
                 .setImageLink(dto.getImageLink() != null ? dto.getImageLink() : "")
-                .setOrganizedByClub(dto.isOrganizedByClub());
+                .setOrganizedByClub(dto.isOrganizedByClub())
+                .setCreationTime(dto.getCreationTime().toString());
 
         if (dto.getDisciplineIds() != null) {
             builder.addAllDisciplineIds(dto.getDisciplineIds());

@@ -1,6 +1,7 @@
 package com.example.service1.DTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +14,6 @@ public class EventNotificationDto {
     private boolean organizedByClub;
     private Set<Long> disciplineIds = new HashSet<>();
     private String timestampNotificacion;
-
 
     public Long getEventoId() {
         return eventoId;
