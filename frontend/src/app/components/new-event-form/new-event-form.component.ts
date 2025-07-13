@@ -88,6 +88,11 @@ export class NewEventFormComponent implements OnInit {
       return;
     }
 
+    if (!this.eventForm.value.mapUrl.includes('https://www.google.com/maps/embed')) {
+      alert('Por favor, introduce un enlace válido de inserción (embed) de Google Maps. No se permiten enlaces tipo "maps.app.goo.gl".');
+      return;
+    }
+
     const formValue = this.eventForm.value;
 
     const newEvent:EventCreate = {
@@ -101,7 +106,6 @@ export class NewEventFormComponent implements OnInit {
     };
     this.eventService.create(newEvent).subscribe({
       next: () => {
-        //alert('Evento creado correctamente');
         this.router.navigate(['/eventos']);
       },
       error: (error) => {

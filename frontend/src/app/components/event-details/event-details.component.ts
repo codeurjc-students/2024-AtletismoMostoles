@@ -83,6 +83,7 @@ export class EventDetailsComponent implements OnInit {
       date: ['', Validators.required],
       isOrganizedByClub: [false],
       imageLink: [''],
+      mapLink:[''],
       createTime: [new Date().toISOString().replace('Z', '')]
     });
   }
@@ -107,7 +108,8 @@ export class EventDetailsComponent implements OnInit {
           name: this.event.name,
           date: this.event.date,
           isOrganizedByClub: this.event.organizedByClub,
-          imageLink: this.event.imageLink
+          imageLink: this.event.imageLink,
+          mapLink: this.event.mapLink
         });
 
         this.resultService.getByEventId(eventId).subscribe({

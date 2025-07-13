@@ -24,6 +24,7 @@ public class Event {
     @NotNull
     private LocalDate date;
 
+    @Column(name = "map_link", length = 1000)
     private String mapLink;
 
     private String imageLink;

@@ -62,6 +62,7 @@
           <h3>{{ event.name }}</h3>
           <p *ngIf="event.date">Fecha: {{ event.date }}</p>
           <p *ngIf="event.organizedByClub">Organizado por el Club</p>
+          <p *ngIf="!event?.organizedByClub">No organizado por el club</p>
         </mat-card-content>
         <mat-card-actions align="end">
           <button mat-raised-button color="primary" (click)="viewEvent(event.id)">Ver Más</button>
