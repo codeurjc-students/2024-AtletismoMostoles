@@ -14,9 +14,9 @@ public class ResultServiceImpl implements ResultService {
     private ResultRepository resultsRepository;
 
     @Override
-    public void saveResult(Result result) {
+    public Result saveResult(Result result) {
         System.out.println("saveResult" + result);
-        resultsRepository.save(result);
+        return resultsRepository.save(result);
     }
 
     @Override

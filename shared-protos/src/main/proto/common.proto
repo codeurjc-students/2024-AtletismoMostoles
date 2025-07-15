@@ -6,4 +6,5 @@ option java_outer_classname = "CommonProto";
 message StatusMessage {
   bool success = 1;
   string mensaje = 2;
+  optional int64 id = 3;
 }

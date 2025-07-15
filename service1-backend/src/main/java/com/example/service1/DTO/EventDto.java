@@ -1,6 +1,9 @@
 package com.example.service1.DTO;
 
 
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -8,7 +11,9 @@ import java.util.Set;
 
 public class EventDto {
     private Long id;
+    @NotBlank(message = "El nombre no puede estar vacío")
     private String name;
+    @NotNull(message = "La fecha no puede ser nula")
     private LocalDate date;
     private String mapLink;
     private String imageLink;

@@ -3,6 +3,7 @@ package com.example.service1.RestControllers;
 import com.example.service1.DTO.EventDto;
 import com.example.service1.DTO.EventNotificationDto;
 import com.example.service1.Services.EventoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -65,7 +66,7 @@ public class EventoRestController {
     }
 
     @PostMapping
-    public ResponseEntity<EventDto> crearEvento(@RequestBody EventDto dto) {
+    public ResponseEntity<EventDto> crearEvento(@Valid @RequestBody EventDto dto) {
         return ResponseEntity.ok(eventoService.crearEvento(dto));
     }
 

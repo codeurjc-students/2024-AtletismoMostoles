@@ -19,10 +19,11 @@ public class ResultServiceGrpcImpl extends ResultServiceGrpc.ResultServiceImplBa
     @Override
     public void saveResult(ResultRequest request, StreamObserver<StatusMessage> responseObserver) {
         Result result = new Result(null, request.getEventId(), request.getDisciplineId(), request.getAthleteId(), request.getValue());
-        resultService.saveResult(result);
+        Long id = resultService.saveResult(result).getId();
         StatusMessage response = StatusMessage.newBuilder()
                 .setSuccess(true)
                 .setMensaje("Resultado guardado correctamente")
+                .setId(id)
                 .build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();

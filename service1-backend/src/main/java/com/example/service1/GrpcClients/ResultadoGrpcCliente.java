@@ -68,6 +68,9 @@ public class ResultadoGrpcCliente {
         CommonProto.StatusMessage rpcResp = resultadoStub.saveResult(grpcReq);
 
         ResultadoDto dto = new ResultadoDto();
+        if (rpcResp.hasId()) {
+            dto.setId(rpcResp.getId());
+        }
         dto.setAtletaId(atletaId);
         dto.setEventoId(eventoId);
         dto.setDisciplinaId(disciplinaId);
