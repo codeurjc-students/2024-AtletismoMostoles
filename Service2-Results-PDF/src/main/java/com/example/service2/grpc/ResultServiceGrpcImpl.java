@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class ResultServiceGrpcImpl extends ResultServiceGrpc.ResultServiceImplBase {
 
     @Autowired
-    private ResultServiceImpl resultService;
+    protected ResultServiceImpl resultService;
 
     @Override
     public void saveResult(ResultRequest request, StreamObserver<StatusMessage> responseObserver) {

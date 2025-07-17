@@ -14,10 +14,10 @@ import java.util.List;
 public class PdfServiceGrpcImpl extends PdfServiceGrpc.PdfServiceImplBase {
 
     @Autowired
-    private RabbitTemplate rabbitTemplate;
+    protected RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private PdfService pdfHistoryService;
+    protected PdfService pdfHistoryService;
 
     @Override
     public void requestPdfGeneration(AthleteIdRequest request, StreamObserver<StatusMessage> responseObserver) {

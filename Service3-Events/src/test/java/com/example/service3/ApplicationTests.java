@@ -1,4 +1,4 @@
-package com.example.service3.Events;
+package com.example.service3;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

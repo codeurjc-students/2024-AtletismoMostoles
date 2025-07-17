@@ -31,4 +31,22 @@ public class ResultadoExDto {
     public String getValue() {
         return value;
     }
+
+    public String setValue(String value) {
+        this.value = value;
+        return value;
+    }
+
+    public String setAthleteFullName(String athleteFullName) {
+        this.athleteFullName = athleteFullName;
+        return athleteFullName;
+    }
+    public String setEventName(String eventName) {
+        this.eventName = eventName;
+        return eventName;
+    }
+    public String setDisciplineName(String disciplineName) {
+        this.disciplineName = disciplineName;
+        return disciplineName;
+    }
 }

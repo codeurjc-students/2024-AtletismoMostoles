@@ -1,4 +1,4 @@
-package com.example.service2.Results.PDF;
+package com.example.service2;
 
 import org.testng.annotations.Test;
 import org.springframework.boot.test.context.SpringBootTest;
