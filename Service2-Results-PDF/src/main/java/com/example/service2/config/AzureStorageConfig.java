@@ -3,13 +3,14 @@ package com.example.service2.config;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile("!test")
-public class AzureStorageConfig {
+@ConditionalOnProperty(name = "azure.storage.connection-string")
+public class AzureStorageConfig{
 
     @Value("${azure.storage.connection-string}")
     private String connectionString;
