@@ -41,10 +41,14 @@ jobs:
       # --- Test de cada backend con Jacoco ---
       - name: Test Service1 + Jacoco
         working-directory: service1-backend
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=tfgpdfs;AccountKey=gIgXNNFNpeSREpjyDZzOiMvT2vZeC+7Um2u/jWdnXx3iVhkyRaePNGj5I+kR5S9kMMxL4bVfgck6+ASt/wrBUQ==;EndpointSuffix=core.windows.net
         run: mvn clean verify
 
       - name: Test Service2 + Jacoco
         working-directory: Service2-Results-PDF
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=tfgpdfs;AccountKey=gIgXNNFNpeSREpjyDZzOiMvT2vZeC+7Um2u/jWdnXx3iVhkyRaePNGj5I+kR5S9kMMxL4bVfgck6+ASt/wrBUQ==;EndpointSuffix=core.windows.net
         run: mvn clean verify
 
       - name: Test Service3 + Jacoco
