@@ -41,19 +41,15 @@ jobs:
       # --- Test de cada backend con Jacoco ---
       - name: Test Service1 + Jacoco
         working-directory: service1-backend
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=tfgpdfs;AccountKey=gIgXNNFNpeSREpjyDZzOiMvT2vZeC+7Um2u/jWdnXx3iVhkyRaePNGj5I+kR5S9kMMxL4bVfgck6+ASt/wrBUQ==;EndpointSuffix=core.windows.net
-        run: mvn clean verify
+        run: mvn clean verify -Dspring.profiles.active=test
 
       - name: Test Service2 + Jacoco
         working-directory: Service2-Results-PDF
-        env:
-          AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=https;AccountName=tfgpdfs;AccountKey=gIgXNNFNpeSREpjyDZzOiMvT2vZeC+7Um2u/jWdnXx3iVhkyRaePNGj5I+kR5S9kMMxL4bVfgck6+ASt/wrBUQ==;EndpointSuffix=core.windows.net
-        run: mvn clean verify
+        run: mvn clean verify -Dspring.profiles.active=test
 
       - name: Test Service3 + Jacoco
         working-directory: Service3-Events
-        run: mvn clean verify
+        run: mvn clean verify -Dspring.profiles.active=test
 
       # --- Configurar Node para el frontend ---
       - name: Setup Node.js
@@ -75,4 +71,4 @@ jobs:
         with:
           projectBaseDir: .
         env:
-           SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
+          SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
