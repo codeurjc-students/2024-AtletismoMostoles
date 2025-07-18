@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -32,17 +33,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven
 
+      # --- Instalar módulo compartido shared-protos ---
+      - name: Instalar shared-protos localmente
+        working-directory: shared-protos
+        run: mvn clean install
+
       # --- Test de cada backend con Jacoco ---
       - name: Test Service1 + Jacoco
-        working-directory: backend/service1
+        working-directory: service1-backend
         run: mvn clean verify
 
       - name: Test Service2 + Jacoco
-        working-directory: backend/service2
+        working-directory: Service2-Results-PDF
         run: mvn clean verify
 
       - name: Test Service3 + Jacoco
-        working-directory: backend/service3
+        working-directory: Service3-Events
         run: mvn clean verify
 
       # --- Configurar Node para el frontend ---
@@ -66,4 +72,3 @@ jobs:
           projectBaseDir: .
         env:
            SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
-        
