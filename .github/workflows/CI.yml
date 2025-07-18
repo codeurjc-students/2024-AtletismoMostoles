@@ -41,15 +41,15 @@ jobs:
       # --- Test de cada backend con Jacoco ---
       - name: Test Service1 + Jacoco
         working-directory: service1-backend
-        run: mvn clean verify -Dspring.profiles.active=test
+        run: mvn clean verify "-Dspring.profiles.active=test"
 
       - name: Test Service2 + Jacoco
         working-directory: Service2-Results-PDF
-        run: mvn clean verify -Dspring.profiles.active=test
+        run: mvn clean verify "-Dspring.profiles.active=test"
 
       - name: Test Service3 + Jacoco
         working-directory: Service3-Events
-        run: mvn clean verify -Dspring.profiles.active=test
+        run: mvn clean verify "-Dspring.profiles.active=test"
 
       # --- Configurar Node para el frontend ---
       - name: Setup Node.js
