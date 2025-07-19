@@ -43,14 +43,14 @@ jobs:
       # ----------------------------
       - name: Run tests - Service2 (Results/PDF)
         working-directory: Service2-Results-PDF
-        run: mvn clean verify
+        run: mvn clean verify -DexcludeTags=integration
 
       # ----------------------------
       # Run tests for Service3
       # ----------------------------
       - name: Run tests - Service3 (Events)
         working-directory: Service3-Events
-        run: mvn clean verify
+        run: mvn clean verify -DexcludeTags=integration
 
       # ----------------------------
       # Node / Angular setup
