@@ -25,6 +25,13 @@ jobs:
           java-version: '17'
 
       # ----------------------------
+      # Install shared-protos
+      # ----------------------------
+      - name: Install shared-protos
+        working-directory: shared-protos
+        run: mvn clean install
+
+      # ----------------------------
       # Run tests for Service1
       # ----------------------------
       - name: Run tests - Service1
