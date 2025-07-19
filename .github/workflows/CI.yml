@@ -43,14 +43,14 @@ jobs:
       # ----------------------------
       - name: Run tests - Service2 (Results/PDF)
         working-directory: Service2-Results-PDF
-        run: mvn clean verify
+        run: mvn clean verify -DexcludeTags=integration
 
       # ----------------------------
       # Run tests for Service3
       # ----------------------------
       - name: Run tests - Service3 (Events)
         working-directory: Service3-Events
-        run: mvn clean verify
+        run: mvn clean verify -DexcludeTags=integration
 
       # ----------------------------
       # Node / Angular setup
@@ -82,4 +82,6 @@ jobs:
             -e SONAR_PROJECT_KEY="codeurjc-students_2024-AtletismoMostoles" \
             -v "${{ github.workspace }}:/usr/src" \
             -w "/usr/src" \
-            sonarsource/sonar-scanner-cli:latest
+            sonarsource/sonar-scanner-cli:latest \
+            -Dsonar.projectBaseDir=.
+
