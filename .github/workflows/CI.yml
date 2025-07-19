@@ -82,4 +82,6 @@ jobs:
             -e SONAR_PROJECT_KEY="codeurjc-students_2024-AtletismoMostoles" \
             -v "${{ github.workspace }}:/usr/src" \
             -w "/usr/src" \
-            sonarsource/sonar-scanner-cli:latest
+            sonarsource/sonar-scanner-cli:latest \
+            -Dsonar.projectBaseDir=.
+
