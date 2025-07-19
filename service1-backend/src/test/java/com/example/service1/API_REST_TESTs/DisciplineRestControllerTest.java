@@ -8,6 +8,7 @@ import org.junit.jupiter.api.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
+@Tag("integration")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DisciplineRestControllerTest {
 
