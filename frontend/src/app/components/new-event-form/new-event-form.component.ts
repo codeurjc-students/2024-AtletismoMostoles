@@ -14,6 +14,8 @@ import { EventCreate } from '../../models/event-create.model';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 
 @Component({
   selector: 'app-new-event-form',
@@ -24,6 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatButtonModule,
     MatInputModule,
+    MatCheckboxModule,
     MatSelectModule,
     MatMenuModule,
     MatIconModule,
@@ -85,20 +88,24 @@ export class NewEventFormComponent implements OnInit {
       return;
     }
 
+    if (!this.eventForm.value.mapUrl.includes('https://www.google.com/maps/embed')) {
+      alert('Por favor, introduce un enlace válido de inserción (embed) de Google Maps. No se permiten enlaces tipo "maps.app.goo.gl".');
+      return;
+    }
+
     const formValue = this.eventForm.value;
 
     const newEvent:EventCreate = {
       name: formValue.name!,
-      imageUrl: formValue.imageUrl!,
-      mapUrl: formValue.mapUrl!,
+      imageLink: formValue.imageUrl!,
+      mapLink: formValue.mapUrl!,
       date: formValue.date!,
-      isOrganizedByClub: formValue.organizedByClub || false,
-      disciplines: formValue.disciplines!.map((id: number) => ({ id }))
+      organizedByClub: formValue.organizedByClub || false,
+      disciplineIds: formValue.disciplines!.map((id: number) =>  id ),
+      creationTime: this.getLocalDateTime()
     };
-
     this.eventService.create(newEvent).subscribe({
       next: () => {
-        alert('Evento creado correctamente');
         this.router.navigate(['/eventos']);
       },
       error: (error) => {
@@ -106,6 +113,13 @@ export class NewEventFormComponent implements OnInit {
         this.errorMessage = 'Error creando evento, inténtalo más tarde.';
       }
     });
+  }
+
+  getLocalDateTime(): string {
+    const now = new Date();
+    const offsetMs = now.getTimezoneOffset() * 60000;
+    const local = new Date(now.getTime() - offsetMs);
+    return local.toISOString().slice(0, 23); // sin Z
   }
 
 

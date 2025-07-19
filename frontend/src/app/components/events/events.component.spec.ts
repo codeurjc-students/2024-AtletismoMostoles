@@ -7,13 +7,20 @@ import { of } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
-
 describe('EventsComponent', () => {
   let component: EventsComponent;
   let fixture: ComponentFixture<EventsComponent>;
   let eventServiceSpy: jasmine.SpyObj<EventService>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let routerSpy: jasmine.SpyObj<Router>;
+
+  const baseEvent = {
+    mapLink: '',
+    imageLink: '',
+    creationTime: '2025-01-01T12:00:00',
+    disciplines: [],
+    results: []
+  };
 
   beforeEach(async () => {
     eventServiceSpy = jasmine.createSpyObj('EventService', ['getAll', 'delete']);
@@ -45,7 +52,7 @@ describe('EventsComponent', () => {
   it('should load events', () => {
     const mockResponse = {
       content: [
-        { id: 1, name: 'Evento A', date: '2025-01-01', organizedByClub: true, imageLink: 'link.jpg' }
+        { id: 1, name: 'Evento A', date: '2025-01-01', organizedByClub: true, ...baseEvent }
       ],
       totalElements: 1,
       totalPages: 1,
@@ -63,8 +70,8 @@ describe('EventsComponent', () => {
 
   it('should filter events by club', () => {
     component.allEvents = [
-      { id: 1, name: 'Evento Club', date: '2025-01-01', organizedByClub: true, imageLink: '' },
-      { id: 2, name: 'Evento Externo', date: '2025-01-02', organizedByClub: false, imageLink: '' }
+      { id: 1, name: 'Evento Club', date: '2025-01-01', organizedByClub: true, ...baseEvent },
+      { id: 2, name: 'Evento Externo', date: '2025-01-02', organizedByClub: false, ...baseEvent }
     ];
     component.selectedFilter = 'club';
     component.applyFilter();
@@ -75,8 +82,8 @@ describe('EventsComponent', () => {
 
   it('should filter events by external', () => {
     component.allEvents = [
-      { id: 1, name: 'Evento Club', date: '2025-01-01', organizedByClub: true, imageLink: '' },
-      { id: 2, name: 'Evento Externo', date: '2025-01-02', organizedByClub: false, imageLink: '' }
+      { id: 1, name: 'Evento Club', date: '2025-01-01', organizedByClub: true, ...baseEvent },
+      { id: 2, name: 'Evento Externo', date: '2025-01-02', organizedByClub: false, ...baseEvent }
     ];
     component.selectedFilter = 'external';
     component.applyFilter();
@@ -92,8 +99,8 @@ describe('EventsComponent', () => {
     pastDate.setDate(pastDate.getDate() - 5);
 
     component.allEvents = [
-      { id: 1, name: 'Evento Futuro', date: futureDate.toISOString(), organizedByClub: true, imageLink: '' },
-      { id: 2, name: 'Evento Pasado', date: pastDate.toISOString(), organizedByClub: true, imageLink: '' }
+      { id: 1, name: 'Evento Futuro', date: futureDate.toISOString(), organizedByClub: true, ...baseEvent },
+      { id: 2, name: 'Evento Pasado', date: pastDate.toISOString(), organizedByClub: true, ...baseEvent }
     ];
     component.selectedFilter = 'upcoming';
     component.applyFilter();
@@ -104,7 +111,7 @@ describe('EventsComponent', () => {
 
   it('should reset filters when selecting all', () => {
     component.allEvents = [
-      { id: 1, name: 'Evento A', date: '2025-01-01', organizedByClub: true, imageLink: '' }
+      { id: 1, name: 'Evento A', date: '2025-01-01', organizedByClub: true, ...baseEvent }
     ];
     component.selectedFilter = 'all';
     component.applyFilter();

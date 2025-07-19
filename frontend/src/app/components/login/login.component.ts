@@ -31,7 +31,7 @@ import { MatCardModule } from '@angular/material/card';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errorMessage: string = '';
-  returnUrl: string = '/';
+  returnUrl: string = '/user-profile';
   isLoggedIn: boolean = false;
 
   constructor(
@@ -47,7 +47,10 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/user-profile';
+    this.authService.user.subscribe(user => {
+      this.isLoggedIn = !!user;
+    });
   }
 
   onSubmit(): void {

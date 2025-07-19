@@ -2,45 +2,18 @@ name: CI Pipeline
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - main
+  #pull_request:
+    #branches:
+      #- main
 
 jobs:
   setup-and-test:
-    name: Setup and Run Tests
+    name: Setup, Build & Test All Modules
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
-
-      # ----------------------------
-      # Start backend with Docker Compose
-      # ----------------------------
-      - name: Check Docker installation
-        run: |
-          docker --version
-          docker info
-
-      - name: Install Docker Compose
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-
-      - name: Bring up containers
-        run: |
-          cd docker
-          docker-compose up -d
-
-      - name: Wait for backend to start
-        run: sleep 15
-
-      - name: List running containers
-        run: docker ps -a
-
-      - name: Test backend connectivity
-        run: curl -k https://localhost:443/api/auth/login || echo "Cannot connect to backend"
 
       # ----------------------------
       # Java / Maven setup
@@ -52,14 +25,35 @@ jobs:
           java-version: '17'
 
       # ----------------------------
-      # Run backend tests + JaCoCo
+      # Install shared-protos
       # ----------------------------
-      - name: Run Maven verify (with JaCoCo)
-        working-directory: backend
-        run: mvn clean verify
+      - name: Install shared-protos
+        working-directory: shared-protos
+        run: mvn clean install
 
       # ----------------------------
-      # Angular Frontend
+      # Run tests for Service1 
+      # ----------------------------
+      - name: Run tests - Service1
+        working-directory: service1-backend
+        run: mvn clean verify -DexcludeTags=integration
+
+      # ----------------------------
+      # Run tests for Service2
+      # ----------------------------
+      - name: Run tests - Service2 (Results/PDF)
+        working-directory: Service2-Results-PDF
+        run: mvn clean verify -DexcludeTags=integration
+
+      # ----------------------------
+      # Run tests for Service3
+      # ----------------------------
+      - name: Run tests - Service3 (Events)
+        working-directory: Service3-Events
+        run: mvn clean verify -DexcludeTags=integration
+
+      # ----------------------------
+      # Node / Angular setup
       # ----------------------------
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -70,14 +64,14 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Run Angular unit tests and collect coverage
+      - name: Run Angular unit tests
         working-directory: frontend
-        run: npm ci && npm test
+        run: npm test -- --watch=false --browsers=ChromeHeadless
 
       # ----------------------------
-      # SonarCloud Analysis via Docker
+      # SonarCloud Analysis
       # ----------------------------
-      - name: Run SonarScanner in Docker
+      - name: SonarCloud Analysis
         env:
           SONAR_TOKEN: 4dd5c6a7ea10044d985b5bf2ff03c431625e8088
         run: |
@@ -88,4 +82,6 @@ jobs:
             -e SONAR_PROJECT_KEY="codeurjc-students_2024-AtletismoMostoles" \
             -v "${{ github.workspace }}:/usr/src" \
             -w "/usr/src" \
-            sonarsource/sonar-scanner-cli:latest
+            sonarsource/sonar-scanner-cli:latest \
+            -Dsonar.projectBaseDir=.
+

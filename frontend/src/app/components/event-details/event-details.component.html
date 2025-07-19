@@ -8,13 +8,25 @@
     <a mat-button routerLink="/ranking">Ranking</a>
     <a mat-button routerLink="/eventos">Eventos</a>
     <a mat-button routerLink="/calendario">Calendario</a>
-    <a mat-menu-item routerLink="/user-profile">User Profile</a>
-
   </nav>
   <div class="LogSection">
     <button mat-raised-button color="accent" *ngIf="!isLoggedIn" (click)="login()"> LogIn </button>
     <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="logout()"> Log Out </button>
   </div>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <a mat-menu-item routerLink="/">Inicio</a>
+    <a mat-menu-item routerLink="/miembros">Miembros del Club</a>
+    <a mat-menu-item routerLink="/ranking">Ranking</a>
+    <a mat-menu-item routerLink="/eventos">Eventos</a>
+    <a mat-menu-item routerLink="/calendario">Calendario</a>
+    <a mat-menu-item routerLink="/disciplines">Disciplinas</a>
+    <a mat-menu-item routerLink="/login">Inicio de Sesión</a>
+    <a mat-menu-item routerLink="/user-profile">User Profile</a>
+
+  </mat-menu>
 </header>
 
 <section>
@@ -23,13 +35,13 @@
       <mat-card-title class="event-title">{{ event?.name ?? 'Nombre no disponible' }}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <img [src]="event?.imageLink ?? 'assets/default-event.jpg'" alt="Imagen del evento" class="event-image">
+      <img [src]="event.imageLink ?? 'assets/default-event.jpg'" alt="Imagen del evento" class="event-image">
       <p><strong>Fecha:</strong> {{ event?.date ?? 'Fecha no disponible' }}</p>
       <p *ngIf="event?.organizedByClub"><strong>Organizado por el club</strong></p>
       <p *ngIf="!event?.organizedByClub"><strong>No organizado por el club</strong></p>
       <button mat-raised-button color="primary" *ngIf="isLoggedIn && !isEditing" (click)="toggleEdit()">Editar Evento</button>
-      <iframe [src]="sanitizedMapUrl" width="100%" height="300" style="border:0;" allowfullscreen loading="lazy"></iframe>
-    </mat-card-content>
+      <iframe *ngIf="sanitizedMapUrl" [src]="sanitizedMapUrl" width="100%" height="300" style="border:0;" allowfullscreen loading="lazy"></iframe>
+      <p *ngIf="!sanitizedMapUrl">Mapa no disponible. Asegúrese de que el enlace sea una URL de inserción válida de Google Maps.</p>    </mat-card-content>
   </mat-card>
 
   <div *ngIf="isEditing" class="edit-section" [formGroup]="eventForm">
@@ -45,6 +57,10 @@
     <mat-form-field appearance="fill" style="width: 100%;">
       <mat-label>Enlace de la Imagen</mat-label>
       <input matInput formControlName="imageLink">
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Enlace del Mapa</mat-label>
+      <input matInput formControlName="mapLink">
     </mat-form-field>
 
     <button mat-raised-button color="primary" (click)="saveEvent()">Guardar</button>
@@ -64,7 +80,7 @@
       </ng-container>
       <ng-container matColumnDef="value">
         <mat-header-cell *matHeaderCellDef> Resultado </mat-header-cell>
-        <mat-cell *matCellDef="let result"> {{ result?.value ?? 'N/A' }} </mat-cell>
+        <mat-cell *matCellDef="let result"> {{ result?.valor ?? 'N/A' }} </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="['athlete', 'discipline', 'value']"></mat-header-row>
       <mat-row *matRowDef="let row; columns: ['athlete', 'discipline', 'value'];"></mat-row>

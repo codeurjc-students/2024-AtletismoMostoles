@@ -1,5 +1,5 @@
-import { Discipline } from './discipline.model';
-import { Results } from './results.model';
+import { Discipline } from "./discipline.model";
+import { Results } from "./results.model";
 
 export interface Event {
   id: number;
@@ -10,4 +10,5 @@ export interface Event {
   imageLink?: string;
   disciplines?: Discipline[];
   results?: Results[];
+  creationTime: string;
 }

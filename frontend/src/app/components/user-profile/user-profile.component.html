@@ -90,6 +90,19 @@
         </div>
       </mat-card-content>
     </mat-card>
+
+    <mat-card *ngIf="notificacionesPendientes.length > 0" class="notificaciones-card">
+      <mat-card-header>
+        <mat-card-title>Eventos nuevos desde tu última conexión</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngFor="let evento of notificacionesPendientes" class="evento-item">
+          <p><strong>{{ evento.name }}</strong> ({{ evento.date }})</p>
+          <button mat-button color="primary" (click)="verDetalles(evento.eventoId)">Ver detalles</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
   </div>
 </div>
 

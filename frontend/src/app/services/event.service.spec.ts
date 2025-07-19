@@ -49,6 +49,7 @@ describe('EventService', () => {
       id: 1,
       name: 'Sample Event',
       date: '2025-10-10',
+      creationTime: '2025-09-01T10:00:00',
       organizedByClub: true,
       mapLink: 'maplink.com',
       imageLink: 'image.jpg',
@@ -73,16 +74,18 @@ describe('EventService', () => {
     const newEventCreate: EventCreate = {
       name: 'New Event',
       date: '2025-10-15',
-      imageUrl: 'newimage.jpg',
-      mapUrl: 'newmaplink.com',
-      isOrganizedByClub: true,
-      disciplines: [{ id: 1 }]
+      imageLink: 'newimage.jpg',
+      mapLink: 'newmaplink.com',
+      organizedByClub: true,
+      disciplineIds: [1],
+      creationTime: '2025-09-01T11:00:00'
     };
 
     const createdEvent: Event = {
       id: 2,
       name: 'New Event',
       date: '2025-10-15',
+      creationTime: '2025-09-01T11:00:00',
       organizedByClub: true,
       mapLink: 'newmaplink.com',
       imageLink: 'newimage.jpg',
@@ -109,6 +112,7 @@ describe('EventService', () => {
       id: 2,
       name: 'Updated Event',
       date: '2025-11-01',
+      creationTime: '2025-09-01T11:30:00',
       organizedByClub: false,
       mapLink: 'updatedmaplink.com',
       imageLink: 'updatedimage.jpg',

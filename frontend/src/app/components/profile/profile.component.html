@@ -72,15 +72,15 @@
         <mat-table [dataSource]="paginatedResults">
           <ng-container matColumnDef="event">
             <mat-header-cell *matHeaderCellDef> Evento </mat-header-cell>
-            <mat-cell *matCellDef="let result"> {{ result.event?.name ?? 'Evento desconocido' }} </mat-cell>
+            <mat-cell *matCellDef="let result"> {{ result.eventName ?? 'Evento desconocido' }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="discipline">
             <mat-header-cell *matHeaderCellDef> Disciplina </mat-header-cell>
-            <mat-cell *matCellDef="let result"> {{ result.discipline?.name ?? 'Sin disciplina' }} </mat-cell>
+            <mat-cell *matCellDef="let result"> {{ result.disciplineName ?? 'Sin disciplina' }} </mat-cell>
           </ng-container>
           <ng-container matColumnDef="value">
             <mat-header-cell *matHeaderCellDef> Resultado </mat-header-cell>
-            <mat-cell *matCellDef="let result"> {{ result.value ?? 'N/A' }} </mat-cell>
+            <mat-cell *matCellDef="let result"> {{ result.valor ?? 'N/A' }} </mat-cell>
           </ng-container>
           <mat-header-row *matHeaderRowDef="['event', 'discipline', 'value']"></mat-header-row>
           <mat-row *matRowDef="let row; columns: ['event', 'discipline', 'value']"></mat-row>
@@ -88,8 +88,36 @@
         <mat-paginator [length]="results.length" [pageSize]="itemsPerPage" (page)="nextPage()"></mat-paginator>
       </div>
 
+      <div *ngIf="isAthlete && pdfHistory.length" class="results-section">
+        <h3>Historial de PDFs Generados</h3>
+        <mat-list>
+          <mat-list-item *ngFor="let pdf of paginatedPdfHistory">
+            <div class="pdf-entry">
+              <p class="pdf-link">
+                <strong>Link de descarga:</strong>
+                <a [href]="pdf.urlBlob" target="_blank" rel="noopener">
+                  {{ pdf.urlBlob }}
+                </a>
+              </p>
+            </div>
+          </mat-list-item>
+          </mat-list>
+        <mat-paginator
+          [length]="pdfHistory.length"
+          [pageSize]="pdfPageSize"
+          [pageSizeOptions]="[5, 10]"
+          (page)="onPdfPageChange($event)">
+        </mat-paginator>
+      </div>
+
       <button mat-raised-button color="primary" *ngIf="isAdmin && !isEditing" (click)="enableEdit()">Editar Perfil</button>
       <button mat-raised-button color="warn" *ngIf="isAdmin" (click)="deleteProfile()">Eliminar Perfil</button>
+      <button mat-raised-button color="warn" (click)="requestPdf()">Pdf de Resultados</button>
+
+      <div *ngIf="generatingPdf">Generando PDF... Por favor, espera.</div>
+      <div *ngIf="generatedPdfLink">
+        <a [href]="generatedPdfLink" target="_blank">Descargar PDF generado</a>
+      </div>
     </mat-card-content>
   </mat-card>
 

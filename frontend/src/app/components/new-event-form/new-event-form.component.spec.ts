@@ -9,7 +9,6 @@ import { of, throwError } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Discipline } from '../../models/discipline.model';
-import { EventCreate } from '../../models/event-create.model';
 import { Event } from '../../models/event.model';
 import { Page } from '../../models/page.model';
 
@@ -114,40 +113,43 @@ describe('NewEventFormComponent', () => {
 
     it('llama a create y navega tras enviar un formulario válido', () => {
       component.eventForm.setValue({
-        name: 'Evt1',                   // ≥3 caracteres para pasar Validators.minLength(3) :contentReference[oaicite:0]{index=0}
+        name: 'Evt1',
         imageUrl: 'http://i',
-        mapUrl: 'http://m',
+        mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3...',
         date: '2025-01-01',
         organizedByClub: true,
         disciplines: [1]
       });
 
-      const fakeEvent: Event = {
+      // No validamos creationTime exacto, usamos expect parcial
+      const expectedPartial = jasmine.objectContaining({
+        name: 'Evt1',
+        imageLink: 'http://i',
+        mapLink: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3...',
+        date: '2025-01-01',
+        organizedByClub: true,
+        disciplineIds: [1]
+      });
+
+      // Creamos una respuesta válida del tipo Event completo
+      const mockEvent: Event = {
         id: 1,
         name: 'Evt1',
         date: '2025-01-01',
-        organizedByClub: true,
+        mapLink: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3...',
         imageLink: 'http://i',
-        mapLink: 'http://m',
-        disciplines: [{ id: 1, name: 'X', description: 'Y' }],
-        results: []
+        organizedByClub: true,
+        disciplines: [],
+        results: [],
+        creationTime: component.getLocalDateTime()
       };
-      eventService.create.and.returnValue(of(fakeEvent));
-      spyOn(window, 'alert').and.stub();
+
+      eventService.create.and.returnValue(of(mockEvent));
       spyOn(router, 'navigate');
 
       component.onSubmit();
 
-      const expectedPayload: EventCreate = {
-        name: 'Evt1',
-        imageUrl: 'http://i',
-        mapUrl: 'http://m',
-        date: '2025-01-01',
-        isOrganizedByClub: true,
-        disciplines: [{ id: 1 }]
-      };
-      expect(eventService.create).toHaveBeenCalledWith(expectedPayload);
-      expect(window.alert).toHaveBeenCalledWith('Evento creado correctamente');
+      expect(eventService.create).toHaveBeenCalledWith(expectedPartial);
       expect(router.navigate).toHaveBeenCalledWith(['/eventos']);
     });
 
@@ -155,16 +157,18 @@ describe('NewEventFormComponent', () => {
       component.eventForm.setValue({
         name: 'Evt1',
         imageUrl: 'http://i',
-        mapUrl: 'http://m',
+        mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3...',
         date: '2025-01-01',
         organizedByClub: false,
         disciplines: [1]
       });
+
       eventService.create.and.returnValue(throwError(() => new Error('fail')));
 
       component.onSubmit();
       expect(component.errorMessage).toBe('Error creando evento, inténtalo más tarde.');
     });
+
   });
 
   describe('onCancel', () => {

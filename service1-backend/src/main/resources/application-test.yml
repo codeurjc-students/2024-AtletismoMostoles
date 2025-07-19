@@ -1,0 +1,3 @@
+azure:
+  storage:
+    connection-string: "DefaultEndpointsProtocol=https;AccountName=fake;AccountKey=fake;EndpointSuffix=core.windows.net"

@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.example.service2.grpc";
+option java_outer_classname = "ResultadoServiceGrpcProto";
+
+// ------------------------
+// Servicio de Resultados
+// ------------------------
+service ResultService {
+  rpc SaveResult(ResultRequest) returns (StatusMessage);
+  rpc SaveMultipleResults(ResultListRequest) returns (StatusMessage);
+  rpc GetResultsByAthleteId(AthleteIdRequest) returns (ResultListResponse);
+  rpc GetResultsByEventId(EventIdRequest) returns (ResultListResponse);
+  rpc GetAllResults(Empty) returns (ResultListResponse);
+  rpc GetResultadoById(ResultIdRequest) returns (ResultResponse);
+
+}
+
+// ------------------------
+// Servicio de PDFs
+// ------------------------
+service PdfService {
+  rpc RequestPdfGeneration(AthleteIdRequest) returns (StatusMessage);
+  rpc GetPdfHistory(AthleteIdRequest) returns (PdfListResponse);
+}
+
+// ------------------------
+// Mensajes comunes
+// ------------------------
+message ResultRequest {
+  int64 eventId = 1;
+  int64 disciplineId = 2;
+  string athleteId = 3;
+  string value = 4;
+}
+
+message ResultIdRequest {
+  int64 id = 1;
+}
+
+
+message ResultResponse {
+  int64 id = 1;
+  ResultRequest result = 2;
+}
+
+message ResultListRequest {
+  repeated ResultRequest results = 1;
+}
+
+message ResultListResponse {
+  repeated ResultResponse results = 1;
+}
+
+message AthleteIdRequest {
+  string athleteId = 1;
+}
+
+message EventIdRequest {
+  int64 eventId = 1;
+}
+
+message PdfListResponse {
+  repeated string urls = 1;
+}
+
+message Empty {}

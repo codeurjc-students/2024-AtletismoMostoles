@@ -114,19 +114,18 @@ export class AddResultsDialogComponent {
   }
 
   onSave(): void {
-    console.log('Guardando...');
     if (this.resultsForm.valid) {
       const payload = this.resultControls.value.map((res: any) => ({
-        value: res.value,
-        athlete: { licenseNumber: res.athleteLicenseNumber },
-        discipline: { id: res.disciplineId },
-        event: { id: this.data.eventId }
+        atletaId: res.athleteLicenseNumber,
+        eventoId: this.data.eventId,
+        disciplinaId: res.disciplineId,
+        valor: res.value
       }));
+
       this.dialogRef.close(payload);
-      console.log('Formulario válido:', this.resultsForm.value);
     } else {
-      console.log('Formulario inválido:', this.resultsForm.value);
       this.resultsForm.markAllAsTouched();
     }
   }
+
 }

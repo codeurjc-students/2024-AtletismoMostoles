@@ -1,8 +1,9 @@
 export interface EventCreate {
   name: string;
-  imageUrl: string;
-  mapUrl: string;
+  imageLink: string;
+  mapLink: string;
   date: string;
-  isOrganizedByClub: boolean;
-  disciplines: { id: number }[];
+  organizedByClub: boolean;
+  disciplineIds: number[];
+  creationTime: string;
 }

@@ -6,7 +6,7 @@ import { CoachService } from '../../services/coach.service';
 import { Athlete } from '../../models/athlete.model';
 import { Coach } from '../../models/coach.model';
 import { Results } from '../../models/results.model';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Discipline } from '../../models/discipline.model';
 import { AuthService } from '../../services/auth.service';
@@ -21,6 +21,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
+import { ResultService } from '../../services/result.service';
+import { EventService } from '../../services/event.service';
+import { DisciplineService } from '../../services/discipline.service';
+import { ExtendedResults } from '../../models/extendedResults.model';
+import { WebSocketService } from '../../services/web-socket.service';
 
 @Component({
   selector: 'app-profile',
@@ -53,6 +58,7 @@ export class ProfileComponent implements OnInit {
   paginatedResults: Results[] = [];
   disciplines: Discipline[] = [];
   availableDisciplines: Discipline[] = [];
+  extendedResults: ExtendedResults[] = [];
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 1;
@@ -62,6 +68,13 @@ export class ProfileComponent implements OnInit {
   errorMessage: string = '';
   isAdmin: boolean = false;
   isLoggedIn: boolean = false;
+  generatingPdf: boolean = false;
+  generatedPdfLink: string = '';
+  pdfHistory: any[] = [];
+  paginatedPdfHistory: any[] = [];
+  pdfPageSize = 5;
+  pdfPageIndex = 0;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -69,7 +82,11 @@ export class ProfileComponent implements OnInit {
     private athleteService: AthleteService,
     private coachService: CoachService,
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private resultService: ResultService,
+    private eventService: EventService,
+    private disciplineService: DisciplineService,
+    private webSocketService: WebSocketService
   ) {}
 
   ngOnInit(): void {
@@ -86,6 +103,7 @@ export class ProfileComponent implements OnInit {
 
   loadProfile(id: number): void {
     const service = this.isAthlete ? this.athleteService : this.coachService;
+
     (service.getById(id.toString()) as Observable<Athlete | Coach>).subscribe(
       (response) => {
         this.profile = response;
@@ -93,15 +111,52 @@ export class ProfileComponent implements OnInit {
 
         if (this.isAthlete) {
           const athlete = response as Athlete;
-          this.results = athlete.results || [];
-          this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
-          this.updatePagination();
+
+          this.resultService.getByAthleteId(athlete.licenseNumber).subscribe({
+            next: (page) => {
+              const rawResults = page.content;
+
+              // Obtener nombres de evento y disciplina
+              const enrichment$ = rawResults.map(result =>
+                forkJoin({
+                  eventName: this.eventService.getById(result.eventoId).pipe(
+                    map(event => event?.name || 'Evento desconocido')
+                  ),
+                  disciplineName: this.disciplineService.getById(result.disciplinaId).pipe(
+                    map(disc => disc?.name || 'Sin disciplina')
+                  ),
+                }).pipe(
+                  map(({ eventName, disciplineName }) => ({
+                    ...result,
+                    eventName,
+                    disciplineName,
+                  }))
+                )
+              );
+
+              forkJoin(enrichment$).subscribe({
+                next: (enrichedResults) => {
+                  this.results = enrichedResults;
+                  this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
+                  this.updatePagination();
+                  console.log('Resultados enriquecidos:', this.results);
+                },
+                error: (err) => {
+                  console.error('Error al enriquecer resultados:', err);
+                  this.results = [];
+                }
+              });
+            },
+            error: (err) => {
+              console.error('Error al cargar resultados:', err);
+              this.results = [];
+            }
+          });
+          this.loadPdfHistory(athlete.licenseNumber);
         } else {
           const coach = response as Coach;
           this.coachedAthletes = coach.athletes || [];
         }
-        console.log('Resultados:', this.results);
-        console.log('Ejemplo evento:', this.results[0]?.event);
       },
       (error) => {
         console.error('Error loading profile:', error);
@@ -119,6 +174,19 @@ export class ProfileComponent implements OnInit {
         console.error('Error cargando disciplinas:', error);
       }
     );
+  }
+
+  loadPdfHistory(licenseNumber: string): void {
+     this.resultService.getPdfHistory(licenseNumber).subscribe({
+      next: (response) => {
+        this.pdfHistory = response.content;
+        this.updatePaginatedPdfHistory();
+        console.log("Historial de resultados.")
+      },
+      error: (err) => {
+        console.error('Error al cargar historial de PDFs', err);
+      },
+    });
   }
 
   enableEdit(): void {
@@ -167,6 +235,17 @@ export class ProfileComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  updatePaginatedPdfHistory(): void {
+    const start = this.pdfPageIndex * this.pdfPageSize;
+    const end = start + this.pdfPageSize;
+    this.paginatedPdfHistory = this.pdfHistory.slice(start, end);
+  }
+
+  onPdfPageChange(event: any): void {
+    this.pdfPageIndex = event.pageIndex;
+    this.updatePaginatedPdfHistory();
   }
 
   updatePagination(): void {
@@ -223,5 +302,20 @@ export class ProfileComponent implements OnInit {
     return `${this.profile.coach.firstName} ${this.profile.coach.lastName}`;
   }
 
+  requestPdf(): void {
+    if (!this.profile?.licenseNumber) return;
 
+    this.resultService.solicitarGeneracionPdf(this.profile.licenseNumber).subscribe({
+      next: () => {
+        this.generatingPdf = true;
+        this.webSocketService.escucharConfirmacionPdf(this.profile.licenseNumber, (url: string) => {
+          this.generatingPdf = false;
+          this.generatedPdfLink = url;
+        });
+      },
+      error: (err) => {
+        console.error('Error al solicitar PDF:', err);
+      }
+    });
+  }
 }

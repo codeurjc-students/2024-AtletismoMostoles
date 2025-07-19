@@ -22,6 +22,9 @@ import { AddResultsDialogComponent } from '../../modals/AddResultDialogComponent
 import { ResultService } from '../../services/result.service';
 import { Athlete } from '../../models/athlete.model';
 import { AthleteService } from '../../services/athlete.service';
+import { forkJoin, map } from 'rxjs';
+import { DisciplineService } from '../../services/discipline.service';
+import { Results } from '../../models/results.model';
 
 
 @Component({
@@ -56,7 +59,9 @@ export class EventDetailsComponent implements OnInit {
   isEditing: boolean = false;
   eventForm: FormGroup;
   results: any[] = [];
+  paginatedResults: Results[] = [];
   currentPage: number = 1;
+  itemsPerPage = 10;
   totalPages: number = 1;
   mapUrl: string = '';
   sanitizedMapUrl: SafeResourceUrl = '';
@@ -67,16 +72,19 @@ export class EventDetailsComponent implements OnInit {
     private eventService: EventService,
     private authService: AuthService,
     private athleteService: AthleteService,
+    private disciplineService: DisciplineService,
     private fb: FormBuilder,
     public dialog: MatDialog,
     private sanitizer: DomSanitizer,
-    private resultService: ResultService
+    private resultService: ResultService,
   ) {
     this.eventForm = this.fb.group({
       name: ['', Validators.required],
       date: ['', Validators.required],
       isOrganizedByClub: [false],
-      imageLink: ['']
+      imageLink: [''],
+      mapLink:[''],
+      createTime: [new Date().toISOString().replace('Z', '')]
     });
   }
 
@@ -89,19 +97,68 @@ export class EventDetailsComponent implements OnInit {
 
   loadEvent(): void {
     const eventId = Number(this.route.snapshot.paramMap.get('id'));
+
     if (eventId) {
-      this.eventService.getById(eventId).subscribe(response => {
-        this.event = response;
-        this.results = response.results || [];
-        this.mapUrl = response.mapLink || '';
+      this.eventService.getById(eventId).subscribe(eventResponse => {
+        this.event = eventResponse;
+        this.mapUrl = eventResponse.mapLink || '';
         this.sanitizedMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.mapUrl);
+
         this.eventForm.patchValue({
           name: this.event.name,
           date: this.event.date,
           isOrganizedByClub: this.event.organizedByClub,
-          imageLink: this.event.imageLink
+          imageLink: this.event.imageLink,
+          mapLink: this.event.mapLink
         });
-        console.log("organized:", this.event.organizedByClub);
+
+        this.resultService.getByEventId(eventId).subscribe({
+          next: (page) => {
+            const rawResults = page.content;
+
+            if (!rawResults || rawResults.length === 0) {
+              this.results = [];
+              return;
+            }
+
+            const enrichment$ = rawResults.map(result =>
+              forkJoin({
+                athlete: this.athleteService.getById(result.atletaId).pipe(
+                  map(a => ({
+                    firstName: a?.firstName || 'Desconocido',
+                    lastName: a?.lastName || ''
+                  }))
+                ),
+                discipline: this.disciplineService.getById(result.disciplinaId).pipe(
+                  map(d => ({ name: d?.name || 'Sin disciplina' }))
+                )
+              }).pipe(
+                map(({ athlete, discipline }) => ({
+                  ...result,
+                  athlete,
+                  discipline
+                }))
+              )
+            );
+
+            forkJoin(enrichment$).subscribe({
+              next: enriched => {
+                this.results = enriched;
+                this.totalPages = Math.ceil(this.results.length / this.itemsPerPage);
+                this.updatePagination();
+                console.log('Resultados enriquecidos:', this.results);
+              },
+              error: err => {
+                console.error('Error enriqueciendo resultados:', err);
+                this.results = rawResults; // fallback
+              }
+            });
+          },
+          error: (err) => {
+            console.error('Error cargando resultados:', err);
+            this.results = [];
+          }
+        });
       });
     }
   }
@@ -114,7 +171,7 @@ export class EventDetailsComponent implements OnInit {
     if (this.eventForm.valid) {
       const updatedEvent = {
         ...this.event,
-        ...this.eventForm.value  // toma los valores del form directamente
+        ...this.eventForm.value
       };
 
       console.log('Datos enviados a la API:', updatedEvent);
@@ -122,7 +179,7 @@ export class EventDetailsComponent implements OnInit {
       this.eventService.update(updatedEvent.id, updatedEvent).subscribe(() => {
         alert('Evento actualizado con éxito');
         this.isEditing = false;
-        this.loadEvent(); // recarga datos actualizados
+        this.loadEvent();
       });
     }
   }
@@ -151,25 +208,33 @@ export class EventDetailsComponent implements OnInit {
     this.athleteService.getAll(0, 1000).subscribe((response) => {
       const athletes: Athlete[] = response.content;
 
-      this.dialog.open(AddResultsDialogComponent, {
-        width: '600px',
-        data: {
-          eventId: this.event.id,
-          disciplines: this.event.disciplines || [],
-          athletes: athletes
-        }
-      }).afterClosed().subscribe((resultsToSave: any[]) => {
-        if (resultsToSave?.length) {
-          this.resultService.createMultiple(resultsToSave).subscribe(() => {
-            alert('Resultados agregados correctamente');
-            this.loadEvent();
-          }, error => {
-            console.error('Error al guardar resultados:', error);
-            alert('Error al guardar resultados');
-          });
-        }
+      this.disciplineService.getAll().subscribe((disciplines) => {
+        this.dialog.open(AddResultsDialogComponent, {
+          width: '600px',
+          data: {
+            eventId: this.event.id,
+            disciplines: disciplines.content || [],
+            athletes: athletes
+          }
+        }).afterClosed().subscribe((resultsToSave: any[]) => {
+          if (resultsToSave?.length) {
+            this.resultService.createMultiple(resultsToSave).subscribe(() => {
+              alert('Resultados agregados correctamente');
+              this.loadEvent();
+            }, error => {
+              console.log("New Result:", resultsToSave);
+              console.error('Error al guardar resultados:', error);
+              alert('Error al guardar resultados');
+            });
+          }
+        });
       });
     });
   }
 
+  updatePagination(): void {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = this.currentPage * this.itemsPerPage;
+    this.paginatedResults = this.results.slice(start, end);
+  }
 }
