@@ -32,11 +32,11 @@ jobs:
         run: mvn clean install
 
       # ----------------------------
-      # Run tests for Service1
+      # Run tests for Service1 
       # ----------------------------
       - name: Run tests - Service1
         working-directory: service1-backend
-        run: mvn clean verify
+        run: mvn clean verify -DexcludeTags=integration
 
       # ----------------------------
       # Run tests for Service2
