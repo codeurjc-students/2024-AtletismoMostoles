@@ -1,6 +1,7 @@
 package com.example.service1.Listeners;
 
 import com.example.service1.DTO.PdfConfirmationMessage;
+import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,8 @@ public class PdfConfirmationListener {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @RabbitListener(queues = "pdf.confirmation.queue")
+
+    @RabbitListener(queuesToDeclare = @Queue("pdf.confirmation.queue"))
     public void handleConfirmation(Map<String, String> message) {
         String atletaId = message.get("atletaId");
         String url = message.get("url");

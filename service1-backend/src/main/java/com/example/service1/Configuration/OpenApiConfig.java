@@ -18,7 +18,7 @@ public class OpenApiConfig {
                         .title("Club Members API")
                         .version("1.0")
                         .description("Documentación de la API REST para la gestión de miembros y entrenadores del club"))
-                .servers(List.of(new Server().url("https://localhost:443").description("Servidor local HTTPS")
+                .servers(List.of(new Server().url("https://localhost:9091").description("Servidor backend local")
                 ));
     }
 }
