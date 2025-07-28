@@ -1,28 +1,21 @@
-# Stage 1: Build Angular application
-FROM node:20 AS build-stage
-
+# Stage 1: Build Angular app
+FROM node:18-alpine AS build
 WORKDIR /app
+
+# Copy only the frontend project
+COPY frontend/package*.json ./
+RUN npm install
+
 COPY frontend/ ./
 
-# Install dependencies and build the project in production mode
-RUN npm install
-RUN npm run build -- --configuration=production
+RUN npx ng build --configuration production --project frontend
 
-# Stage 2: Serve with NGINX over HTTPS
-FROM nginx:stable-alpine AS production-stage
+# Stage 2: Serve with NGINX
+FROM nginx:1.25-alpine
 
-# Copy compiled Angular files
-COPY --from=build-stage /app/dist/frontend/browser /usr/share/nginx/html
+COPY docker/frontend/nginx.conf /etc/nginx/nginx.conf
 
-# Copy custom NGINX configuration
-COPY docker/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/frontend/browser/ /usr/share/nginx/html/
 
-# Copy self-signed SSL certificates
-COPY docker/frontend/certs/selfsigned.crt /etc/nginx/certs/selfsigned.crt
-COPY docker/frontend/certs/selfsigned.key /etc/nginx/certs/selfsigned.key
+EXPOSE 80
 
-# Expose HTTPS port
-EXPOSE 443
-
-# Start NGINX in the foreground
-CMD ["nginx", "-g", "daemon off;"]

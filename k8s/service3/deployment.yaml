@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service3-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service3-backend
+  template:
+    metadata:
+      labels:
+        app: service3-backend
+    spec:
+      containers:
+        - name: service3-backend
+          image: saac04/service3-events:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9093
+          envFrom:
+            - configMapRef:
+                name: service3-config
+            - secretRef:
+                name: service3-secrets

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service2-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service2-backend
+  template:
+    metadata:
+      labels:
+        app: service2-backend
+    spec:
+      containers:
+        - name: service2-backend
+          image: saac04/service2-result:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9092
+          envFrom:
+            - configMapRef:
+                name: service2-config
+            - secretRef:
+                name: service2-secrets

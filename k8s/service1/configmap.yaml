@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service1-config
+data:
+  SPRING_DATASOURCE_URL: "jdbc:mysql://service1-db:3306/service1_db"
+  SPRING_RABBITMQ_HOST: "rabbitmq"
+  SPRING_RABBITMQ_USERNAME: "guest"
+  SPRING_RABBITMQ_PASSWORD: "guest"
+  GRPC_CLIENT_SERVICIO2_ADDRESS: "service2-backend:9092"
+  GRPC_CLIENT_SERVICIO3_ADDRESS: "service3-backend:9093"
+  SERVER_SSL_ENABLED: "true"

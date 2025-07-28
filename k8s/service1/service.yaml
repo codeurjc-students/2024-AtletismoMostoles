@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service1-backend
+spec:
+  selector:
+    app: service1-backend
+  ports:
+    - protocol: TCP
+      port: 9091
+      targetPort: 9091
