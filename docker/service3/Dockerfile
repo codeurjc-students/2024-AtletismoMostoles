@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=builder /app/Service3-Events/target/*.jar app.jar
 
 # Expose gRPC port
-EXPOSE 9094
+EXPOSE 9093
 
 # === Environment variables: injected from Kubernetes Deployment ===
 ENV SPRING_DATASOURCE_URL=""

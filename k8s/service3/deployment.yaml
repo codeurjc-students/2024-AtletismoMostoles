@@ -17,7 +17,7 @@ spec:
           image: saac04/service3-events:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 9094
+            - containerPort: 9093
           envFrom:
             - configMapRef:
                 name: service3-config
