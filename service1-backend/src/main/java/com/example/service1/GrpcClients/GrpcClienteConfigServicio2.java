@@ -13,9 +13,8 @@ public class GrpcClienteConfigServicio2 {
 
     @Bean
     public ManagedChannel channelServicio2() {
-        // Apunta al gRPC server de Servicio2 en localhost:9092
         return ManagedChannelBuilder
-                .forAddress("localhost", 9092)
+                .forAddress("service2-backend", 9092)
                 .usePlaintext()
                 .build();
     }

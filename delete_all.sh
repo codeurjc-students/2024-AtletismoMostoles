@@ -27,7 +27,6 @@ kubectl delete -f k8s/service1/secret.yaml --ignore-not-found
 echo "🗑️ Deleting RabbitMQ..."
 kubectl delete -f k8s/rabbitmq/service.yaml --ignore-not-found
 kubectl delete -f k8s/rabbitmq/deployment.yaml --ignore-not-found
-kubectl delete -f k8s/rabbitmq/pvc.yaml --ignore-not-found
 
 echo "🗑️ Deleting MySQL databases..."
 kubectl delete -f k8s/databases/mysql-service3.yaml --ignore-not-found

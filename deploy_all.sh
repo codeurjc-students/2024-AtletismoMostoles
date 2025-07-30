@@ -11,10 +11,7 @@ kubectl apply -f k8s/databases/mysql-service1.yaml
 kubectl apply -f k8s/databases/mysql-service2.yaml
 kubectl apply -f k8s/databases/mysql-service3.yaml
 
-echo "📡 Deploying RabbitMQ..."
-kubectl apply -f k8s/rabbitmq/pvc.yaml
-kubectl apply -f k8s/rabbitmq/deployment.yaml
-kubectl apply -f k8s/rabbitmq/service.yaml
+
 
 echo "🧠 Deploying service1-backend..."
 kubectl apply -f k8s/service1/configmap.yaml

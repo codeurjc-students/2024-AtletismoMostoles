@@ -116,7 +116,6 @@ export class ProfileComponent implements OnInit {
             next: (page) => {
               const rawResults = page.content;
 
-              // Obtener nombres de evento y disciplina
               const enrichment$ = rawResults.map(result =>
                 forkJoin({
                   eventName: this.eventService.getById(result.eventoId).pipe(

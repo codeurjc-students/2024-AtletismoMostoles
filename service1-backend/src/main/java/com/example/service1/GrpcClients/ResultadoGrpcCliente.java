@@ -3,7 +3,6 @@ package com.example.service1.GrpcClients;
 import com.example.service1.DTO.PdfDto;
 import com.example.service1.DTO.ResultadoDto;
 import com.example.service2.grpc.*;
-import com.example.service2.grpc.ResultServiceGrpc.ResultServiceBlockingStub;
 import com.example.shared.CommonProto;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +12,10 @@ import java.util.stream.Collectors;
 @Component
 public class ResultadoGrpcCliente {
 
-    private final ResultServiceBlockingStub resultadoStub;
+    private final ResultServiceGrpc.ResultServiceBlockingStub resultadoStub;
     private final PdfServiceGrpc.PdfServiceBlockingStub pdfStub;
 
-    public ResultadoGrpcCliente(ResultServiceBlockingStub resultadoStub,
+    public ResultadoGrpcCliente(ResultServiceGrpc.ResultServiceBlockingStub resultadoStub,
                                 PdfServiceGrpc.PdfServiceBlockingStub pdfStub) {
         this.resultadoStub = resultadoStub;
         this.pdfStub = pdfStub;
