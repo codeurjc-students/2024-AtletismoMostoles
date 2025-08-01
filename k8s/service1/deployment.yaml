@@ -15,7 +15,7 @@ spec:
       containers:
         - name: service1-backend
           image: saac04/service1-backend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 9091
           envFrom:

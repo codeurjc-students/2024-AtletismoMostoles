@@ -15,7 +15,7 @@ spec:
       containers:
         - name: service2-backend
           image: saac04/service2-result:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 9092
           envFrom:

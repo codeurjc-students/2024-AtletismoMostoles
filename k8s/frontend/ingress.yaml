@@ -3,15 +3,16 @@ kind: Ingress
 metadata:
   name: frontend-ingress
   annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - localhost
-      secretName: frontend-ssl-secret
+        - frontend.9.163.170.58.nip.io
+      secretName: frontend-ssl-nipio
   rules:
-    - host: localhost
+    - host: frontend.9.163.170.58.nip.io
       http:
         paths:
           - path: /

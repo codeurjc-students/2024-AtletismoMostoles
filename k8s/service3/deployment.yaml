@@ -15,7 +15,7 @@ spec:
       containers:
         - name: service3-backend
           image: saac04/service3-events:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 9093
           envFrom:
