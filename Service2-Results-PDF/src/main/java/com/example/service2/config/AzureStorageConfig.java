@@ -3,20 +3,21 @@ package com.example.service2.config;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 @Configuration
-@ConditionalOnProperty(name = "azure.storage.connection-string")
-public class AzureStorageConfig{
+public class AzureStorageConfig {
 
-    @Value("${azure.storage.connection-string}")
-    private String connectionString;
+    String connectionString = System.getenv("AZURE_STORAGE_CONNECTION_STRING");
 
     @Bean
     public BlobServiceClient blobServiceClient() {
+        if (connectionString == null || connectionString.isBlank()) {
+            System.out.println("Azure_Storage_Connection_String: " + connectionString);
+            throw new IllegalStateException("AZURE_STORAGE_CONNECTION_STRING is not set or empty");
+        }
+
         return new BlobServiceClientBuilder()
                 .connectionString(connectionString)
                 .buildClient();

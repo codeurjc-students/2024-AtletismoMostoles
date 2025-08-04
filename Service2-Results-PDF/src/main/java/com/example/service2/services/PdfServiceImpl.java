@@ -46,15 +46,15 @@ public class PdfServiceImpl implements PdfService {
         Long disciplinaId = result.getDisciplineId();
 
         String athleteName = restTemplate.getForObject(
-                "https://localhost:9091/api/athletes/" + atletaId, AthleteDto.class
-        ).getFullName(); // ← combínalo si hace falta
+                "http://service1-backend:8081/api/athletes/" + atletaId, AthleteDto.class
+        ).getFullName();
 
         String eventName= restTemplate.getForObject(
-                "https://localhost:9091/api/events/" + eventoId, EventDto.class
+                "http://service1-backend:8081/api/events/" + eventoId, EventDto.class
         ).getName();
 
         String disciplineName = restTemplate.getForObject(
-                "https://localhost:9091/api/disciplines/" + disciplinaId, DisciplineDto.class
+                "http://service1-backend:8081/api/disciplines/" + disciplinaId, DisciplineDto.class
         ).getName();
 
         return new ResultadoExDto(athleteName, eventName, disciplineName, result.getValue());

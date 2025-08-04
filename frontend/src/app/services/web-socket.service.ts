@@ -14,7 +14,7 @@ export class WebSocketService {
   constructor() {
     this.stompClient = new Client({
       brokerURL: undefined, // usamos SockJS
-      webSocketFactory: () => new SockJS('https://localhost:443/ws'),
+      webSocketFactory: () => new SockJS('/ws'),
       reconnectDelay: 5000,
       debug: (msg: string) => console.log('[WebSocket] ' + msg),
       onConnect: () => {
