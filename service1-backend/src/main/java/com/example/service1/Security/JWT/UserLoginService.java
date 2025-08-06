@@ -3,7 +3,7 @@ package com.example.service1.Security.JWT;
 import com.example.service1.DTO.EventNotificationDto;
 import com.example.service1.Entities.User;
 import com.example.service1.Services.UserService;
-import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionData;
+import com.example.service3.grpc.EventoServiceGrpcProto.NotificationData;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,13 +44,11 @@ public class UserLoginService {
 
     public ResponseEntity<AuthResponse> login(LoginRequest loginRequest, String encryptedAccessToken, String encryptedRefreshToken) {
 
-        // Capturar el lastLogin antes de cualquier autenticación
         User dbUser = userService.getUserByName(loginRequest.getUsername());
         LocalDateTime lastLoginPrevio = dbUser.getLastLogin();
 
         System.out.println("TimeStamp Login (previo): " + lastLoginPrevio);
 
-        // Autenticación
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -62,11 +60,10 @@ public class UserLoginService {
         String username = loginRequest.getUsername();
         UserDetails user = userDetailsService.loadUserByUsername(username);
 
-        // Ya tienes dbUser cargado arriba
         List<EventNotificationDto> notificaciones = List.of();
 
         if (dbUser != null) {
-            List<NotificacionData> rawNotificaciones = userService.getPendingNotifications(dbUser, lastLoginPrevio);
+            List<NotificationData> rawNotificaciones = userService.getPendingNotifications(dbUser, lastLoginPrevio);
             notificaciones = rawNotificaciones.stream().map(data -> {
                 EventNotificationDto dto = new EventNotificationDto();
                 dto.setEventoId(data.getEventoId());
@@ -75,16 +72,14 @@ public class UserLoginService {
                 dto.setMapLink(data.getMapLink());
                 dto.setImageLink(data.getImageLink());
                 dto.setOrganizedByClub(data.getOrganizedByClub());
-                dto.setTimestampNotificacion(data.getTimestampNotificacion());
+                dto.setTimestampNotification(data.getTimestampNotification());
                 dto.setDisciplineIds(new HashSet<>(data.getDisciplineIdsList()));
                 return dto;
             }).toList();
 
-            // Actualizar último login después de recoger las notificaciones
             userService.updateLastLogin(dbUser);
         }
 
-        // Resto igual...
         boolean accessTokenValid = jwtTokenProvider.validateToken(accessToken);
         boolean refreshTokenValid = jwtTokenProvider.validateToken(refreshToken);
 

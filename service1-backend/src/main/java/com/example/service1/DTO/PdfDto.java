@@ -10,7 +10,6 @@ public class PdfDto {
     private String urlBlob;
     private String estado;
 
-    // Getters y setters
     public String getRequestId() {
         return requestId;
     }

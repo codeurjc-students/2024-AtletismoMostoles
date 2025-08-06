@@ -15,7 +15,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue eventNotificationQueue() {
-        return new Queue(EVENT_NOTIFICATION_QUEUE, true); // durable
+        return new Queue(EVENT_NOTIFICATION_QUEUE, true);
     }
 
     @Bean

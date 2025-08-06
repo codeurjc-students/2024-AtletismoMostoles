@@ -6,13 +6,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
-import com.example.service3.grpc.EventoServiceGrpc;
+import com.example.service3.grpc.EventServiceGrpc;
 
 @Configuration
-public class GrpcClienteConfigServicio3 {
+public class GrpcClienteConfigService3 {
 
     @Bean
-    public ManagedChannel channelServicio3() {
+    public ManagedChannel channelService3() {
         return ManagedChannelBuilder
                 .forAddress("service3-backend", 9093)
                 .usePlaintext()
@@ -20,8 +20,7 @@ public class GrpcClienteConfigServicio3 {
     }
 
     @Bean
-    public EventoServiceGrpc.EventoServiceBlockingStub eventoStub(ManagedChannel channelServicio3) {
-        // Crea el BlockingStub para invocar RPCs de EventoService
-        return EventoServiceGrpc.newBlockingStub(channelServicio3);
+    public EventServiceGrpc.EventServiceBlockingStub eventoStub(ManagedChannel channelService3) {
+        return EventServiceGrpc.newBlockingStub(channelService3);
     }
 }

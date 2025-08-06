@@ -1,7 +1,6 @@
 package com.example.service1.DTO;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,7 +12,7 @@ public class EventNotificationDto {
     private String imageLink;
     private boolean organizedByClub;
     private Set<Long> disciplineIds = new HashSet<>();
-    private String timestampNotificacion;
+    private String timestampNotification;
 
     public Long getEventoId() {
         return eventoId;
@@ -63,12 +62,12 @@ public class EventNotificationDto {
         this.organizedByClub = organizedByClub;
     }
 
-    public String getTimestampNotificacion() {
-        return timestampNotificacion;
+    public String getTimestampNotification() {
+        return timestampNotification;
     }
 
-    public void setTimestampNotificacion(String timestampNotificacion) {
-        this.timestampNotificacion = timestampNotificacion;
+    public void setTimestampNotification(String timestampNotification) {
+        this.timestampNotification = timestampNotification;
     }
 
     public Set<Long> getDisciplineIds() {

@@ -25,7 +25,6 @@ public class EventNotification {
         this.disciplineIds = disciplineIds;
     }
 
-    // Getters and setters
     public Long getEventoId() { return eventoId; }
     public void setEventoId(Long eventoId) { this.eventoId = eventoId; }
 

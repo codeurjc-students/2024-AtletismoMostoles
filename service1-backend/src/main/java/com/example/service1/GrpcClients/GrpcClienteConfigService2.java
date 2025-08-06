@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-public class GrpcClienteConfigServicio2 {
+public class GrpcClienteConfigService2 {
 
     @Bean
-    public ManagedChannel channelServicio2() {
+    public ManagedChannel channelService2() {
         return ManagedChannelBuilder
                 .forAddress("service2-backend", 9092)
                 .usePlaintext()
@@ -20,13 +20,13 @@ public class GrpcClienteConfigServicio2 {
     }
 
     @Bean
-    public PdfServiceGrpc.PdfServiceBlockingStub pdfServiceStub(ManagedChannel channelServicio2) {
-        return PdfServiceGrpc.newBlockingStub(channelServicio2);
+    public PdfServiceGrpc.PdfServiceBlockingStub pdfServiceStub(ManagedChannel channelService2) {
+        return PdfServiceGrpc.newBlockingStub(channelService2);
     }
 
     @Bean
-    public ResultServiceGrpc.ResultServiceBlockingStub resultServiceStub(ManagedChannel channelServicio2) {
-        return ResultServiceGrpc.newBlockingStub(channelServicio2);
+    public ResultServiceGrpc.ResultServiceBlockingStub resultServiceStub(ManagedChannel channelService2) {
+        return ResultServiceGrpc.newBlockingStub(channelService2);
     }
 
 

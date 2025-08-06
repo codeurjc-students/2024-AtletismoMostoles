@@ -2,7 +2,6 @@ package com.example.service2.config;
 
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,7 +13,6 @@ public class AzureStorageConfig {
     @Bean
     public BlobServiceClient blobServiceClient() {
         if (connectionString == null || connectionString.isBlank()) {
-            System.out.println("Azure_Storage_Connection_String: " + connectionString);
             throw new IllegalStateException("AZURE_STORAGE_CONNECTION_STRING is not set or empty");
         }
 

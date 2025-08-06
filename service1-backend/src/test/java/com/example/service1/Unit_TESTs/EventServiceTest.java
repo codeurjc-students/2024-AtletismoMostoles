@@ -2,12 +2,12 @@ package com.example.service1.Unit_TESTs;
 
 import com.example.service1.DTO.EventDto;
 import com.example.service1.DTO.EventNotificationDto;
-import com.example.service1.GrpcClients.EventoGrpcClient;
-import com.example.service1.Services.EventoService;
-import com.example.service3.grpc.EventoServiceGrpcProto.EventoMessage;
-import com.example.service3.grpc.EventoServiceGrpcProto.ListarEventosResponse;
-import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionData;
-import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionesResponse;
+import com.example.service1.GrpcClients.EventGrpcClient;
+import com.example.service1.Services.EventService;
+import com.example.service3.grpc.EventServiceGrpcProto.EventMessage;
+import com.example.service3.grpc.EventServiceGrpcProto.ListEventsResponse;
+import com.example.service3.grpc.EventServiceGrpcProto.NotificationData;
+import com.example.service3.grpc.EventServiceGrpcProto.NotificationsResponse;
 import com.example.shared.CommonProto.StatusMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,18 +26,18 @@ import static org.mockito.Mockito.*;
 class EventServiceTest {
 
     @Mock
-    private EventoGrpcClient grpcClient;
+    private EventGrpcClient grpcClient;
 
     @InjectMocks
-    private EventoService eventoService;
+    private EventService eventService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
-    private EventoMessage mockEventoMessage() {
-        return EventoMessage.newBuilder()
+    private EventMessage mockEventMessage() {
+        return EventMessage.newBuilder()
                 .setId(1L)
                 .setName("Test Event")
                 .setDate("2025-01-01")
@@ -50,31 +50,31 @@ class EventServiceTest {
     }
 
     @Test
-    void testListarEventos() {
-        ListarEventosResponse response = ListarEventosResponse.newBuilder()
-                .addAllEventos(List.of(mockEventoMessage()))
+    void testListEvents() {
+        ListEventsResponse response = ListEventsResponse.newBuilder()
+                .addAllEventos(List.of(mockEventMessage()))
                 .build();
 
-        when(grpcClient.listarEventos()).thenReturn(response);
+        when(grpcClient.listEvents()).thenReturn(response);
 
-        List<EventDto> result = eventoService.listarEventos();
+        List<EventDto> result = eventService.listEvents();
 
         assertEquals(1, result.size());
         assertEquals("Test Event", result.get(0).getName());
     }
 
     @Test
-    void testGetEventoById() {
-        when(grpcClient.obtenerEventoPorId(1L)).thenReturn(mockEventoMessage());
+    void testGetEventById() {
+        when(grpcClient.getEventForId(1L)).thenReturn(mockEventMessage());
 
-        EventDto result = eventoService.getEventoById(1L);
+        EventDto result = eventService.getEventById(1L);
 
         assertNotNull(result);
         assertEquals("Test Event", result.getName());
     }
 
     @Test
-    void testCrearEvento() {
+    void testCreateEvent() {
         EventDto input = new EventDto();
         input.setName("Nuevo");
         input.setDate(LocalDate.parse("2025-01-01"));
@@ -84,15 +84,15 @@ class EventServiceTest {
         input.setDisciplineIds(new java.util.HashSet<>(Arrays.asList(1L, 2L)));
         input.setCreationTime(LocalDateTime.parse("2025-01-01T12:00:00"));
 
-        when(grpcClient.crearEvento(input)).thenReturn(mockEventoMessage());
+        when(grpcClient.createEvent(input)).thenReturn(mockEventMessage());
 
-        EventDto result = eventoService.crearEvento(input);
+        EventDto result = eventService.createEvent(input);
 
         assertEquals("Test Event", result.getName());
     }
 
     @Test
-    void testActualizarEvento() {
+    void testUpdateEvent() {
         EventDto input = new EventDto();
         input.setName("Actualizar");
         input.setDate(LocalDate.parse("2025-01-01"));
@@ -102,48 +102,47 @@ class EventServiceTest {
         input.setDisciplineIds(new java.util.HashSet<>(Arrays.asList(1L)));
         input.setCreationTime(LocalDateTime.parse("2025-01-01T12:00:00"));
 
-        when(grpcClient.actualizarEvento(1L, input)).thenReturn(mockEventoMessage());
+        when(grpcClient.updateEvent(1L, input)).thenReturn(mockEventMessage());
 
-        EventDto result = eventoService.actualizarEvento(1L, input);
+        EventDto result = eventService.updateEvent(1L, input);
 
         assertEquals("Test Event", result.getName());
     }
 
     @Test
-    void testBorrarEvento() {
-        // Simula retorno exitoso (como está definido en el .proto con StatusMessage)
+    void testDeleteEvent() {
         StatusMessage success = StatusMessage.newBuilder()
                 .setSuccess(true)
                 .setMensaje("ok")
                 .build();
 
-        when(grpcClient.borrarEvento(1L)).thenReturn(success);
+        when(grpcClient.deleteEvent(1L)).thenReturn(success);
 
-        eventoService.borrarEvento(1L);
+        eventService.deleteEvent(1L);
 
-        verify(grpcClient).borrarEvento(1L);
+        verify(grpcClient).deleteEvent(1L);
     }
 
     @Test
-    void testObtenerNotificaciones() {
-        NotificacionData notif = NotificacionData.newBuilder()
+    void testGetNotifications() {
+        NotificationData notif = NotificationData.newBuilder()
                 .setEventoId(1L)
                 .setName("Noti")
                 .setDate("2025-01-01")
                 .setMapLink("map")
                 .setImageLink("img")
                 .setOrganizedByClub(true)
-                .setTimestampNotificacion("2025-01-01T13:00:00")
+                .setTimestampNotification("2025-01-01T13:00:00")
                 .addAllDisciplineIds(Arrays.asList(1L, 2L))
                 .build();
 
-        NotificacionesResponse response = NotificacionesResponse.newBuilder()
+        NotificationsResponse response = NotificationsResponse.newBuilder()
                 .addAllNotificaciones(List.of(notif))
                 .build();
 
-        when(grpcClient.notificacionesPendientes(100L, "2025-01-01T10:00:00")).thenReturn(response);
+        when(grpcClient.pendingNotifications(100L, "2025-01-01T10:00:00")).thenReturn(response);
 
-        List<EventNotificationDto> result = eventoService.obtenerNotificaciones(100L, "2025-01-01T10:00:00");
+        List<EventNotificationDto> result = eventService.obtenerNotificaciones(100L, "2025-01-01T10:00:00");
 
         assertEquals(1, result.size());
         assertEquals("Noti", result.get(0).getName());

@@ -14,7 +14,6 @@ public class Result {
     private String athleteId;
     private String value;
 
-    // Constructores
     public Result() {}
 
     public Result(Long id, Long eventId, Long disciplineId, String athleteId, String value) {
@@ -25,7 +24,6 @@ public class Result {
         this.value = value;
     }
 
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -38,16 +36,8 @@ public class Result {
         return eventId;
     }
 
-    public void setEventId(Long eventId) {
-        this.eventId = eventId;
-    }
-
     public Long getDisciplineId() {
         return disciplineId;
-    }
-
-    public void setDisciplineId(Long disciplineId) {
-        this.disciplineId = disciplineId;
     }
 
     public String getAthleteId() {

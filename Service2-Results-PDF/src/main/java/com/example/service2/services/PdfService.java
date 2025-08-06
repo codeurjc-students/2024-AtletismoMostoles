@@ -6,7 +6,7 @@ public interface PdfService {
 
     List<String> getUrlsByAthleteId(String athleteId);
 
-    void generarPdfParaAtleta(String athleteId);
+    void generatePdfForAthlete(String athleteId);
 
     void saveUrlForAthlete(String athleteId, String url);
 }

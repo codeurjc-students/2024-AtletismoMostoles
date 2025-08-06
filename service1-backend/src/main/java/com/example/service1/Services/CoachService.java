@@ -1,6 +1,5 @@
 package com.example.service1.Services;
 
-
 import com.example.service1.Exceptions.DuplicateResourceException;
 import com.example.service1.Exceptions.ResourceNotFoundException;
 import com.example.service1.Entities.Coach;
@@ -10,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class CoachService {

@@ -47,7 +47,7 @@ class PdfServiceImplTest {
     }
 
     @Test
-    void generarPdfParaAtleta_shouldUploadAndNotify() {
+    void generatePdfForAthlete_shouldUploadAndNotify() {
         String athleteId = "123";
         Long eventId = 1L;
         Long disciplineId = 1L;
@@ -76,7 +76,7 @@ class PdfServiceImplTest {
         when(azureBlobService.uploadPdf(anyString(), any())).thenReturn(expectedUrl);
 
         // Ejecutar servicio
-        pdfService.generarPdfParaAtleta(athleteId);
+        pdfService.generatePdfForAthlete(athleteId);
 
         // Verificaciones
         verify(resultRepository).findByAthleteId(athleteId);

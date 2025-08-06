@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+import "common.proto";
+
+option java_package = "com.example.service3.grpc";
+option java_outer_classname = "EventServiceGrpcProto";
+
+service EventService {
+  rpc ListEvents(ListEventsRequest) returns (ListEventsResponse);
+  rpc CreateEvent(CreateEventRequest) returns (EventMessage);
+  rpc GetEventById(GetEventRequest) returns (EventMessage);
+  rpc UpdateEvent(UpdateEventRequest) returns (EventMessage);
+  rpc DeleteEvent(DeleteEventRequest) returns (StatusMessage);
+  rpc PendingNotifications(NotificationsRequest) returns (NotificationsResponse);
+  rpc MarkEventViewed(MarkEventViewedRequest) returns (StatusMessage);
+}
+
+// ========================= GETS =========================
+
+message ListEventsRequest {}
+
+message GetEventRequest {
+  int64 id = 1;
+}
+
+message CreateEventRequest {
+  string name = 1;
+  string date = 2;
+  string mapLink = 3;
+  string imageLink = 4;
+  bool organizedByClub = 5;
+  repeated int64 disciplineIds = 6;
+  string creationTime = 8;
+}
+
+message UpdateEventRequest {
+  int64 id = 1;
+  string name = 2;
+  string date = 3;
+  string mapLink = 4;
+  string imageLink = 5;
+  bool organizedByClub = 6;
+  repeated int64 disciplineIds = 7;
+  string creationTime = 8;
+}
+
+message DeleteEventRequest {
+  int64 eventId = 1;
+}
+
+message MarkEventViewedRequest {
+  int64 userId = 1;
+  int64 eventId = 2;
+}
+
+message NotificationsRequest {
+  int64 userId = 1;
+  string timestampLastConnection = 2;
+}
+
+// ========================= RESPONS =========================
+
+message EventMessage {
+  int64 id = 1;
+  string name = 2;
+  string date = 3;
+  string mapLink = 4;
+  string imageLink = 5;
+  bool organizedByClub = 6;
+  repeated int64 disciplineIds = 7;
+  string creationTime = 8;
+}
+
+message ListEventsResponse {
+  repeated EventMessage eventos = 1;
+}
+
+message NotificationData {
+  int64 eventoId = 1;
+  string name = 2;
+  string date = 3;
+  string mapLink = 4;
+  string imageLink = 5;
+  bool organizedByClub = 6;
+  string timestampNotification = 7;
+  repeated int64 disciplineIds = 8;
+}
+
+message NotificationsResponse {
+  repeated NotificationData notificaciones = 1;
+}
+
+

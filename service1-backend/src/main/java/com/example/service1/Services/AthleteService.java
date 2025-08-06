@@ -1,6 +1,5 @@
 package com.example.service1.Services;
 
-
 import com.example.service1.Exceptions.DuplicateResourceException;
 import com.example.service1.Exceptions.ResourceNotFoundException;
 import com.example.service1.Entities.Athlete;

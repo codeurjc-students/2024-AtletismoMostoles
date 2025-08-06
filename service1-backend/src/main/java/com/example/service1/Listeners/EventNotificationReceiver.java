@@ -19,7 +19,6 @@ public class EventNotificationReceiver {
         System.out.println("Notification:"+ notification);
         System.out.println("[RabbitMQ] Notificación de evento recibida: " + notification.getEventoId());
 
-        // Enviar al topic del frontend
         messagingTemplate.convertAndSend("/topic/eventos", notification);
     }
 }

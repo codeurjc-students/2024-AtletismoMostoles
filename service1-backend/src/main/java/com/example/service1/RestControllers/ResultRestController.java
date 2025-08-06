@@ -1,7 +1,7 @@
 package com.example.service1.RestControllers;
 
 import com.example.service1.DTO.PdfDto;
-import com.example.service1.DTO.ResultadoDto;
+import com.example.service1.DTO.ResultDto;
 import com.example.service1.Services.ResultService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,34 +19,34 @@ public class ResultRestController {
     private ResultService resultService;
 
     @GetMapping
-    public ResponseEntity<Page<ResultadoDto>> getAllResults(
+    public ResponseEntity<Page<ResultDto>> getAllResults(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy
     ) {
-        List<ResultadoDto> allResults = resultService.getAllResultados();
+        List<ResultDto> allResults = resultService.getAllResults();
         return ResponseEntity.ok(paginate(allResults, page, size, sortBy));
     }
 
     @GetMapping("/athlete/{atletaId}")
-    public ResponseEntity<Page<ResultadoDto>> getResultsByAthlete(
+    public ResponseEntity<Page<ResultDto>> getResultsByAthlete(
             @PathVariable String atletaId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy
     ) {
-        List<ResultadoDto> results = resultService.getResultadosDeAtleta(atletaId);
+        List<ResultDto> results = resultService.getResultsByAthlete(atletaId);
         return ResponseEntity.ok(paginate(results, page, size, sortBy));
     }
 
     @GetMapping("/event/{eventId}")
-    public ResponseEntity<Page<ResultadoDto>> getResultsByEvent(
+    public ResponseEntity<Page<ResultDto>> getResultsByEvent(
             @PathVariable Long eventId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy
     ) {
-        List<ResultadoDto> results = resultService.getResultadosDeEvento(eventId);
+        List<ResultDto> results = resultService.getResultsByEvent(eventId);
         return ResponseEntity.ok(paginate(results, page, size, sortBy));
     }
 
@@ -62,28 +62,28 @@ public class ResultRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResultadoDto> getResultById(@PathVariable Long id) {
-        ResultadoDto result = resultService.getResultadoPorId(id);
+    public ResponseEntity<ResultDto> getResultById(@PathVariable Long id) {
+        ResultDto result = resultService.getResultById(id);
         return result != null ? ResponseEntity.ok(result) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<ResultadoDto> createResult(@Valid @RequestBody ResultadoDto dto) {
-        ResultadoDto saved = resultService.guardarResultado(
-                dto.getAtletaId(), dto.getEventoId(), dto.getDisciplinaId(), dto.getValor());
+    public ResponseEntity<ResultDto> createResult(@Valid @RequestBody ResultDto dto) {
+        ResultDto saved = resultService.saveResult(
+                dto.getAthleteId(), dto.getEventId(), dto.getDisciplineId(), dto.getValue());
         return ResponseEntity.ok(saved);
     }
 
     @PostMapping("/batch")
-    public ResponseEntity<List<ResultadoDto>> createMultipleResults(@RequestBody List<ResultadoDto> DTos) {
-        List<ResultadoDto> saved = resultService.guardarResultadosBatchDesdeDto(DTos);
+    public ResponseEntity<List<ResultDto>> createMultipleResults(@RequestBody List<ResultDto> DTos) {
+        List<ResultDto> saved = resultService.saveResultsBatchFromDto(DTos);
         return ResponseEntity.ok(saved);
     }
 
 
-    @PostMapping("/pdf/{atletaId}")
-    public ResponseEntity<Void> solicitarGeneracionPdf(@PathVariable String atletaId) {
-        resultService.solicitarGeneracionPdf(atletaId);
+    @PostMapping("/pdf/{athleteId}")
+    public ResponseEntity<Void> requestGenerationPdf(@PathVariable String athleteId) {
+        resultService.requestGenerationPdf(athleteId);
         return ResponseEntity.accepted().build();
     }
 

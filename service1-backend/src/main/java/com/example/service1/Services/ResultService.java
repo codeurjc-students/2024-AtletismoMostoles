@@ -2,8 +2,8 @@ package com.example.service1.Services;
 
 import com.example.service1.Configuration.RabbitMQConfig;
 import com.example.service1.DTO.PdfDto;
-import com.example.service1.DTO.ResultadoDto;
-import com.example.service1.GrpcClients.ResultadoGrpcCliente;
+import com.example.service1.DTO.ResultDto;
+import com.example.service1.GrpcClients.ResultGrpcClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,42 +16,42 @@ import java.util.Map;
 public class ResultService {
 
     @Autowired
-    private ResultadoGrpcCliente grpcClient;
+    private ResultGrpcClient grpcClient;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public List<ResultadoDto> getAllResultados() {
-        return grpcClient.getAllResultados();
+    public List<ResultDto> getAllResults() {
+        return grpcClient.getAllResults();
     }
 
-    public List<ResultadoDto> getResultadosDeAtleta(String atletaId) {
-        return grpcClient.getResultadosPorAtleta(atletaId);
+    public List<ResultDto> getResultsByAthlete(String athleteId) {
+        return grpcClient.getResultsByAthlete(athleteId);
     }
 
-    public List<ResultadoDto> getResultadosDeEvento(Long eventoId) {
-        return grpcClient.verResultadosPorEvento(eventoId);
+    public List<ResultDto> getResultsByEvent(Long eventId) {
+        return grpcClient.getResultsByEvent(eventId);
     }
 
-    public ResultadoDto guardarResultado(String atletaId, Long eventoId, Long disciplinaId, String valor) {
-        return grpcClient.guardarResultado(atletaId, eventoId, disciplinaId, valor);
+    public ResultDto saveResult(String athleteId, Long eventId, Long disciplineId, String value) {
+        return grpcClient.saveResult(athleteId, eventId, disciplineId, value);
     }
 
-    public List<ResultadoDto> guardarResultadosBatchDesdeDto(List<ResultadoDto> DTos) {
-        return grpcClient.guardarResultadosBatch(DTos);
+    public List<ResultDto> saveResultsBatchFromDto(List<ResultDto> DTos) {
+        return grpcClient.saveResultsBatch(DTos);
     }
 
-    public ResultadoDto getResultadoPorId(Long id) {
-        return grpcClient.getResultadoPorId(id);
+    public ResultDto getResultById(Long id) {
+        return grpcClient.getResultById(id);
     }
 
-    public List<PdfDto> getHistorialPdf(String atletaId) {
-        return grpcClient.listaPdfHistorico(atletaId);
+    public List<PdfDto> getHistorialPdf(String athleteId) {
+        return grpcClient.listPdfHistorical(athleteId);
     }
 
-    public void solicitarGeneracionPdf(String atletaId) {
+    public void requestGenerationPdf(String athleteId) {
         Map<String, String> message = new HashMap<>();
-        message.put("atletaId", atletaId);
+        message.put("atletaId", athleteId);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.PDF_REQUEST_QUEUE, message);
     }

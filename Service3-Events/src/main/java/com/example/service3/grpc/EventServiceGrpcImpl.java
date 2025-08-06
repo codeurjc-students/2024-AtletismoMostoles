@@ -25,11 +25,11 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void listarEventos(ListarEventosRequest request, StreamObserver<ListarEventosResponse> responseObserver) {
-        List<Event> eventos = eventService.findAllOrdered();
+    public void listEvents(ListEventsRequest request, StreamObserver<ListEventsResponse> responseObserver) {
+        List<Event> events = eventService.findAllOrdered();
 
-        ListarEventosResponse.Builder response = ListarEventosResponse.newBuilder();
-        for (Event e : eventos) {
+        ListEventsResponse.Builder response = ListEventsResponse.newBuilder();
+        for (Event e : events) {
             response.addEventos(convertToMessage(e));
         }
 
@@ -38,11 +38,11 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void obtenerEventoPorId(GetEventoRequest request, StreamObserver<EventoMessage> responseObserver) {
+    public void getEventForId(GetEventRequest request, StreamObserver<EventMessage> responseObserver) {
         Optional<Event> optional = eventService.findById(request.getId());
 
         if (optional.isPresent()) {
-            EventoMessage msg = convertToMessage(optional.get());
+            EventMessage msg = convertToMessage(optional.get());
             responseObserver.onNext(msg);
             responseObserver.onCompleted();
         } else {
@@ -55,7 +55,7 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void crearEvento(CrearEventoRequest request, StreamObserver<EventoMessage> responseObserver) {
+    public void createEvent(CreateEventRequest request, StreamObserver<EventMessage> responseObserver) {
         Event event = new Event();
         event.setName(request.getName());
         event.setDate(LocalDate.parse(request.getDate()));
@@ -67,13 +67,13 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
 
         Event saved = eventService.save(event);
 
-        EventoMessage message = convertToMessage(saved);
+        EventMessage message = convertToMessage(saved);
         responseObserver.onNext(message);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void actualizarEvento(UpdateEventoRequest request, StreamObserver<EventoMessage> responseObserver) {
+    public void updateEvent(UpdateEventRequest request, StreamObserver<EventMessage> responseObserver) {
         Optional<Event> optional = eventService.findById(request.getId());
 
         if (optional.isPresent()) {
@@ -87,21 +87,20 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
             event.setCreationTime(LocalDateTime.parse(request.getCreationTime()));
 
             Event updated = eventService.save(event);
-            EventoMessage message = convertToMessage(updated);
+            EventMessage message = convertToMessage(updated);
             responseObserver.onNext(message);
         } else {
             responseObserver.onError(Status.NOT_FOUND
                     .withDescription("Evento no encontrado")
                     .asRuntimeException());
         }
-
         responseObserver.onCompleted();
     }
 
     @Override
-    public void borrarEvento(BorrarEventoRequest request, StreamObserver<CommonProto.StatusMessage> responseObserver) {
+    public void deleteEvent(DeleteEventRequest request, StreamObserver<CommonProto.StatusMessage> responseObserver) {
         try {
-            eventService.deleteById(request.getEventoId());
+            eventService.deleteById(request.getEventId());
             responseObserver.onNext(CommonProto.StatusMessage.newBuilder()
                     .setSuccess(true)
                     .setMensaje("Evento eliminado correctamente.")
@@ -116,28 +115,28 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void notificacionesPendientes(NotificacionesRequest request, StreamObserver<NotificacionesResponse> responseObserver) {
+    public void pendingNotifications(NotificationsRequest request, StreamObserver<NotificationsResponse> responseObserver) {
         try {
-            String fechaStr = request.getTimestampUltimaConexion();
+            String fechaStr = request.getTimestampLastConnection();
             System.out.println("fecha: " + fechaStr);
             LocalDateTime date = LocalDateTime.parse(fechaStr);
 
             List<Event> nuevosEventos = eventService.findEventsAfter(date);
 
-            List<NotificacionData> notificaciones = nuevosEventos.stream().map(event ->
-                    NotificacionData.newBuilder()
+            List<NotificationData> notificaciones = nuevosEventos.stream().map(event ->
+                    NotificationData.newBuilder()
                             .setEventoId(event.getId())
                             .setName(event.getName())
                             .setDate(event.getDate().toString())
                             .setMapLink(event.getMapLink())
                             .setImageLink(event.getImageLink())
                             .setOrganizedByClub(event.isOrganizedByClub())
-                            .setTimestampNotificacion(LocalDateTime.now().toString())
+                            .setTimestampNotification(LocalDateTime.now().toString())
                             .addAllDisciplineIds(event.getDisciplineIds())
                             .build()
             ).toList();
 
-            NotificacionesResponse response = NotificacionesResponse.newBuilder()
+            NotificationsResponse response = NotificationsResponse.newBuilder()
                     .addAllNotificaciones(notificaciones)
                     .build();
 
@@ -150,8 +149,8 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
         }
     }
 
-    private EventoMessage convertToMessage(Event event) {
-        EventoMessage.Builder builder = EventoMessage.newBuilder()
+    private EventMessage convertToMessage(Event event) {
+        EventMessage.Builder builder = EventMessage.newBuilder()
                 .setId(event.getId())
                 .setName(event.getName())
                 .setDate(event.getDate().toString())
