@@ -118,10 +118,10 @@ export class ProfileComponent implements OnInit {
 
               const enrichment$ = rawResults.map(result =>
                 forkJoin({
-                  eventName: this.eventService.getById(result.eventoId).pipe(
+                  eventName: this.eventService.getById(result.eventId).pipe(
                     map(event => event?.name || 'Evento desconocido')
                   ),
-                  disciplineName: this.disciplineService.getById(result.disciplinaId).pipe(
+                  disciplineName: this.disciplineService.getById(result.disciplineId).pipe(
                     map(disc => disc?.name || 'Sin disciplina')
                   ),
                 }).pipe(
@@ -304,10 +304,10 @@ export class ProfileComponent implements OnInit {
   requestPdf(): void {
     if (!this.profile?.licenseNumber) return;
 
-    this.resultService.solicitarGeneracionPdf(this.profile.licenseNumber).subscribe({
+    this.resultService.requestGenerationPdf(this.profile.licenseNumber).subscribe({
       next: () => {
         this.generatingPdf = true;
-        this.webSocketService.escucharConfirmacionPdf(this.profile.licenseNumber, (url: string) => {
+        this.webSocketService.listenConfirmationPdf(this.profile.licenseNumber, (url: string) => {
           this.generatingPdf = false;
           this.generatedPdfLink = url;
         });

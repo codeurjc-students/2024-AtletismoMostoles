@@ -25,9 +25,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.webSocketService.escucharEventos((evento) => {
+    this.webSocketService.listenEvents((event) => {
       const ref = this.snackBar.openFromComponent(EventNotificationSnackbarComponent, {
-        data: evento,
+        data: event,
         duration: 8000,
         horizontalPosition: 'center',
         verticalPosition: 'top',
@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
       });
 
       ref.onAction().subscribe(() => {
-        this.router.navigate([`/eventos/${evento.eventoId}`]);
+        this.router.navigate([`/eventos/${event.eventoId}`]);
       });
     });
   }

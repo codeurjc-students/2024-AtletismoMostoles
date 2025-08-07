@@ -30,7 +30,7 @@ export class UserService {
     return this.http.get('/api/admin/users', { withCredentials: true });
   }
 
-  getNotificacionesPendientes(): Observable<any[]> {
+  getNotificationPending(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/notificaciones-pendientes`, { withCredentials: true });
   }
 }

@@ -32,7 +32,6 @@ export class IndexComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    // Suscribirse a los cambios del estado de autenticación
     this.authService.user.subscribe(user => {
       this.isLoggedIn = !!user;
     });

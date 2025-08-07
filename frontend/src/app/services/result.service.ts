@@ -37,7 +37,7 @@ export class ResultService {
   }
 
   getByAthleteId(
-    atletaId: string,
+    athleteId: string,
     page: number = 0,
     size: number = 10,
     sortBy: string = 'id'
@@ -48,7 +48,7 @@ export class ResultService {
       .set('sortBy', sortBy);
 
     return this.http
-      .get<Page<Results>>(`${this.apiUrl}/athlete/${atletaId}`, {
+      .get<Page<Results>>(`${this.apiUrl}/athlete/${athleteId}`, {
         params,
         withCredentials: true,
       })
@@ -75,7 +75,7 @@ export class ResultService {
   }
 
   getPdfHistory(
-    atletaId: string,
+    athleteId: string,
     page: number = 0,
     size: number = 10,
     sortBy: string = 'timestampGenerado'
@@ -86,16 +86,16 @@ export class ResultService {
       .set('sortBy', sortBy);
 
     return this.http
-      .get<Page<PdfHistory>>(`${this.apiUrl}/pdf/history/${atletaId}`, {
+      .get<Page<PdfHistory>>(`${this.apiUrl}/pdf/history/${athleteId}`, {
         params,
         withCredentials: true,
       })
       .pipe(catchError((err) => this.handleAuthError(err)));
   }
 
-  solicitarGeneracionPdf(atletaId: string): Observable<void> {
+  requestGenerationPdf(athleteId: string): Observable<void> {
     return this.http
-      .post<void>(`${this.apiUrl}/pdf/${atletaId}`, {}, { withCredentials: true })
+      .post<void>(`${this.apiUrl}/pdf/${athleteId}`, {}, { withCredentials: true })
       .pipe(catchError((err) => this.handleAuthError(err)));
   }
 

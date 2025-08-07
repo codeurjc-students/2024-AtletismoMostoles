@@ -1,8 +1,8 @@
 export interface PdfHistory {
   requestId: string;
-  atletaId: number;
-  eventoId?: number;
-  timestampGenerado: string;
+  athleteId: number;
+  eventId?: number;
+  timestampGenerated: string;
   urlBlob?: string;
-  estado: string;
+  state: string;
 }

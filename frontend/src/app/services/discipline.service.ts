@@ -51,7 +51,6 @@ export class DisciplineService {
 
   private handleAuthError(error: any): Observable<never> {
     if (error.status === 401 || error.status === 403) {
-      // Redirigir al login si no está autorizado
       this.router.navigate(['/login'], {
         queryParams: { returnUrl: this.router.url },
       });
