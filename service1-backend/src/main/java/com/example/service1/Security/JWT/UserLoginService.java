@@ -3,7 +3,7 @@ package com.example.service1.Security.JWT;
 import com.example.service1.DTO.EventNotificationDto;
 import com.example.service1.Entities.User;
 import com.example.service1.Services.UserService;
-import com.example.service3.grpc.EventoServiceGrpcProto.NotificationData;
+import com.example.service3.grpc.EventServiceGrpcProto.NotificationData;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -66,7 +66,7 @@ public class UserLoginService {
             List<NotificationData> rawNotificaciones = userService.getPendingNotifications(dbUser, lastLoginPrevio);
             notificaciones = rawNotificaciones.stream().map(data -> {
                 EventNotificationDto dto = new EventNotificationDto();
-                dto.setEventoId(data.getEventoId());
+                dto.setEventId(data.getEventId());
                 dto.setName(data.getName());
                 dto.setDate(LocalDate.parse(data.getDate()));
                 dto.setMapLink(data.getMapLink());

@@ -3,7 +3,8 @@ package com.example.service3.GrpcServices_Test;
 import com.example.service3.entities.Event;
 import com.example.service3.grpc.EventServiceGrpcImpl;
 import com.example.service3.services.EventService;
-import com.example.service3.grpc.EventoServiceGrpcProto.*;
+import com.example.service3.grpc.EventServiceGrpcProto.*;
+import com.example.service3.grpc.EventServiceGrpc.*;
 import com.example.shared.CommonProto;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
@@ -52,8 +53,8 @@ class EventServiceGrpcTest {
         StreamObserver<ListEventsResponse> observer = new StreamObserver<>() {
             @Override
             public void onNext(ListEventsResponse value) {
-                assertEquals(1, value.getEventosCount());
-                assertEquals("Test Event", value.getEventos(0).getName());
+                assertEquals(1, value.getEventsCount());
+                assertEquals("Test Event", value.getEvents(0).getName());
             }
 
             @Override public void onError(Throwable t) { fail(t); }
@@ -79,7 +80,7 @@ class EventServiceGrpcTest {
             @Override public void onCompleted() {}
         };
 
-        grpcService.getEventForId(GetEventRequest.newBuilder().setId(1L).build(), observer);
+        grpcService.getEventById(GetEventRequest.newBuilder().setId(1L).build(), observer);
     }
 
     @Test
@@ -95,7 +96,7 @@ class EventServiceGrpcTest {
             @Override public void onCompleted() {}
         };
 
-        grpcService.getEventForId(GetEventRequest.newBuilder().setId(99L).build(), observer);
+        grpcService.getEventById(GetEventRequest.newBuilder().setId(99L).build(), observer);
     }
 
     @Test

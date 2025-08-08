@@ -17,7 +17,7 @@ public class PdfRequestListener {
 
     @RabbitListener(queues = RabbitMQConfig.PDF_REQUEST_QUEUE)
     public void handlePdfRequest(PdfRequestDto request) {
-        String athleteId = request.getAtletaId();
+        String athleteId = request.getAthleteId();
         if (athleteId != null && !athleteId.isBlank()) {
             System.out.println("📄 Recibida solicitud de PDF para atleta: " + athleteId);
             pdfService.generatePdfForAthlete(athleteId);

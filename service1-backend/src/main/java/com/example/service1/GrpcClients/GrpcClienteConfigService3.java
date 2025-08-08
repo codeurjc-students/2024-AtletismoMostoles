@@ -20,7 +20,7 @@ public class GrpcClienteConfigService3 {
     }
 
     @Bean
-    public EventServiceGrpc.EventServiceBlockingStub eventoStub(ManagedChannel channelService3) {
+    public EventServiceGrpc.EventServiceBlockingStub eventStub(ManagedChannel channelService3) {
         return EventServiceGrpc.newBlockingStub(channelService3);
     }
 }

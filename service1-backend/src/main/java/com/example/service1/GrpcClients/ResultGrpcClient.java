@@ -110,9 +110,9 @@ public class ResultGrpcClient {
 
         return response.getUrlsList().stream().map(url -> {
             PdfDto dto = new PdfDto();
-            dto.setAtletaId(athleteId);
+            dto.setAthleteId(athleteId);
             dto.setUrlBlob(url);
-            dto.setEstado("GENERADO");
+            dto.setState("GENERADO");
             return dto;
         }).collect(Collectors.toList());
     }

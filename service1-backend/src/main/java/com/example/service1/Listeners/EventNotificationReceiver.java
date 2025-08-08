@@ -17,7 +17,7 @@ public class EventNotificationReceiver {
     @RabbitListener(queues = "event.notification.queue")
     public void receiveNotification(EventNotificationDto notification) {
         System.out.println("Notification:"+ notification);
-        System.out.println("[RabbitMQ] Notificación de evento recibida: " + notification.getEventoId());
+        System.out.println("[RabbitMQ] Notificación de evento recibida: " + notification.getEventId());
 
         messagingTemplate.convertAndSend("/topic/eventos", notification);
     }

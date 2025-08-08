@@ -47,29 +47,29 @@ public class AthleteService {
         athleteRepository.delete(athlete);
     }
 
-    public Page<Athlete> getFilteredAthletes(String nombre, String apellido, String disciplina,
-                                             String numeroLicencia, String entrenador, Pageable pageable) {
+    public Page<Athlete> getFilteredAthletes(String firstName, String lastName, String discipline,
+                                             String licenseNumber, String coach, Pageable pageable) {
         Specification<Athlete> spec = Specification.where(null);
 
-        if (nombre != null && !nombre.isEmpty()) {
+        if (firstName != null && !firstName.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get("firstName"), "%" + nombre + "%"));
+                    criteriaBuilder.like(root.get("firstName"), "%" + firstName + "%"));
         }
-        if (apellido != null && !apellido.isEmpty()) {
+        if (lastName != null && !lastName.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get("lastName"), "%" + apellido + "%"));
+                    criteriaBuilder.like(root.get("lastName"), "%" + lastName + "%"));
         }
-        if (disciplina != null && !disciplina.isEmpty()) {
+        if (discipline != null && !discipline.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.join("disciplines").get("name"), "%" + disciplina + "%"));
+                    criteriaBuilder.like(root.join("disciplines").get("name"), "%" + discipline + "%"));
         }
-        if (numeroLicencia != null && !numeroLicencia.isEmpty()) {
+        if (licenseNumber != null && !licenseNumber.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("licenseNumber"), numeroLicencia));
+                    criteriaBuilder.equal(root.get("licenseNumber"), licenseNumber));
         }
-        if (entrenador != null && !entrenador.isEmpty()) {
+        if (coach != null && !coach.isEmpty()) {
             spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.join("coach").get("firstName"), "%" + entrenador + "%"));
+                    criteriaBuilder.like(root.join("coach").get("firstName"), "%" + coach + "%"));
         }
 
         return athleteRepository.findAll(spec, pageable);

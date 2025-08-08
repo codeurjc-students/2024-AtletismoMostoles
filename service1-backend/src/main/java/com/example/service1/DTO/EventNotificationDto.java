@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EventNotificationDto {
-    private Long eventoId;
+    private Long eventId;
     private String name;
     private LocalDate date;
     private String mapLink;
@@ -14,12 +14,12 @@ public class EventNotificationDto {
     private Set<Long> disciplineIds = new HashSet<>();
     private String timestampNotification;
 
-    public Long getEventoId() {
-        return eventoId;
+    public Long getEventId() {
+        return eventId;
     }
 
-    public void setEventoId(Long id) {
-        this.eventoId = id;
+    public void setEventId(Long id) {
+        this.eventId = id;
     }
 
     public String getName() {

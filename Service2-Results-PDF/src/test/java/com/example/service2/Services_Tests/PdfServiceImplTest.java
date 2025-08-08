@@ -94,7 +94,7 @@ class PdfServiceImplTest {
         );
 
         Map<String, String> capturedMap = mapCaptor.getValue();
-        assertEquals("123", capturedMap.get("atletaId"));
+        assertEquals("123", capturedMap.get("athleteId"));
         assertEquals("https://storage.blob.core.windows.net/resultspdf/file123.pdf", capturedMap.get("url"));
 
     }

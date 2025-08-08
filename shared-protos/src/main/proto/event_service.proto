@@ -72,11 +72,11 @@ message EventMessage {
 }
 
 message ListEventsResponse {
-  repeated EventMessage eventos = 1;
+  repeated EventMessage events = 1;
 }
 
 message NotificationData {
-  int64 eventoId = 1;
+  int64 eventId = 1;
   string name = 2;
   string date = 3;
   string mapLink = 4;

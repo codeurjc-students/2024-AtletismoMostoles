@@ -11,14 +11,14 @@ import io.grpc.ManagedChannel;
 @Component
 public class EventGrpcClient {
 
-    private final EventServiceGrpc.EventServiceBlockingStub eventoStub;
+    private final EventServiceGrpc.EventServiceBlockingStub eventStub;
 
     public EventGrpcClient(@Qualifier("channelService3") ManagedChannel channel) {
-        this.eventoStub = EventServiceGrpc.newBlockingStub(channel);
+        this.eventStub = EventServiceGrpc.newBlockingStub(channel);
     }
 
     public ListEventsResponse listEvents() {
-        return eventoStub.listEvents(ListEventsRequest.newBuilder().build());
+        return eventStub.listEvents(ListEventsRequest.newBuilder().build());
     }
 
     public EventMessage createEvent(EventDto dto) {
@@ -34,12 +34,12 @@ public class EventGrpcClient {
             builder.addAllDisciplineIds(dto.getDisciplineIds());
         }
 
-        return eventoStub.createEvent(builder.build());
+        return eventStub.createEvent(builder.build());
     }
 
-    public EventMessage getEventForId(Long id) {
+    public EventMessage getEventById(Long id) {
         GetEventRequest request = GetEventRequest.newBuilder().setId(id).build();
-        return eventoStub.getEventById(request);
+        return eventStub.getEventById(request);
     }
 
     public EventMessage updateEvent(Long id, EventDto dto) {
@@ -56,12 +56,12 @@ public class EventGrpcClient {
             builder.addAllDisciplineIds(dto.getDisciplineIds());
         }
 
-        return eventoStub.updateEvent(builder.build());
+        return eventStub.updateEvent(builder.build());
     }
 
     public CommonProto.StatusMessage deleteEvent(long eventId) {
         DeleteEventRequest request = DeleteEventRequest.newBuilder().setEventId(eventId).build();
-        return eventoStub.deleteEvent(request);
+        return eventStub.deleteEvent(request);
     }
 
     public NotificationsResponse pendingNotifications(long userId, String timestampLastConnection) {
@@ -69,7 +69,7 @@ public class EventGrpcClient {
                 .setUserId(userId)
                 .setTimestampLastConnection(timestampLastConnection)
                 .build();
-        return eventoStub.pendingNotifications(request);
+        return eventStub.pendingNotifications(request);
     }
 
 }

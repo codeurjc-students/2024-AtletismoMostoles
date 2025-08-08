@@ -51,7 +51,7 @@ public class ResultService {
 
     public void requestGenerationPdf(String athleteId) {
         Map<String, String> message = new HashMap<>();
-        message.put("atletaId", athleteId);
+        message.put("athleteId", athleteId);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.PDF_REQUEST_QUEUE, message);
     }

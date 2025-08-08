@@ -43,7 +43,7 @@ public class EventServiceImpl implements EventService {
         Event savedEvent = eventRepository.save(event);
 
         EventNotification notification = new EventNotification();
-        notification.setEventoId(savedEvent.getId());
+        notification.setEventId(savedEvent.getId());
         notification.setName(savedEvent.getName());
         notification.setDate(savedEvent.getDate().toString());
         notification.setMapLink(savedEvent.getMapLink());

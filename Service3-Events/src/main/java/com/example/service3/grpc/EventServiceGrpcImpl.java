@@ -2,8 +2,8 @@ package com.example.service3.grpc;
 
 import com.example.service3.entities.Event;
 import com.example.service3.services.EventService;
-import com.example.service3.grpc.EventoServiceGrpcProto.*;
-import com.example.service3.grpc.EventoServiceGrpc.EventoServiceImplBase;
+import com.example.service3.grpc.EventServiceGrpcProto.*;
+import com.example.service3.grpc.EventServiceGrpc.EventServiceImplBase;
 import com.example.shared.CommonProto;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @GrpcService
-public class EventServiceGrpcImpl extends EventoServiceImplBase {
+public class EventServiceGrpcImpl extends EventServiceImplBase {
 
     private final EventService eventService;
 
@@ -30,7 +30,7 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
 
         ListEventsResponse.Builder response = ListEventsResponse.newBuilder();
         for (Event e : events) {
-            response.addEventos(convertToMessage(e));
+            response.addEvents(convertToMessage(e));
         }
 
         responseObserver.onNext(response.build());
@@ -38,7 +38,7 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void getEventForId(GetEventRequest request, StreamObserver<EventMessage> responseObserver) {
+    public void getEventById(GetEventRequest request, StreamObserver<EventMessage> responseObserver) {
         Optional<Event> optional = eventService.findById(request.getId());
 
         if (optional.isPresent()) {
@@ -125,7 +125,7 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
 
             List<NotificationData> notificaciones = nuevosEventos.stream().map(event ->
                     NotificationData.newBuilder()
-                            .setEventoId(event.getId())
+                            .setEventId(event.getId())
                             .setName(event.getName())
                             .setDate(event.getDate().toString())
                             .setMapLink(event.getMapLink())

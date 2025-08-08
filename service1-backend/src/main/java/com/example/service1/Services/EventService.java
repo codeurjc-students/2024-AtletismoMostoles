@@ -23,14 +23,14 @@ public class EventService {
 
     public List<EventDto> listEvents() {
         return grpcClient.listEvents()
-                .getEventosList()
+                .getEventsList()
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     public EventDto getEventById(Long id) {
-        EventMessage msg = grpcClient.getEventForId(id);
+        EventMessage msg = grpcClient.getEventById(id);
         return mapToDto(msg);
     }
 
@@ -71,7 +71,7 @@ public class EventService {
 
     private EventNotificationDto mapToNotificacionDto(NotificationData notif) {
         EventNotificationDto dto = new EventNotificationDto();
-        dto.setEventoId(notif.getEventoId());
+        dto.setEventId(notif.getEventId());
         dto.setName(notif.getName());
         dto.setDate(LocalDate.parse(notif.getDate()));
         dto.setMapLink(notif.getMapLink());

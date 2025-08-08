@@ -28,14 +28,14 @@ public class ResultRestController {
         return ResponseEntity.ok(paginate(allResults, page, size, sortBy));
     }
 
-    @GetMapping("/athlete/{atletaId}")
+    @GetMapping("/athlete/{athleteId}")
     public ResponseEntity<Page<ResultDto>> getResultsByAthlete(
-            @PathVariable String atletaId,
+            @PathVariable String athleteId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy
     ) {
-        List<ResultDto> results = resultService.getResultsByAthlete(atletaId);
+        List<ResultDto> results = resultService.getResultsByAthlete(athleteId);
         return ResponseEntity.ok(paginate(results, page, size, sortBy));
     }
 
@@ -50,14 +50,14 @@ public class ResultRestController {
         return ResponseEntity.ok(paginate(results, page, size, sortBy));
     }
 
-    @GetMapping("/pdf/history/{atletaId}")
+    @GetMapping("/pdf/history/{athleteId}")
     public ResponseEntity<Page<PdfDto>> getHistorialPdf(
-            @PathVariable String atletaId,
+            @PathVariable String athleteId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "timestampGenerado") String sortBy
     ) {
-        List<PdfDto> pdfs = resultService.getHistorialPdf(atletaId);
+        List<PdfDto> pdfs = resultService.getHistorialPdf(athleteId);
         return ResponseEntity.ok(paginate(pdfs, page, size, sortBy));
     }
 

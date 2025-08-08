@@ -36,8 +36,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatPaginatorModule,
     MatMenuModule,
     RouterLink,
-    RouterOutlet,
-
+    RouterOutlet
   ],
 })
 export class EventsComponent implements OnInit {

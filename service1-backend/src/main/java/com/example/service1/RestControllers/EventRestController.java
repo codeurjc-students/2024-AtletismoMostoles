@@ -33,9 +33,9 @@ public class EventRestController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        List<EventDto> eventos = eventService.listEvents();
+        List<EventDto> events = eventService.listEvents();
 
-        Stream<EventDto> filtered = eventos.stream();
+        Stream<EventDto> filtered = events.stream();
         if (organizedByClub != null)
             filtered = filtered.filter(e -> e.isOrganizedByClub() == organizedByClub);
         if (startDate != null)

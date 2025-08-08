@@ -52,7 +52,7 @@ class EventServiceTest {
     @Test
     void testListEvents() {
         ListEventsResponse response = ListEventsResponse.newBuilder()
-                .addAllEventos(List.of(mockEventMessage()))
+                .addAllEvents(List.of(mockEventMessage()))
                 .build();
 
         when(grpcClient.listEvents()).thenReturn(response);
@@ -65,7 +65,7 @@ class EventServiceTest {
 
     @Test
     void testGetEventById() {
-        when(grpcClient.getEventForId(1L)).thenReturn(mockEventMessage());
+        when(grpcClient.getEventById(1L)).thenReturn(mockEventMessage());
 
         EventDto result = eventService.getEventById(1L);
 
@@ -126,7 +126,7 @@ class EventServiceTest {
     @Test
     void testGetNotifications() {
         NotificationData notif = NotificationData.newBuilder()
-                .setEventoId(1L)
+                .setEventId(1L)
                 .setName("Noti")
                 .setDate("2025-01-01")
                 .setMapLink("map")

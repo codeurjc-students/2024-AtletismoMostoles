@@ -124,6 +124,6 @@ class ResultServiceTest {
     void testRequestGenerationPdf() {
         resultService.requestGenerationPdf("ABC123");
 
-        verify(rabbitTemplate).convertAndSend(eq("pdf.request.queue"), eq(Map.of("atletaId", "ABC123")));
+        verify(rabbitTemplate).convertAndSend(eq("pdf.request.queue"), eq(Map.of("athleteId", "ABC123")));
     }
 }

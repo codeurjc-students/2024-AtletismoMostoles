@@ -18,9 +18,9 @@ public class PdfConfirmationListener {
 
     @RabbitListener(queuesToDeclare = @Queue("pdf.confirmation.queue"))
     public void handleConfirmation(Map<String, String> message) {
-        String atletaId = message.get("atletaId");
+        String athleteId = message.get("athleteId");
         String url = message.get("url");
 
-        messagingTemplate.convertAndSend("/topic/pdf/" + atletaId, url);
+        messagingTemplate.convertAndSend("/topic/pdf/" + athleteId, url);
     }
 }

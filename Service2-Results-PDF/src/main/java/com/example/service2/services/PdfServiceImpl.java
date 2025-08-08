@@ -64,10 +64,10 @@ public class PdfServiceImpl implements PdfService {
     }
 
     @Override
-    public void generatePdfForAthlete(String atletaId) {
-        List<Result> results = resultRepository.findByAthleteId(atletaId);
+    public void generatePdfForAthlete(String athleteId) {
+        List<Result> results = resultRepository.findByAthleteId(athleteId);
         if (results.isEmpty()) {
-            System.out.println("No hay resultados para el atleta " + atletaId);
+            System.out.println("No hay resultados para el atleta " + athleteId);
             return;
         }
 
@@ -78,21 +78,21 @@ public class PdfServiceImpl implements PdfService {
 
         byte[] pdf = generatePdfFromResults(extended);
 
-        String fileName = "resultados_" + atletaId + "_" + UUID.randomUUID() + ".pdf";
+        String fileName = "resultados_" + athleteId + "_" + UUID.randomUUID() + ".pdf";
         String url = azureBlobService.uploadPdf(fileName, pdf);
 
-        PdfHistory pdfHistory = new PdfHistory(atletaId, url);
+        PdfHistory pdfHistory = new PdfHistory(athleteId, url);
         pdfHistoryRepository.save(pdfHistory);
 
         Map<String, String> confirmation = new HashMap<>();
-        confirmation.put("atletaId", atletaId);
+        confirmation.put("athleteId", athleteId);
         confirmation.put("url", url);
         rabbitTemplate.convertAndSend(RabbitMQConfig.PDF_CONFIRMATION_QUEUE, confirmation);
     }
 
     @Override
-    public List<String> getUrlsByAthleteId(String atletaId) {
-        return pdfHistoryRepository.findByAthleteId(atletaId).stream()
+    public List<String> getUrlsByAthleteId(String athleteId) {
+        return pdfHistoryRepository.findByAthleteId(athleteId).stream()
                 .map(PdfHistory::getUrl)
                 .collect(Collectors.toList());
     }

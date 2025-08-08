@@ -80,7 +80,7 @@
       </ng-container>
       <ng-container matColumnDef="value">
         <mat-header-cell *matHeaderCellDef> Resultado </mat-header-cell>
-        <mat-cell *matCellDef="let result"> {{ result?.valor ?? 'N/A' }} </mat-cell>
+        <mat-cell *matCellDef="let result"> {{ result?.value ?? 'N/A' }} </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="['athlete', 'discipline', 'value']"></mat-header-row>
       <mat-row *matRowDef="let row; columns: ['athlete', 'discipline', 'value'];"></mat-row>
