@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: service1-backend
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-tcp-idle-timeout: "30"
 spec:
   selector:
     app: service1-backend

@@ -2,19 +2,81 @@ apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
   name: rabbitmq
+  # namespace: default  # uncomment if you want to pin a namespace
 spec:
-  replicas: 1
+  replicas: 3
+
+  # Persistent storage for the data volume
   persistence:
-    storageClassName: rabbitmq-storage
+    storageClassName: managed-premium  # make sure this StorageClass exists in your AKS
     storage: 8Gi
-  resources:
-    requests:
-      cpu: 500m
-      memory: 512Mi
-    limits:
-      cpu: 1
-      memory: 1Gi
+
+  # RabbitMQ configuration (plugins, defaults, policies, etc.)
   rabbitmq:
     additionalConfig: |
+      # Default user (LAB ONLY; prefer a Secret in production)
       default_user = rabbitAdmin
       default_pass = rabbitPass
+
+      # K8s peer discovery
+      cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+
+      # Safer split-brain behavior
+      cluster_partition_handling = pause_minority
+
+      # Use quorum queues by default
+      default_queue_type = quorum
+
+      # Optional tuning
+      vm_memory_high_watermark.relative = 0.6
+      disk_free_limit.relative = 2.0
+
+  # Customize generated Kubernetes objects using "override"
+  override:
+    # Service customizations (exposes the cluster internally)
+    service:
+      spec:
+        type: ClusterIP
+
+    # StatefulSet / Pod template customizations
+    statefulSet:
+      spec:
+        template:
+          metadata:
+            labels:
+              # Additional labels for your Pods
+              app: rabbitmq
+          spec:
+            # Grace period for clean shutdown on termination
+            terminationGracePeriodSeconds: 30
+
+            # Prefer spreading pods across nodes (anti-affinity)
+            affinity:
+              podAntiAffinity:
+                preferredDuringSchedulingIgnoredDuringExecution:
+                  - weight: 100
+                    podAffinityTerm:
+                      labelSelector:
+                        matchLabels:
+                          app.kubernetes.io/name: rabbitmq
+                      topologyKey: kubernetes.io/hostname
+
+            # Topology spread constraints to avoid co-locating all replicas
+            topologySpreadConstraints:
+              - maxSkew: 1
+                topologyKey: kubernetes.io/hostname
+                whenUnsatisfiable: ScheduleAnyway
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: rabbitmq
+
+            containers:
+              - name: rabbitmq
+                # Resource requests/limits for the RabbitMQ container
+                resources:
+                  requests:
+                    cpu: "200m"
+                    memory: "512Mi"
+                  limits:
+                    cpu: "1"
+                    memory: "1Gi"

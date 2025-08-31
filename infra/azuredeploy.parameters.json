@@ -1,0 +1,67 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westeurope"
+    },
+    "projectName": {
+      "value": "tfg"
+    },
+    "aksName": {
+      "value": "aks-tfg-cluster"
+    },
+    "aksVmSize": {
+      "value": "Standard_B2s"
+    },
+    "aksNodeCount": {
+      "value": 1
+    },
+    "aksMinCount": {
+      "value": 1
+    },
+    "aksMaxCount": {
+      "value": 3
+    },
+    "createLogAnalytics": {
+      "value": true
+    },
+    "lawName": {
+      "value": "log-tfg"
+    },
+    "mysqlServerName": {
+      "value": "mysql-tfg-server"
+    },
+    "mysqlAdminUser": {
+      "value": "mysqladmin"
+    },
+    "mysqlAdminPassword": {
+      "value": "29042013Sa"
+    },
+    "mysqlVersion": {
+      "value": "8.4"
+    },
+    "mysqlSkuName": {
+      "value": "Standard_B1ms"
+    },
+    "mysqlStorageGB": {
+      "value": 32
+    },
+    "mysqlDatabases": {
+      "value": [
+        "service1_db",
+        "service2_db",
+        "service3_db"
+      ]
+    },
+    "storageAccountName": {
+      "value": "tfgpdfs"
+    },
+    "pdfContainerName": {
+      "value": "resultspdf"
+    },
+    "ingressPublicIpName": {
+      "value": "pip-ingress-tfg"
+    }
+  }
+}
