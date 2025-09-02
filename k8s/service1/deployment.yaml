@@ -3,7 +3,12 @@ kind: Deployment
 metadata:
   name: service1-backend
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: service1-backend
@@ -12,14 +17,63 @@ spec:
       labels:
         app: service1-backend
     spec:
+      terminationGracePeriodSeconds: 30
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: service1-backend
+                topologyKey: kubernetes.io/hostname
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: service1-backend
       containers:
         - name: service1-backend
           image: saac04/service1-backend:latest
           imagePullPolicy: Always
           ports:
+            - containerPort: 8081
             - containerPort: 9091
           envFrom:
             - configMapRef:
                 name: service1-config
             - secretRef:
                 name: service1-secrets
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+
+          startupProbe:
+            tcpSocket:
+              port: 9091
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 24
+
+          livenessProbe:
+            tcpSocket:
+              port: 9091
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          readinessProbe:
+            tcpSocket:
+              port: 9091
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3

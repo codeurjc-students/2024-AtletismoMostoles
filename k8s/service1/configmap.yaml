@@ -3,11 +3,20 @@ kind: ConfigMap
 metadata:
   name: service1-config
 data:
-  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-service1.mysql.database.azure.com:3306/service1_db?useSSL=true&requireSSL=true&allowPublicKeyRetrieval=true"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://mysql-tfg-server.mysql.database.azure.com:3306/service1_db?sslMode=REQUIRED&serverTimezone=UTC"
+
   SPRING_RABBITMQ_HOST: "rabbitmq"
   SPRING_RABBITMQ_PORT: "5672"
   SPRING_RABBITMQ_USERNAME: "rabbitAdmin"
   SPRING_RABBITMQ_PASSWORD: "rabbitPass"
+
   GRPC_CLIENT_SERVICIO2_ADDRESS: "static://service2-backend:9092"
   GRPC_CLIENT_SERVICIO3_ADDRESS: "static://service3-backend:9093"
+
   SERVER_SSL_ENABLED: "true"
+
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info"
+  MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+  MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED: "true"
+  MANAGEMENT_HEALTH_READINESSSTATE_ENABLED: "true"
+
