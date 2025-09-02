@@ -28,7 +28,7 @@ describe('EventNotificationSnackbarComponent', () => {
   });
 
   it('debe cerrar el snackbar al ejecutar verEvento', () => {
-    component.verEvento();
+    component.getEvent();
     expect(snackBarRefSpy.dismissWithAction).toHaveBeenCalled();
   });
 });

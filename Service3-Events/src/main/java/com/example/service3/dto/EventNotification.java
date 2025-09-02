@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class EventNotification {
 
-    private Long eventoId;
+    private Long eventId;
     private String name;
     private String date;
     private String mapLink;
@@ -14,9 +14,9 @@ public class EventNotification {
 
     public EventNotification() {}
 
-    public EventNotification(Long eventoId, String name, String date, String mapLink,
+    public EventNotification(Long eventId, String name, String date, String mapLink,
                              String imageLink, boolean organizedByClub, Set<Long> disciplineIds) {
-        this.eventoId = eventoId;
+        this.eventId = eventId;
         this.name = name;
         this.date = date;
         this.mapLink = mapLink;
@@ -25,9 +25,8 @@ public class EventNotification {
         this.disciplineIds = disciplineIds;
     }
 
-    // Getters and setters
-    public Long getEventoId() { return eventoId; }
-    public void setEventoId(Long eventoId) { this.eventoId = eventoId; }
+    public Long getEventId() { return eventId; }
+    public void setEventId(Long eventId) { this.eventId = eventId; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

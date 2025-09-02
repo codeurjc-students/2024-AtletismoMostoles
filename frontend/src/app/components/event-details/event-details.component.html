@@ -11,7 +11,7 @@
   </nav>
   <div class="LogSection">
     <button mat-raised-button color="accent" *ngIf="!isLoggedIn" (click)="login()"> LogIn </button>
-    <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="logout()"> Log Out </button>
+    <button mat-raised-button color="warn" *ngIf="isLoggedIn" (click)="logout()"> LogOut </button>
   </div>
   <button mat-icon-button [matMenuTriggerFor]="menu">
     <mat-icon>menu</mat-icon>
@@ -80,7 +80,7 @@
       </ng-container>
       <ng-container matColumnDef="value">
         <mat-header-cell *matHeaderCellDef> Resultado </mat-header-cell>
-        <mat-cell *matCellDef="let result"> {{ result?.valor ?? 'N/A' }} </mat-cell>
+        <mat-cell *matCellDef="let result"> {{ result?.value ?? 'N/A' }} </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="['athlete', 'discipline', 'value']"></mat-header-row>
       <mat-row *matRowDef="let row; columns: ['athlete', 'discipline', 'value'];"></mat-row>

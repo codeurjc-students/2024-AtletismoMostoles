@@ -1,13 +1,13 @@
 package com.example.service2.dto;
 
 public class PdfRequestDto {
-    private String atletaId;
+    private String athleteId;
 
-    public String getAtletaId() {
-        return atletaId;
+    public String getAthleteId() {
+        return athleteId;
     }
 
-    public void setAtletaId(String atletaId) {
-        this.atletaId = atletaId;
+    public void setAthleteId(String athleteId) {
+        this.athleteId = athleteId;
     }
 }

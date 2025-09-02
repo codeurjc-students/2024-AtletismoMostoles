@@ -1,10 +1,10 @@
 
 export interface Results {
   id?: number;
-  atletaId: string;
-  eventoId: number;
-  disciplinaId: number;
-  valor: string;
+  athleteId: string;
+  eventId: number;
+  disciplineId: number;
+  value: string;
   athlete?: {
     firstName: string;
     lastName: string;

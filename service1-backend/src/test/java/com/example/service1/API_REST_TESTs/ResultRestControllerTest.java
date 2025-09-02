@@ -18,7 +18,7 @@ class ResultRestControllerTest {
     @BeforeAll
     static void setup() {
         RestAssured.useRelaxedHTTPSValidation();
-        RestAssured.baseURI = "https://localhost:443";
+        RestAssured.baseURI = "https://service1-backend:9091";
 
         Response response = given()
                 .contentType(ContentType.JSON)
@@ -56,10 +56,10 @@ class ResultRestControllerTest {
     private static Response createResult() {
         String newResultJson = """
         {
-            "valor": "12.5",
-            "atletaId": "A2001",
-            "disciplinaId": 1,
-            "eventoId": 1
+            "value": "12.5",
+            "athleteId": "A2001",
+            "disciplineId": 1,
+            "eventId": 1
         }
         """;
 
@@ -87,16 +87,16 @@ class ResultRestControllerTest {
         String multipleResultsJson = """
         [
             {
-                "valor": "13.0",
-                "atletaId": "A2001",
-                "disciplinaId": 1,
-                "eventoId": 1
+                "value": "13.0",
+                "athleteId": "A2001",
+                "disciplineId": 1,
+                "eventId": 1
             },
             {
-                "valor": "11.75",
-                "atletaId": "A2002",
-                "disciplinaId": 1,
-                "eventoId": 1
+                "value": "11.75",
+                "athleteId": "A2002",
+                "disciplineId": 1,
+                "eventId": 1
             }
         ]
         """;

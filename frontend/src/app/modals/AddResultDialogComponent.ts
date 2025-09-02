@@ -116,10 +116,10 @@ export class AddResultsDialogComponent {
   onSave(): void {
     if (this.resultsForm.valid) {
       const payload = this.resultControls.value.map((res: any) => ({
-        atletaId: res.athleteLicenseNumber,
-        eventoId: this.data.eventId,
-        disciplinaId: res.disciplineId,
-        valor: res.value
+        athleteId: res.athleteLicenseNumber,
+        eventId: this.data.eventId,
+        disciplineId: res.disciplineId,
+        value: res.value
       }));
 
       this.dialogRef.close(payload);

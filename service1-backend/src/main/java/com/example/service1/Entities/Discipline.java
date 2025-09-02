@@ -14,7 +14,6 @@ public class Discipline {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @NotBlank
     private String name;
     @NotBlank
@@ -70,13 +69,9 @@ public class Discipline {
         this.description = description;
     }
 
-    public String getImageLink() {
-        return imageLink;
-    }
+    public String getImageLink() { return imageLink; }
 
-    public void setImageLink(String imageLink) {
-        this.imageLink = imageLink;
-    }
+    public void setImageLink(String imageLink) { this.imageLink = imageLink; }
 
     public Set<Equipment> getEquipment() {
         return equipment;

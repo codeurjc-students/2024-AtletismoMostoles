@@ -15,7 +15,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class EventServiceImplTest {
+class EventServiceTest {
 
     @Mock
     private EventRepository eventRepository;

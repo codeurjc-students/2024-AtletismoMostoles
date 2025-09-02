@@ -17,8 +17,8 @@ class EquipmentRestControllerTest {
 
     @BeforeAll
     static void setup() {
-        RestAssured.baseURI = "https://localhost";
-        RestAssured.port = 443;
+        RestAssured.baseURI = "https://service1-backend";
+        RestAssured.port = 9091;
         RestAssured.useRelaxedHTTPSValidation();
 
         Response response = given()

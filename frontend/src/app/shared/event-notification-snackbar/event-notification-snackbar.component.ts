@@ -16,7 +16,7 @@ export class EventNotificationSnackbarComponent {
     private snackBarRef: MatSnackBarRef<EventNotificationSnackbarComponent>
   ) {}
 
-  verEvento(): void {
+  getEvent(): void {
     this.snackBarRef.dismissWithAction();
   }
 }

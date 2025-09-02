@@ -1,6 +1,5 @@
 package com.example.service1.Repositories;
 
-
 import com.example.service1.Entities.Coach;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

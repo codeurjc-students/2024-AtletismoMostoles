@@ -1,8 +1,8 @@
 package com.example.service1.Unit_TESTs;
 
 import com.example.service1.DTO.PdfDto;
-import com.example.service1.DTO.ResultadoDto;
-import com.example.service1.GrpcClients.ResultadoGrpcCliente;
+import com.example.service1.DTO.ResultDto;
+import com.example.service1.GrpcClients.ResultGrpcClient;
 import com.example.service1.Services.ResultService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class ResultServiceTest {
 
     @Mock
-    private ResultadoGrpcCliente grpcClient;
+    private ResultGrpcClient grpcClient;
 
     @Mock
     private RabbitTemplate rabbitTemplate;
@@ -34,96 +34,96 @@ class ResultServiceTest {
     }
 
     @Test
-    void testGetAllResultados() {
-        List<ResultadoDto> mockList = List.of(new ResultadoDto());
-        when(grpcClient.getAllResultados()).thenReturn(mockList);
+    void testGetAllResults() {
+        List<ResultDto> mockList = List.of(new ResultDto());
+        when(grpcClient.getAllResults()).thenReturn(mockList);
 
-        List<ResultadoDto> result = resultService.getAllResultados();
+        List<ResultDto> result = resultService.getAllResults();
 
         assertEquals(1, result.size());
-        verify(grpcClient).getAllResultados();
+        verify(grpcClient).getAllResults();
     }
 
     @Test
-    void testGetResultadosDeAtleta() {
-        List<ResultadoDto> mockList = List.of(new ResultadoDto());
-        when(grpcClient.getResultadosPorAtleta("ABC123")).thenReturn(mockList);
+    void testGetResultsByAthlete() {
+        List<ResultDto> mockList = List.of(new ResultDto());
+        when(grpcClient.getResultsByAthlete("ABC123")).thenReturn(mockList);
 
-        List<ResultadoDto> result = resultService.getResultadosDeAtleta("ABC123");
+        List<ResultDto> result = resultService.getResultsByAthlete("ABC123");
 
         assertEquals(1, result.size());
-        verify(grpcClient).getResultadosPorAtleta("ABC123");
+        verify(grpcClient).getResultsByAthlete("ABC123");
     }
 
     @Test
-    void testGetResultadosDeEvento() {
-        List<ResultadoDto> mockList = List.of(new ResultadoDto());
-        when(grpcClient.verResultadosPorEvento(5L)).thenReturn(mockList);
+    void testGetResultsByEvent() {
+        List<ResultDto> mockList = List.of(new ResultDto());
+        when(grpcClient.getResultsByEvent(5L)).thenReturn(mockList);
 
-        List<ResultadoDto> result = resultService.getResultadosDeEvento(5L);
+        List<ResultDto> result = resultService.getResultsByEvent(5L);
 
         assertEquals(1, result.size());
-        verify(grpcClient).verResultadosPorEvento(5L);
+        verify(grpcClient).getResultsByEvent(5L);
     }
 
     @Test
-    void testGuardarResultado() {
-        ResultadoDto mockDto = new ResultadoDto();
-        when(grpcClient.guardarResultado("ABC123", 10L, 20L, "9.87")).thenReturn(mockDto);
+    void testSaveResult() {
+        ResultDto mockDto = new ResultDto();
+        when(grpcClient.saveResult("ABC123", 10L, 20L, "9.87")).thenReturn(mockDto);
 
-        ResultadoDto result = resultService.guardarResultado("ABC123", 10L, 20L, "9.87");
+        ResultDto result = resultService.saveResult("ABC123", 10L, 20L, "9.87");
 
         assertEquals(mockDto, result);
-        verify(grpcClient).guardarResultado("ABC123", 10L, 20L, "9.87");
+        verify(grpcClient).saveResult("ABC123", 10L, 20L, "9.87");
     }
 
     @Test
-    void testGuardarResultadoRetornaNull() {
-        when(grpcClient.guardarResultado("DEF456", 11L, 22L, "10.23")).thenReturn(null);
+    void testSaveResultReturnNull() {
+        when(grpcClient.saveResult("DEF456", 11L, 22L, "10.23")).thenReturn(null);
 
-        ResultadoDto result = resultService.guardarResultado("DEF456", 11L, 22L, "10.23");
+        ResultDto result = resultService.saveResult("DEF456", 11L, 22L, "10.23");
 
         assertNull(result);
-        verify(grpcClient).guardarResultado("DEF456", 11L, 22L, "10.23");
+        verify(grpcClient).saveResult("DEF456", 11L, 22L, "10.23");
     }
 
     @Test
-    void testGuardarResultadosBatchDesdeDto() {
-        List<ResultadoDto> input = List.of(new ResultadoDto());
-        when(grpcClient.guardarResultadosBatch(input)).thenReturn(input);
+    void testSaveResultsBatchFromDto() {
+        List<ResultDto> input = List.of(new ResultDto());
+        when(grpcClient.saveResultsBatch(input)).thenReturn(input);
 
-        List<ResultadoDto> result = resultService.guardarResultadosBatchDesdeDto(input);
+        List<ResultDto> result = resultService.saveResultsBatchFromDto(input);
 
         assertEquals(1, result.size());
-        verify(grpcClient).guardarResultadosBatch(input);
+        verify(grpcClient).saveResultsBatch(input);
     }
 
     @Test
-    void testGetResultadoPorId() {
-        ResultadoDto mockDto = new ResultadoDto();
-        when(grpcClient.getResultadoPorId(100L)).thenReturn(mockDto);
+    void testGetResultById() {
+        ResultDto mockDto = new ResultDto();
+        when(grpcClient.getResultById(100L)).thenReturn(mockDto);
 
-        ResultadoDto result = resultService.getResultadoPorId(100L);
+        ResultDto result = resultService.getResultById(100L);
 
         assertEquals(mockDto, result);
-        verify(grpcClient).getResultadoPorId(100L);
+        verify(grpcClient).getResultById(100L);
     }
 
     @Test
     void testGetHistorialPdf() {
         List<PdfDto> pdfList = List.of(new PdfDto());
-        when(grpcClient.listaPdfHistorico("ABC123")).thenReturn(pdfList);
+        when(grpcClient.listPdfHistorical("ABC123")).thenReturn(pdfList);
 
         List<PdfDto> result = resultService.getHistorialPdf("ABC123");
 
         assertEquals(1, result.size());
-        verify(grpcClient).listaPdfHistorico("ABC123");
+        verify(grpcClient).listPdfHistorical("ABC123");
     }
 
     @Test
-    void testSolicitarGeneracionPdf() {
-        resultService.solicitarGeneracionPdf("ABC123");
+    void testRequestGenerationPdf() {
+        resultService.requestGenerationPdf("ABC123");
 
-        verify(rabbitTemplate).convertAndSend(eq("pdf.request.queue"), eq(Map.of("atletaId", "ABC123")));
+        verify(rabbitTemplate).convertAndSend(eq("pdf.request.queue"), eq(Map.of("athleteId", "ABC123")));
     }
 }

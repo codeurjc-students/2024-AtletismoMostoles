@@ -35,7 +35,7 @@ public class DataInitializer {
     @PostConstruct
     public void initData() {
         if (athleteRepository.count() == 0 && coachRepository.count() == 0) {
-            // Equipamiento
+            // Equipments
             Equipment cronometro = new Equipment("Cronómetro", "Modelo Pro");
             Equipment disco = new Equipment("Disco 1kg", "Disco oficial competición");
             Equipment vallas = new Equipment("Vallas", "Vallas 100m");
@@ -44,7 +44,7 @@ public class DataInitializer {
 
             equipmentRepository.saveAll(List.of(cronometro, disco, vallas, jabalina, pertiga));
 
-            // Disciplinas
+            // Disciplines
             Discipline altura = new Discipline("Salto de Altura", "Lunes 16-18", List.of(cronometro),"https://media.istockphoto.com/id/124053579/es/foto/atleta.jpg?s=612x612&w=0&k=20&c=hO1Xxq9kqyK2n6Tlc8rpkbmlHhFLytLSqh6ojUYmy3I=");
             Discipline vallas100m = new Discipline("100m Vallas", "Martes 17-19", List.of(vallas),"https://media.istockphoto.com/id/515791560/es/foto/atleta-masculino-vallas-de-carrera.jpg?s=612x612&w=0&k=20&c=JHLwan5DT4huFnKPVBNgmVvndCa0NA9LuYoFuvSR8aY=");
             Discipline discoLan = new Discipline("Lanzamiento de Disco", "Miércoles 15-17", List.of(disco),"https://media.istockphoto.com/id/1648117083/es/foto/atleta-femenina-girando-con-disco.jpg?s=612x612&w=0&k=20&c=uTIBIHflXEWraHeB9GGjAH8no0GwYfGQL-HxvyThspU=");
@@ -53,7 +53,7 @@ public class DataInitializer {
 
             disciplineRepository.saveAll(List.of(altura, vallas100m, discoLan, jabalinaLan, pertigaSalto));
 
-            // Entrenadores
+            // Coaches
             Coach coach1 = new Coach("1001", "José", "Martínez", List.of(altura));
             Coach coach2 = new Coach("1002", "Ana", "García", List.of(vallas100m));
             Coach coach3 = new Coach("1003", "Pedro", "López", List.of(discoLan));
@@ -61,7 +61,7 @@ public class DataInitializer {
             Coach coach5 = new Coach("1005", "Luis", "Díaz", List.of(pertigaSalto));
             coachRepository.saveAll(List.of(coach1, coach2, coach3, coach4, coach5));
 
-            // Atletas
+            // Athletes
             Athlete atleta1 = new Athlete("A001", "Carlos", "Pérez", LocalDate.of(2000, 5, 10), coach1, new HashSet<>(List.of(altura, vallas100m)));
             Athlete atleta2 = new Athlete("A002", "Lucía", "Torres", LocalDate.of(1999, 8, 22), coach2, new HashSet<>(List.of(vallas100m, discoLan)));
             Athlete atleta3 = new Athlete("A003", "David", "Ruiz", LocalDate.of(2001, 3, 14), coach3, new HashSet<>(List.of(discoLan, jabalinaLan)));

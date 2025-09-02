@@ -4,14 +4,14 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
-export interface NotificacionData {
-  eventoId: number;
+export interface NotificationData {
+  eventId: number;
   name: string;
   date: string;
   mapLink: string;
   imageLink: string;
   organizedByClub: boolean;
-  timestampNotificacion: string;
+  timestampNotification: string;
   disciplineIds: number[];
 }
 
@@ -23,7 +23,7 @@ export class AuthService {
   private userSubject: BehaviorSubject<any | null>;
   public user: Observable<any | null>;
 
-  public notificacionesPendientes: NotificacionData[] = [];
+  public notificationsPending: NotificationData[] = [];
 
   constructor(private http: HttpClient, private router: Router) {
     this.userSubject = new BehaviorSubject<any | null>(null);
@@ -48,7 +48,7 @@ export class AuthService {
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.authUrl}/login`, { username, password }, { withCredentials: true }).pipe(
       switchMap(response => {
-        this.notificacionesPendientes = response.notificacionesPendientes || [];
+        this.notificationsPending = response.notificacionesPendientes || [];
 
         return this.http.get<any>(`/api/users/me`, { withCredentials: true }).pipe(
           tap(user => {
@@ -64,7 +64,7 @@ export class AuthService {
   logout(): void {
     this.http.post(`${this.authUrl}/logout`, {}, { withCredentials: true }).subscribe(() => {
       this.userSubject.next(null);
-      this.notificacionesPendientes = [];
+      this.notificationsPending = [];
       this.router.navigate(['/login']);
     });
   }

@@ -3,7 +3,8 @@ package com.example.service3.GrpcServices_Test;
 import com.example.service3.entities.Event;
 import com.example.service3.grpc.EventServiceGrpcImpl;
 import com.example.service3.services.EventService;
-import com.example.service3.grpc.EventoServiceGrpcProto.*;
+import com.example.service3.grpc.EventServiceGrpcProto.*;
+import com.example.service3.grpc.EventServiceGrpc.*;
 import com.example.shared.CommonProto;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
@@ -46,31 +47,31 @@ class EventServiceGrpcTest {
     }
 
     @Test
-    void listarEventos_shouldReturnList() {
+    void listEvents_shouldReturnList() {
         when(eventService.findAllOrdered()).thenReturn(List.of(buildMockEvent()));
 
-        StreamObserver<ListarEventosResponse> observer = new StreamObserver<>() {
+        StreamObserver<ListEventsResponse> observer = new StreamObserver<>() {
             @Override
-            public void onNext(ListarEventosResponse value) {
-                assertEquals(1, value.getEventosCount());
-                assertEquals("Test Event", value.getEventos(0).getName());
+            public void onNext(ListEventsResponse value) {
+                assertEquals(1, value.getEventsCount());
+                assertEquals("Test Event", value.getEvents(0).getName());
             }
 
             @Override public void onError(Throwable t) { fail(t); }
             @Override public void onCompleted() {}
         };
 
-        grpcService.listarEventos(ListarEventosRequest.newBuilder().build(), observer);
+        grpcService.listEvents(ListEventsRequest.newBuilder().build(), observer);
     }
 
     @Test
-    void obtenerEventoPorId_shouldReturnEvent() {
+    void getEventForId_shouldReturnEvent() {
         Event event = buildMockEvent();
         when(eventService.findById(1L)).thenReturn(Optional.of(event));
 
-        StreamObserver<EventoMessage> observer = new StreamObserver<>() {
+        StreamObserver<EventMessage> observer = new StreamObserver<>() {
             @Override
-            public void onNext(EventoMessage msg) {
+            public void onNext(EventMessage msg) {
                 assertEquals("Test Event", msg.getName());
                 assertEquals(1L, msg.getId());
             }
@@ -79,15 +80,15 @@ class EventServiceGrpcTest {
             @Override public void onCompleted() {}
         };
 
-        grpcService.obtenerEventoPorId(GetEventoRequest.newBuilder().setId(1L).build(), observer);
+        grpcService.getEventById(GetEventRequest.newBuilder().setId(1L).build(), observer);
     }
 
     @Test
-    void obtenerEventoPorId_shouldReturnNotFound() {
+    void getEventForId_shouldReturnNotFound() {
         when(eventService.findById(99L)).thenReturn(Optional.empty());
 
-        StreamObserver<EventoMessage> observer = new StreamObserver<>() {
-            @Override public void onNext(EventoMessage value) { fail("Debe lanzar error"); }
+        StreamObserver<EventMessage> observer = new StreamObserver<>() {
+            @Override public void onNext(EventMessage value) { fail("Debe lanzar error"); }
             @Override public void onError(Throwable t) {
                 assertInstanceOf(StatusRuntimeException.class, t);
                 assertTrue(t.getMessage().contains("no encontrado"));
@@ -95,15 +96,15 @@ class EventServiceGrpcTest {
             @Override public void onCompleted() {}
         };
 
-        grpcService.obtenerEventoPorId(GetEventoRequest.newBuilder().setId(99L).build(), observer);
+        grpcService.getEventById(GetEventRequest.newBuilder().setId(99L).build(), observer);
     }
 
     @Test
-    void crearEvento_shouldSaveAndReturn() {
+    void createEvent_shouldSaveAndReturn() {
         Event saved = buildMockEvent();
         when(eventService.save(any(Event.class))).thenReturn(saved);
 
-        CrearEventoRequest request = CrearEventoRequest.newBuilder()
+        CreateEventRequest request = CreateEventRequest.newBuilder()
                 .setName("Test Event")
                 .setDate("2025-07-15")
                 .setMapLink("https://map.link")
@@ -113,8 +114,8 @@ class EventServiceGrpcTest {
                 .setCreationTime("2025-07-14T10:30:00")
                 .build();
 
-        StreamObserver<EventoMessage> observer = new StreamObserver<>() {
-            @Override public void onNext(EventoMessage msg) {
+        StreamObserver<EventMessage> observer = new StreamObserver<>() {
+            @Override public void onNext(EventMessage msg) {
                 assertEquals("Test Event", msg.getName());
                 assertEquals(1L, msg.getId());
             }
@@ -123,11 +124,11 @@ class EventServiceGrpcTest {
             @Override public void onCompleted() {}
         };
 
-        grpcService.crearEvento(request, observer);
+        grpcService.createEvent(request, observer);
     }
 
     @Test
-    void borrarEvento_shouldReturnSuccess() {
+    void deleteEvent_shouldReturnSuccess() {
         doNothing().when(eventService).deleteById(1L);
 
         StreamObserver<CommonProto.StatusMessage> observer = new StreamObserver<>() {
@@ -139,6 +140,6 @@ class EventServiceGrpcTest {
             @Override public void onCompleted() {}
         };
 
-        grpcService.borrarEvento(BorrarEventoRequest.newBuilder().setEventoId(1L).build(), observer);
+        grpcService.deleteEvent(DeleteEventRequest.newBuilder().setEventId(1L).build(), observer);
     }
 }

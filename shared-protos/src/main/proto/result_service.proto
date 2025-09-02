@@ -4,23 +4,20 @@ import "common.proto";
 
 option java_multiple_files = true;
 option java_package = "com.example.service2.grpc";
-option java_outer_classname = "ResultadoServiceGrpcProto";
+option java_outer_classname = "ResultServiceGrpcProto";
 
-// ------------------------
-// Servicio de Resultados
-// ------------------------
 service ResultService {
   rpc SaveResult(ResultRequest) returns (StatusMessage);
   rpc SaveMultipleResults(ResultListRequest) returns (StatusMessage);
   rpc GetResultsByAthleteId(AthleteIdRequest) returns (ResultListResponse);
   rpc GetResultsByEventId(EventIdRequest) returns (ResultListResponse);
   rpc GetAllResults(Empty) returns (ResultListResponse);
-  rpc GetResultadoById(ResultIdRequest) returns (ResultResponse);
+  rpc GetResultById(ResultIdRequest) returns (ResultResponse);
 
 }
 
 // ------------------------
-// Servicio de PDFs
+// PDFs Services
 // ------------------------
 service PdfService {
   rpc RequestPdfGeneration(AthleteIdRequest) returns (StatusMessage);
@@ -28,7 +25,7 @@ service PdfService {
 }
 
 // ------------------------
-// Mensajes comunes
+// Messages
 // ------------------------
 message ResultRequest {
   int64 eventId = 1;

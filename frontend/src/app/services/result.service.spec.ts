@@ -59,10 +59,10 @@ describe('ResultService', () => {
   it('should fetch result by ID', () => {
     const dummyResult: Results = {
       id: 1,
-      atletaId: 'A100',
-      eventoId: 1,
-      disciplinaId: 2,
-      valor: '12.5',
+      athleteId: 'A100',
+      eventId: 1,
+      disciplineId: 2,
+      value: '12.5',
       athlete: { firstName: 'Juan', lastName: 'Pérez' },
       discipline: { name: '100m' }
     };
@@ -78,10 +78,10 @@ describe('ResultService', () => {
 
   it('should create a new result', () => {
     const newResult: Results = {
-      atletaId: 'A100',
-      eventoId: 1,
-      disciplinaId: 2,
-      valor: '13.5'
+      athleteId: 'A100',
+      eventId: 1,
+      disciplineId: 2,
+      value: '13.5'
     };
 
     service.create(newResult).subscribe(response => {
@@ -97,10 +97,10 @@ describe('ResultService', () => {
   it('should update a result', () => {
     const updatedResult: Results = {
       id: 1,
-      atletaId: 'A100',
-      eventoId: 1,
-      disciplinaId: 2,
-      valor: '14.0'
+      athleteId: 'A100',
+      eventId: 1,
+      disciplineId: 2,
+      value: '14.0'
     };
 
     service.update(1, updatedResult).subscribe(response => {
@@ -126,16 +126,16 @@ describe('ResultService', () => {
   it('should create multiple results', () => {
     const newResults: Results[] = [
       {
-        atletaId: 'A100',
-        eventoId: 1,
-        disciplinaId: 2,
-        valor: '15.0'
+        athleteId: 'A100',
+        eventId: 1,
+        disciplineId: 2,
+        value: '15.0'
       },
       {
-        atletaId: 'A101',
-        eventoId: 1,
-        disciplinaId: 2,
-        valor: '16.0'
+        athleteId: 'A101',
+        eventId: 1,
+        disciplineId: 2,
+        value: '16.0'
       }
     ];
 

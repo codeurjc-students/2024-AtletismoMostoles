@@ -35,7 +35,6 @@ public class Athlete {
     @JsonIgnoreProperties({"athletes", "coaches", "equipment", "events"})
     private Set<Discipline> disciplines = new HashSet<>();
 
-
     public Athlete(String licenseNumber, String firstName, String lastName, LocalDate birthDate, Coach coach, Set<Discipline> disciplines) {
         this.licenseNumber = licenseNumber;
         this.firstName = firstName;
@@ -45,9 +44,7 @@ public class Athlete {
         this.disciplines = disciplines;
     }
 
-    public Athlete() {
-
-    }
+    public Athlete() {}
 
     public String getLicenseNumber() {
         return licenseNumber;

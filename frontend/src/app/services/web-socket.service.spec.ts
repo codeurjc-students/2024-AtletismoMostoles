@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { WebSocketService } from './web-socket.service';
-import { Client, IMessage } from '@stomp/stompjs';
+import { IMessage } from '@stomp/stompjs';
 
 describe('WebSocketService', () => {
   let service: WebSocketService;
@@ -34,16 +34,16 @@ describe('WebSocketService', () => {
       return { unsubscribe: () => {} } as any;
     });
 
-    service.escucharConfirmacionPdf('123', spyCallback);
+    service.listenConfirmationPdf('123', spyCallback);
 
     expect(spyCallback).toHaveBeenCalledWith('https://fake.pdf');
   });
 
 
   it('debería suscribirse a eventos cuando está conectado', () => {
-    const eventoMock = { id: 99, name: 'evento' };
+    const eventMock = { id: 99, name: 'evento' };
     const fakeMessage: IMessage = {
-      body: JSON.stringify(eventoMock),
+      body: JSON.stringify(eventMock),
       ack: () => {},
       nack: () => {},
       command: '',
@@ -61,9 +61,9 @@ describe('WebSocketService', () => {
       return { unsubscribe: () => {} } as any;
     });
 
-    service.escucharEventos(spyCallback);
+    service.listenEvents(spyCallback);
 
-    expect(spyCallback).toHaveBeenCalledWith(eventoMock);
+    expect(spyCallback).toHaveBeenCalledWith(eventMock);
   });
 
   it('debería limpiar todas las suscripciones al desconectar', () => {
@@ -71,12 +71,12 @@ describe('WebSocketService', () => {
     const eventUnsub = jasmine.createSpy('eventUnsub');
 
     service['pdfSubscriptions'].set('123', pdfUnsub);
-    service['eventoSubscription'] = eventUnsub;
+    service['eventSubscription'] = eventUnsub;
     service['connected'] = true;
 
     spyOn(service['stompClient'], 'deactivate');
 
-    service.desconectar();
+    service.disconnect();
 
     expect(pdfUnsub).toHaveBeenCalled();
     expect(eventUnsub).toHaveBeenCalled();

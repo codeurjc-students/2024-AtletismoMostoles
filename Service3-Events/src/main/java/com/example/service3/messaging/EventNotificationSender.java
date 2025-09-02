@@ -16,6 +16,6 @@ public class EventNotificationSender {
 
     public void sendNotification(EventNotification notification) {
         rabbitTemplate.convertAndSend(RabbitMQConfig.EVENT_NOTIFICATION_QUEUE, notification);
-        System.out.println("Evento enviado a cola: " + notification.getEventoId());
+        System.out.println("Evento enviado a cola: " + notification.getEventId());
     }
 }

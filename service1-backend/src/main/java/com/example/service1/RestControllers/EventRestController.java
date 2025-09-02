@@ -2,7 +2,7 @@ package com.example.service1.RestControllers;
 
 import com.example.service1.DTO.EventDto;
 import com.example.service1.DTO.EventNotificationDto;
-import com.example.service1.Services.EventoService;
+import com.example.service1.Services.EventService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,20 +13,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/events")
-public class EventoRestController {
+public class EventRestController {
 
     @Autowired
-    private EventoService eventoService;
+    private EventService eventService;
 
     @GetMapping
-    public ResponseEntity<Page<EventDto>> getEventos(
+    public ResponseEntity<Page<EventDto>> getEvents(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
@@ -34,9 +33,9 @@ public class EventoRestController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        List<EventDto> eventos = eventoService.listarEventos();
+        List<EventDto> events = eventService.listEvents();
 
-        Stream<EventDto> filtered = eventos.stream();
+        Stream<EventDto> filtered = events.stream();
         if (organizedByClub != null)
             filtered = filtered.filter(e -> e.isOrganizedByClub() == organizedByClub);
         if (startDate != null)
@@ -61,28 +60,28 @@ public class EventoRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventDto> getEvento(@PathVariable Long id) {
-        return ResponseEntity.ok(eventoService.getEventoById(id));
+    public ResponseEntity<EventDto> getEvent(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.getEventById(id));
     }
 
     @PostMapping
-    public ResponseEntity<EventDto> crearEvento(@Valid @RequestBody EventDto dto) {
-        return ResponseEntity.ok(eventoService.crearEvento(dto));
+    public ResponseEntity<EventDto> createEvent(@Valid @RequestBody EventDto dto) {
+        return ResponseEntity.ok(eventService.createEvent(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventDto> actualizarEvento(@PathVariable Long id, @RequestBody EventDto dto) {
-        return ResponseEntity.ok(eventoService.actualizarEvento(id, dto));
+    public ResponseEntity<EventDto> updateEvent(@PathVariable Long id, @RequestBody EventDto dto) {
+        return ResponseEntity.ok(eventService.updateEvent(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> borrarEvento(@PathVariable Long id) {
-        eventoService.borrarEvento(id);
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long id) {
+        eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/notificaciones")
-    public List<EventNotificationDto> getNotificaciones(@RequestParam long usuarioId, @RequestParam String ultimaConexion) {
-        return eventoService.obtenerNotificaciones(usuarioId, ultimaConexion);
+    public List<EventNotificationDto> getNotifications(@RequestParam long userId, @RequestParam String lastConnection) {
+        return eventService.obtenerNotificaciones(userId, lastConnection);
     }
 }

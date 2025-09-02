@@ -47,7 +47,7 @@ class PdfServiceImplTest {
     }
 
     @Test
-    void generarPdfParaAtleta_shouldUploadAndNotify() {
+    void generatePdfForAthlete_shouldUploadAndNotify() {
         String athleteId = "123";
         Long eventId = 1L;
         Long disciplineId = 1L;
@@ -76,7 +76,7 @@ class PdfServiceImplTest {
         when(azureBlobService.uploadPdf(anyString(), any())).thenReturn(expectedUrl);
 
         // Ejecutar servicio
-        pdfService.generarPdfParaAtleta(athleteId);
+        pdfService.generatePdfForAthlete(athleteId);
 
         // Verificaciones
         verify(resultRepository).findByAthleteId(athleteId);
@@ -94,7 +94,7 @@ class PdfServiceImplTest {
         );
 
         Map<String, String> capturedMap = mapCaptor.getValue();
-        assertEquals("123", capturedMap.get("atletaId"));
+        assertEquals("123", capturedMap.get("athleteId"));
         assertEquals("https://storage.blob.core.windows.net/resultspdf/file123.pdf", capturedMap.get("url"));
 
     }

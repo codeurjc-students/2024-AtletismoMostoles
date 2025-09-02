@@ -6,8 +6,6 @@ import com.example.service2.services.PdfServiceImpl;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 @Component
 public class PdfRequestListener {
 
@@ -19,10 +17,10 @@ public class PdfRequestListener {
 
     @RabbitListener(queues = RabbitMQConfig.PDF_REQUEST_QUEUE)
     public void handlePdfRequest(PdfRequestDto request) {
-        String atletaId = request.getAtletaId();
-        if (atletaId != null && !atletaId.isBlank()) {
-            System.out.println("📄 Recibida solicitud de PDF para atleta: " + atletaId);
-            pdfService.generarPdfParaAtleta(atletaId);
+        String athleteId = request.getAthleteId();
+        if (athleteId != null && !athleteId.isBlank()) {
+            System.out.println("📄 Recibida solicitud de PDF para atleta: " + athleteId);
+            pdfService.generatePdfForAthlete(athleteId);
         } else {
             System.err.println("❌ Mensaje inválido: atletaId ausente o vacío");
         }

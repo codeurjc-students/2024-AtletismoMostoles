@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
@@ -26,9 +25,9 @@ public class DataInitializer {
     @PostConstruct
     public void initData() {
         if (eventRepository.count() == 0) {
-            LocalDateTime now = LocalDateTime.now();  // para usar la misma hora base
+            LocalDateTime now = LocalDateTime.now();
 
-            List<Event> eventos = List.of(
+            List<Event> events = List.of(
                     new Event("Control de Lanzamientos",
                             LocalDate.of(2024, 3, 15),
                             "https://goo.gl/maps/lanzamientos", DEFAULT_IMAGE, false,
@@ -55,7 +54,7 @@ public class DataInitializer {
                             Set.of(2L, 5L), now.minusDays(1))
             );
 
-            eventRepository.saveAll(eventos);
+            eventRepository.saveAll(events);
         }
     }
 }

@@ -2,8 +2,8 @@ package com.example.service3.grpc;
 
 import com.example.service3.entities.Event;
 import com.example.service3.services.EventService;
-import com.example.service3.grpc.EventoServiceGrpcProto.*;
-import com.example.service3.grpc.EventoServiceGrpc.EventoServiceImplBase;
+import com.example.service3.grpc.EventServiceGrpcProto.*;
+import com.example.service3.grpc.EventServiceGrpc.EventServiceImplBase;
 import com.example.shared.CommonProto;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @GrpcService
-public class EventServiceGrpcImpl extends EventoServiceImplBase {
+public class EventServiceGrpcImpl extends EventServiceImplBase {
 
     private final EventService eventService;
 
@@ -25,12 +25,12 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void listarEventos(ListarEventosRequest request, StreamObserver<ListarEventosResponse> responseObserver) {
-        List<Event> eventos = eventService.findAllOrdered();
+    public void listEvents(ListEventsRequest request, StreamObserver<ListEventsResponse> responseObserver) {
+        List<Event> events = eventService.findAllOrdered();
 
-        ListarEventosResponse.Builder response = ListarEventosResponse.newBuilder();
-        for (Event e : eventos) {
-            response.addEventos(convertToMessage(e));
+        ListEventsResponse.Builder response = ListEventsResponse.newBuilder();
+        for (Event e : events) {
+            response.addEvents(convertToMessage(e));
         }
 
         responseObserver.onNext(response.build());
@@ -38,11 +38,11 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void obtenerEventoPorId(GetEventoRequest request, StreamObserver<EventoMessage> responseObserver) {
+    public void getEventById(GetEventRequest request, StreamObserver<EventMessage> responseObserver) {
         Optional<Event> optional = eventService.findById(request.getId());
 
         if (optional.isPresent()) {
-            EventoMessage msg = convertToMessage(optional.get());
+            EventMessage msg = convertToMessage(optional.get());
             responseObserver.onNext(msg);
             responseObserver.onCompleted();
         } else {
@@ -55,7 +55,7 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void crearEvento(CrearEventoRequest request, StreamObserver<EventoMessage> responseObserver) {
+    public void createEvent(CreateEventRequest request, StreamObserver<EventMessage> responseObserver) {
         Event event = new Event();
         event.setName(request.getName());
         event.setDate(LocalDate.parse(request.getDate()));
@@ -67,13 +67,13 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
 
         Event saved = eventService.save(event);
 
-        EventoMessage message = convertToMessage(saved);
+        EventMessage message = convertToMessage(saved);
         responseObserver.onNext(message);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void actualizarEvento(UpdateEventoRequest request, StreamObserver<EventoMessage> responseObserver) {
+    public void updateEvent(UpdateEventRequest request, StreamObserver<EventMessage> responseObserver) {
         Optional<Event> optional = eventService.findById(request.getId());
 
         if (optional.isPresent()) {
@@ -87,21 +87,20 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
             event.setCreationTime(LocalDateTime.parse(request.getCreationTime()));
 
             Event updated = eventService.save(event);
-            EventoMessage message = convertToMessage(updated);
+            EventMessage message = convertToMessage(updated);
             responseObserver.onNext(message);
         } else {
             responseObserver.onError(Status.NOT_FOUND
                     .withDescription("Evento no encontrado")
                     .asRuntimeException());
         }
-
         responseObserver.onCompleted();
     }
 
     @Override
-    public void borrarEvento(BorrarEventoRequest request, StreamObserver<CommonProto.StatusMessage> responseObserver) {
+    public void deleteEvent(DeleteEventRequest request, StreamObserver<CommonProto.StatusMessage> responseObserver) {
         try {
-            eventService.deleteById(request.getEventoId());
+            eventService.deleteById(request.getEventId());
             responseObserver.onNext(CommonProto.StatusMessage.newBuilder()
                     .setSuccess(true)
                     .setMensaje("Evento eliminado correctamente.")
@@ -116,28 +115,28 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
     }
 
     @Override
-    public void notificacionesPendientes(NotificacionesRequest request, StreamObserver<NotificacionesResponse> responseObserver) {
+    public void pendingNotifications(NotificationsRequest request, StreamObserver<NotificationsResponse> responseObserver) {
         try {
-            String fechaStr = request.getTimestampUltimaConexion();
+            String fechaStr = request.getTimestampLastConnection();
             System.out.println("fecha: " + fechaStr);
             LocalDateTime date = LocalDateTime.parse(fechaStr);
 
             List<Event> nuevosEventos = eventService.findEventsAfter(date);
 
-            List<NotificacionData> notificaciones = nuevosEventos.stream().map(event ->
-                    NotificacionData.newBuilder()
-                            .setEventoId(event.getId())
+            List<NotificationData> notificaciones = nuevosEventos.stream().map(event ->
+                    NotificationData.newBuilder()
+                            .setEventId(event.getId())
                             .setName(event.getName())
                             .setDate(event.getDate().toString())
                             .setMapLink(event.getMapLink())
                             .setImageLink(event.getImageLink())
                             .setOrganizedByClub(event.isOrganizedByClub())
-                            .setTimestampNotificacion(LocalDateTime.now().toString())
+                            .setTimestampNotification(LocalDateTime.now().toString())
                             .addAllDisciplineIds(event.getDisciplineIds())
                             .build()
             ).toList();
 
-            NotificacionesResponse response = NotificacionesResponse.newBuilder()
+            NotificationsResponse response = NotificationsResponse.newBuilder()
                     .addAllNotificaciones(notificaciones)
                     .build();
 
@@ -150,8 +149,8 @@ public class EventServiceGrpcImpl extends EventoServiceImplBase {
         }
     }
 
-    private EventoMessage convertToMessage(Event event) {
-        EventoMessage.Builder builder = EventoMessage.newBuilder()
+    private EventMessage convertToMessage(Event event) {
+        EventMessage.Builder builder = EventMessage.newBuilder()
                 .setId(event.getId())
                 .setName(event.getName())
                 .setDate(event.getDate().toString())

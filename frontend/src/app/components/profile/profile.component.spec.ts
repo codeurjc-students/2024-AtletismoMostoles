@@ -54,7 +54,6 @@ describe('ProfileComponent', () => {
 
     authServiceSpy.isAdmin.and.returnValue(true);
     authServiceSpy.isAuthenticated.and.returnValue(true);
-    // Para evitar error al subscribirse en ngOnInit
     Object.defineProperty(authServiceSpy, 'user', {
       get: () => of({})
     });

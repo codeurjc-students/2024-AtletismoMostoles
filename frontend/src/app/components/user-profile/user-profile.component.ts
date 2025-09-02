@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AuthService, NotificacionData } from '../../services/auth.service';
+import { AuthService, NotificationData } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 import { NewUserDialogComponent } from '../../modals/NewUserDialogComponent';
 import { NgIf, NgForOf } from '@angular/common';
@@ -43,7 +43,7 @@ export class UserProfileComponent implements OnInit {
   isAdmin = false;
   users: any[] = [];
   selection = new SelectionModel<any>(true, []);
-  notificacionesPendientes: NotificacionData[] = [];
+  notificationsPending: NotificationData[] = [];
 
   constructor(
     private authService: AuthService,
@@ -58,7 +58,7 @@ export class UserProfileComponent implements OnInit {
       this.isLoggedIn = this.authService.isAuthenticated();
       this.isAdmin = this.authService.isAdmin();
 
-      this.notificacionesPendientes = this.authService.notificacionesPendientes;
+      this.notificationsPending = this.authService.notificationsPending;
 
       if (this.isAdmin) {
         this.loadUsers();

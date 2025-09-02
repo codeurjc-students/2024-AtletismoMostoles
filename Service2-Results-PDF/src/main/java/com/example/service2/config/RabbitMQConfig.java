@@ -13,12 +13,12 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue pdfRequestQueue() {
-        return new Queue(PDF_REQUEST_QUEUE, true); // durable
+        return new Queue(PDF_REQUEST_QUEUE, true);
     }
 
     @Bean
     public Queue pdfConfirmationQueue() {
-        return new Queue(PDF_CONFIRMATION_QUEUE, true); // durable
+        return new Queue(PDF_CONFIRMATION_QUEUE, true);
     }
 
     @Bean

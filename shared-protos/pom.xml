@@ -12,7 +12,7 @@
     <properties>
         <java.version>11</java.version>
         <grpc.version>1.45.1</grpc.version>
-        <protobuf.version>3.19.4</protobuf.version>
+        <protobuf.version>3.21.12</protobuf.version>
     </properties>
 
     <dependencies>
@@ -40,14 +40,14 @@
             <version>${grpc.version}</version>
         </dependency>
 
-        <!-- Guava (requerido por gRPC) -->
+        <!-- Guava (required by gRPC) -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>31.1-jre</version>
         </dependency>
 
-        <!-- Anotaciones -->
+        <!-- Annotations -->
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
@@ -57,15 +57,16 @@
 
     <build>
         <extensions>
+            <!-- OS detection for protoc binary -->
             <extension>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>os-maven-plugin</artifactId>
-                <version>1.6.2</version>
+                <version>1.7.0</version>
             </extension>
         </extensions>
 
         <plugins>
-            <!-- Plugin Protobuf -->
+            <!-- Protobuf + gRPC plugin -->
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
@@ -85,7 +86,7 @@
                 </executions>
             </plugin>
 
-            <!-- Plugin Java -->
+            <!-- Java Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -96,7 +97,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Añade las fuentes generadas al build -->
+            <!-- Include generated proto sources -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>

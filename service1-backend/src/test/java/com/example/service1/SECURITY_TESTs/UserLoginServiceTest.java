@@ -1,10 +1,8 @@
 package com.example.service1.SECURITY_TESTs;
 
-import com.example.service1.DTO.EventNotificationDto;
 import com.example.service1.Entities.User;
 import com.example.service1.Security.JWT.*;
 import com.example.service1.Services.UserService;
-import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionData;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,14 +23,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

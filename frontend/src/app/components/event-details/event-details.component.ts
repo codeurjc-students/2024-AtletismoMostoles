@@ -123,13 +123,13 @@ export class EventDetailsComponent implements OnInit {
 
             const enrichment$ = rawResults.map(result =>
               forkJoin({
-                athlete: this.athleteService.getById(result.atletaId).pipe(
+                athlete: this.athleteService.getById(result.athleteId).pipe(
                   map(a => ({
                     firstName: a?.firstName || 'Desconocido',
                     lastName: a?.lastName || ''
                   }))
                 ),
-                discipline: this.disciplineService.getById(result.disciplinaId).pipe(
+                discipline: this.disciplineService.getById(result.disciplineId).pipe(
                   map(d => ({ name: d?.name || 'Sin disciplina' }))
                 )
               }).pipe(

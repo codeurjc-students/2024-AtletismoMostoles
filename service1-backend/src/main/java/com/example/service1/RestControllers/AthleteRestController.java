@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/athletes")
-@CrossOrigin(origins = "https://localhost:4200")
 public class AthleteRestController {
     @Autowired
     private AthleteService athleteService;

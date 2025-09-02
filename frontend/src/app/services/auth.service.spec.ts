@@ -20,7 +20,6 @@ describe('AuthService', () => {
     httpMock = TestBed.inject(HttpTestingController);
     routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
 
-    // ✅ Interceptamos la petición automática a /api/users/me al iniciar el servicio
     const initReq = httpMock.expectOne('/api/users/me');
     initReq.flush(null);
   });

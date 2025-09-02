@@ -9,21 +9,20 @@ export class WebSocketService {
   private stompClient: Client;
   private connected = false;
   private pdfSubscriptions: Map<string, () => void> = new Map();
-  private eventoSubscription?: () => void;
+  private eventSubscription?: () => void;
 
   constructor() {
     this.stompClient = new Client({
       brokerURL: undefined, // usamos SockJS
-      webSocketFactory: () => new SockJS('https://localhost:443/ws'),
+      webSocketFactory: () => new SockJS('/ws'),
       reconnectDelay: 5000,
       debug: (msg: string) => console.log('[WebSocket] ' + msg),
       onConnect: () => {
         this.connected = true;
         console.log('[WebSocket] Conectado correctamente');
 
-        // Re-suscribir en caso de reconexión
-        this.reSuscribirPdf();
-        this.reSuscribirEventos();
+        this.reSubscribePDF();
+        this.reSubscribeEvents();
       },
       onStompError: (frame) => {
         console.error('[WebSocket] Error STOMP:', frame);
@@ -33,12 +32,7 @@ export class WebSocketService {
     this.stompClient.activate();
   }
 
-  /**
-   * Se suscribe al tópico de PDF para un atleta específico.
-   * @param licenseNumber ID del atleta
-   * @param callback función que se ejecutará con la URL del PDF
-   */
-  escucharConfirmacionPdf(licenseNumber: string, callback: (url: string) => void): void {
+  listenConfirmationPdf(licenseNumber: string, callback: (url: string) => void): void {
     const topic = `/topic/pdf/${licenseNumber}`;
 
     const subscribe = () => {
@@ -63,21 +57,17 @@ export class WebSocketService {
     }
   }
 
-  /**
-   * Escucha notificaciones de nuevos eventos creados.
-   * @param callback función que se ejecutará con la notificación recibida
-   */
-  escucharEventos(callback: (evento: any) => void): void {
+  listenEvents(callback: (event: any) => void): void {
     const topic = `/topic/eventos`;
 
     const subscribe = () => {
       const sub = this.stompClient.subscribe(topic, (message: IMessage) => {
-        const evento = JSON.parse(message.body);
-        console.log('[WebSocket] Evento recibido:', evento);
-        callback(evento);
+        const event = JSON.parse(message.body);
+        console.log('[WebSocket] Evento recibido:', event);
+        callback(event);
       });
 
-      this.eventoSubscription = () => sub.unsubscribe();
+      this.eventSubscription = () => sub.unsubscribe();
     };
 
     if (this.connected) {
@@ -93,36 +83,27 @@ export class WebSocketService {
     }
   }
 
-  /**
-   * Re-suscribe a todos los topics de PDF en caso de reconexión.
-   */
-  private reSuscribirPdf(): void {
+  private reSubscribePDF(): void {
     const oldSubs = this.pdfSubscriptions;
     this.pdfSubscriptions = new Map();
     oldSubs.forEach((_unsub, licenseNumber) => {
-      this.escucharConfirmacionPdf(licenseNumber, () => {});
+      this.listenConfirmationPdf(licenseNumber, () => {});
     });
   }
 
-  /**
-   * Re-suscribe al topic de eventos en caso de reconexión.
-   */
-  private reSuscribirEventos(): void {
-    if (this.eventoSubscription) {
-      this.escucharEventos(() => {});
+  private reSubscribeEvents(): void {
+    if (this.eventSubscription) {
+      this.listenEvents(() => {});
     }
   }
 
-  /**
-   * Limpia todas las suscripciones activas (PDFs y eventos).
-   */
-  desconectar(): void {
+  disconnect(): void {
     this.pdfSubscriptions.forEach(unsub => unsub());
     this.pdfSubscriptions.clear();
 
-    if (this.eventoSubscription) {
-      this.eventoSubscription();
-      this.eventoSubscription = undefined;
+    if (this.eventSubscription) {
+      this.eventSubscription();
+      this.eventSubscription = undefined;
     }
 
     if (this.stompClient && this.connected) {

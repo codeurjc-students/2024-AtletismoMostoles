@@ -1,10 +1,10 @@
 package com.example.service1.Services;
 
 import com.example.service1.Entities.User;
-import com.example.service1.GrpcClients.EventoGrpcClient;
+import com.example.service1.GrpcClients.EventGrpcClient;
 import com.example.service1.Repositories.UserRepository;
-import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionData;
-import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionesResponse;
+import com.example.service3.grpc.EventServiceGrpcProto.NotificationData;
+import com.example.service3.grpc.EventServiceGrpcProto.NotificationsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ public class UserService {
     UserRepository userRepository;
 
     @Autowired
-    EventoGrpcClient eventoGrpcClient;
+    EventGrpcClient eventGrpcClient;
 
     public Collection<User> getAllUsers() {
         return userRepository.findAll();
@@ -80,12 +80,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public List<NotificacionData> getPendingNotifications(User user, LocalDateTime lastLogin) {
+    public List<NotificationData> getPendingNotifications(User user, LocalDateTime lastLogin) {
         if (user == null || lastLogin == null) {
             return List.of();
         }
         System.out.println("Service Timestamp: " + lastLogin );
-        NotificacionesResponse response = eventoGrpcClient.notificacionesPendientes(user.getId(), lastLogin.toString());
+        NotificationsResponse response = eventGrpcClient.pendingNotifications(user.getId(), lastLogin.toString());
         return response.getNotificacionesList();
     }
 

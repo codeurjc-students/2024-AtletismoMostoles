@@ -6,7 +6,7 @@ public class AthleteDto {
     private String lastName;
 
     public String getFullName(){
-        return firstName + " " + lastName;
+        return this.firstName + " " + this.lastName;
     }
 }
 

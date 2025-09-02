@@ -2,10 +2,10 @@ package com.example.service1.Services;
 
 import com.example.service1.DTO.EventDto;
 import com.example.service1.DTO.EventNotificationDto;
-import com.example.service1.GrpcClients.EventoGrpcClient;
-import com.example.service3.grpc.EventoServiceGrpcProto.EventoMessage;
-import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionData;
-import com.example.service3.grpc.EventoServiceGrpcProto.NotificacionesResponse;
+import com.example.service1.GrpcClients.EventGrpcClient;
+import com.example.service3.grpc.EventServiceGrpcProto.EventMessage;
+import com.example.service3.grpc.EventServiceGrpcProto.NotificationData;
+import com.example.service3.grpc.EventServiceGrpcProto.NotificationsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,47 +16,47 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class EventoService {
+public class EventService {
 
     @Autowired
-    private EventoGrpcClient grpcClient;
+    private EventGrpcClient grpcClient;
 
-    public List<EventDto> listarEventos() {
-        return grpcClient.listarEventos()
-                .getEventosList()
+    public List<EventDto> listEvents() {
+        return grpcClient.listEvents()
+                .getEventsList()
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
-    public EventDto getEventoById(Long id) {
-        EventoMessage msg = grpcClient.obtenerEventoPorId(id);
+    public EventDto getEventById(Long id) {
+        EventMessage msg = grpcClient.getEventById(id);
         return mapToDto(msg);
     }
 
-    public EventDto crearEvento(EventDto dto) {
-        EventoMessage msg = grpcClient.crearEvento(dto);
+    public EventDto createEvent(EventDto dto) {
+        EventMessage msg = grpcClient.createEvent(dto);
         return mapToDto(msg);
     }
 
-    public EventDto actualizarEvento(Long id, EventDto dto) {
-        EventoMessage msg = grpcClient.actualizarEvento(id, dto);
+    public EventDto updateEvent(Long id, EventDto dto) {
+        EventMessage msg = grpcClient.updateEvent(id, dto);
         return mapToDto(msg);
     }
 
-    public void borrarEvento(Long id) {
-        grpcClient.borrarEvento(id);
+    public void deleteEvent(Long id) {
+        grpcClient.deleteEvent(id);
     }
 
     public List<EventNotificationDto> obtenerNotificaciones(long usuarioId, String timestampUltimaConexion) {
-        NotificacionesResponse response = grpcClient.notificacionesPendientes(usuarioId, timestampUltimaConexion);
+        NotificationsResponse response = grpcClient.pendingNotifications(usuarioId, timestampUltimaConexion);
         return response.getNotificacionesList()
                 .stream()
                 .map(this::mapToNotificacionDto)
                 .collect(Collectors.toList());
     }
 
-    private EventDto mapToDto(EventoMessage msg) {
+    private EventDto mapToDto(EventMessage msg) {
         EventDto dto = new EventDto();
         dto.setId(msg.getId());
         dto.setName(msg.getName());
@@ -69,15 +69,15 @@ public class EventoService {
         return dto;
     }
 
-    private EventNotificationDto mapToNotificacionDto(NotificacionData notif) {
+    private EventNotificationDto mapToNotificacionDto(NotificationData notif) {
         EventNotificationDto dto = new EventNotificationDto();
-        dto.setEventoId(notif.getEventoId());
+        dto.setEventId(notif.getEventId());
         dto.setName(notif.getName());
         dto.setDate(LocalDate.parse(notif.getDate()));
         dto.setMapLink(notif.getMapLink());
         dto.setImageLink(notif.getImageLink());
         dto.setOrganizedByClub(notif.getOrganizedByClub());
-        dto.setTimestampNotificacion(notif.getTimestampNotificacion());
+        dto.setTimestampNotification(notif.getTimestampNotification());
         dto.setDisciplineIds(new HashSet<>(notif.getDisciplineIdsList()));
         return dto;
     }

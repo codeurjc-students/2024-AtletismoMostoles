@@ -17,7 +17,7 @@ class AthleteRestControllerTest {
     @BeforeAll
     static void setup() {
         RestAssured.useRelaxedHTTPSValidation();
-        RestAssured.baseURI = "https://localhost:443";
+        RestAssured.baseURI = "https://service1-backend:9091";
 
         Response response = given()
                 .contentType(ContentType.JSON)

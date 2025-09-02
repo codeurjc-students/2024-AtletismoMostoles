@@ -110,7 +110,7 @@ export class EventsCalendarComponent implements OnInit, AfterViewInit {
       const eventDate = this.datePipe.transform(event.date, 'yyyy-MM-dd');
       if (eventDate) {
         this.markedDates.add(eventDate);
-        console.log(`Evento marcado en el calendario: ${eventDate}`); // Para depuración
+        console.log(`Evento marcado en el calendario: ${eventDate}`);
       }
     });
   }
@@ -136,11 +136,11 @@ export class EventsCalendarComponent implements OnInit, AfterViewInit {
     const dateString = this.datePipe.transform(date, 'yyyy-MM-dd');
 
     if (dateString) {
-      console.log(`Revisión de fecha en el calendario: ${dateString}`); // 🔥 Debe aparecer en consola
+      console.log(`Revisión de fecha en el calendario: ${dateString}`);
     }
 
     if (dateString && this.markedDates.has(dateString)) {
-      console.log(`✅ Día marcado en UI: ${dateString}`); // 🔥 Debe aparecer si la fecha tiene evento
+      console.log(`✅ Día marcado en UI: ${dateString}`);
       return 'event-highlight';
     }
 

@@ -135,10 +135,10 @@ describe('EventDetailsComponent', () => {
 
     const mockResults = [
       {
-        valor: '10',
-        atletaId: 'A001',
-        eventoId: 1,
-        disciplinaId: 1
+        value: '10',
+        athleteId: 'A001',
+        eventId: 1,
+        disciplineId: 1
       }
     ];
 

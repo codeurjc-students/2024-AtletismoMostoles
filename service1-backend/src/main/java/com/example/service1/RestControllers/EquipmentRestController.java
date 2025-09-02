@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/equipment")
-@CrossOrigin(origins = "https://localhost:4200")
 public class EquipmentRestController {
     @Autowired
     private EquipmentService equipmentService;
