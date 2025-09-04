@@ -3,24 +3,24 @@ name: CD to AKS (Docker Hub)
 on:
   #push:
     #branches:
-      #- main
+       #- main
   workflow_dispatch:
 
+concurrency:
+  group: aks-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
-  # --- Docker Hub ---
   DOCKERHUB_USER: saac04
   REGISTRY: docker.io
   IMAGE_TAG: ${{ github.sha }}
   LATEST_TAG: latest
-
-  # --- AKS / Kubernetes ---
   K8S_NAMESPACE: default
 
 jobs:
   build_and_push:
     name: Build & Push to Docker Hub
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,7 +37,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # FRONTEND
       - name: Build & Push frontend
         uses: docker/build-push-action@v6
         with:
@@ -50,7 +49,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # SERVICE 1
       - name: Build & Push service1-backend
         uses: docker/build-push-action@v6
         with:
@@ -63,7 +61,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # SERVICE 2
       - name: Build & Push service2-result
         uses: docker/build-push-action@v6
         with:
@@ -76,7 +73,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # SERVICE 3
       - name: Build & Push service3-events
         uses: docker/build-push-action@v6
         with:
@@ -93,12 +89,10 @@ jobs:
     name: Update AKS Deployments
     runs-on: ubuntu-latest
     needs: build_and_push
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Connecting to the cluster using kubeconfig secret (without Enter ID)
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
 
@@ -108,9 +102,20 @@ jobs:
           chmod 600 $HOME/kubeconfig
           echo "KUBECONFIG=$HOME/kubeconfig" >> $GITHUB_ENV
 
-      # (Optional) Create/update imagePullSecret if your Docker Hub repos are private
+      - name: Detect Docker Hub creds
+        id: dh
+        env:
+          DH_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DH_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -n "$DH_USER" ] && [ -n "$DH_TOKEN" ]; then
+            echo "present=true" >> $GITHUB_OUTPUT
+          else
+            echo "present=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Upsert imagePullSecret (only if private repos)
-        if: ${{ secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN }}
+        if: ${{ steps.dh.outputs.present == 'true' }}
         run: |
           NS="${{ env.K8S_NAMESPACE }}"
           kubectl -n "$NS" create secret docker-registry dockerhub-cred \
@@ -119,11 +124,10 @@ jobs:
             --docker-password="${{ secrets.DOCKERHUB_TOKEN }}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
-      # Update images on each deployment
       - name: Set images
         env:
           NS: ${{ env.K8S_NAMESPACE }}
-          REG: "${{ env.REGISTRY }}/${{ env.DOCKERHUB_USER }}"
+          REG: ${{ format('{0}/{1}', env.REGISTRY, env.DOCKERHUB_USER) }}
           TAG: ${{ env.IMAGE_TAG }}
         run: |
           kubectl -n "$NS" set image deploy/frontend          frontend=${REG}/frontend:${TAG}
@@ -131,7 +135,6 @@ jobs:
           kubectl -n "$NS" set image deploy/service2-backend  service2-backend=${REG}/service2-result:${TAG}
           kubectl -n "$NS" set image deploy/service3-backend  service3-backend=${REG}/service3-events:${TAG}
 
-      # Wait for rollouts
       - name: Wait for rollouts
         env:
           NS: ${{ env.K8S_NAMESPACE }}
