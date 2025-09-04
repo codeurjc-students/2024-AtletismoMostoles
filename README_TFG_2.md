@@ -1,10 +1,10 @@
-# 🏃‍♂️ TFG - Sistema Distribuido para Club de Atletismo
+# TFG - Sistema Distribuido para Club de Atletismo
 
 Este proyecto es la continuación del TFG original basado en una aplicación monolítica. Se ha rediseñado usando una arquitectura de microservicios para mejorar la escalabilidad, el mantenimiento y la especialización de cada funcionalidad.
 
 ---
 
-## 🧩 Microservicios del sistema
+## Microservicios del sistema
 
 ### 🔹 Service1 - Frontend Gateway
 - Rol: punto de entrada para el frontend Angular.
@@ -23,7 +23,7 @@ Este proyecto es la continuación del TFG original basado en una aplicación mon
 
 ---
 
-## 🛰️ Comunicación entre servicios
+## Comunicación entre servicios
 
 | Origen     | Destino     | Protocolo      | Propósito                         |
 |------------|-------------|----------------|-----------------------------------|
@@ -35,7 +35,7 @@ Este proyecto es la continuación del TFG original basado en una aplicación mon
 
 ---
 
-## 📁 Estructura del repositorio
+## Estructura del repositorio
 
 ```
 /TFG-Proyecto-Atletismo/
@@ -55,7 +55,7 @@ Este proyecto es la continuación del TFG original basado en una aplicación mon
 ```
 ---
 
-## 🧪 Tecnologías utilizadas
+## Tecnologías utilizadas
 
 - Spring Boot 3.5.0
 - Angular
@@ -301,3 +301,102 @@ az group delete -n rg-tfg-weu --yes --no-wait
     - MySQL con **acceso privado**, copias, HA, SKU GP/MO,
     - secretos en **Key Vault** + CSI Driver.
 
+---
+
+# CD to AKS  — Workflow Guide
+
+Este repositorio incluye un workflow de GitHub Actions que:
+1) **Construye y publica** imágenes Docker en Docker Hub.
+2) **Actualiza** los Deployments de Kubernetes en AKS usando `kubectl` con un **kubeconfig** almacenado como secreto.
+
+> No se usa login de Azure/Entra ID. El pipeline se conecta al clúster con un **ServiceAccount** y un **kubeconfig** con RBAC mínimo.
+
+---
+## Requisitos
+
+- **Docker Hub**
+  - Cuenta y token de acceso.
+  - Secrets en GitHub:
+    - `DOCKERHUB_USERNAME`
+    - `DOCKERHUB_TOKEN`
+
+- **Kubernetes (AKS)**
+  - Un clúster AKS accesible.
+  - Namespace objetivo (por defecto `default`).
+  - Deployments existentes con estos nombres y contenedores:
+    - `deploy/frontend` (container `frontend`)
+    - `deploy/service1-backend` (container `service1-backend`)
+    - `deploy/service2-backend` (container `service2-backend`)
+    - `deploy/service3-backend` (container `service3-backend`)
+  - Secret en GitHub con el kubeconfig del ServiceAccount:
+    - `KUBECONFIG_GHA`
+
+- **Manifiestos K8s** aplicados previamente (Services, ConfigMaps, Secrets, HPAs, PDBs, Ingress, etc.).
+
+---
+
+## Bootstrap (primera vez o tras borrar el Resource Group)
+
+1. **Provisiona** la infraestructura:
+   - Con el script: 
+   ```bash
+   deploy_files/deploy_AKS.sh
+   ```
+   - Con IaC usando el main.bicep:
+    ```bash
+    # 3.1 Grupo
+    az group create -n rg-tfg-weu -l westeurope
+    
+    # 3.2 Implementación (IAAC)
+    az deployment group create \
+    -g rg-tfg-weu \
+    -f infra/main.bicep \
+    -p infra/parameters.dev.json
+    ```
+   Y el archivo:
+    ```bash
+    infra/bootstrap_k8s.sh
+    ```
+
+   Asegúrate de que en esta primera ejecución el flag esté así dentro del script:
+   ```bash
+   GENERATE_GHA_KUBECONFIG=true
+   ```
+
+   El script:
+  - Crea el ServiceAccount `gha-deployer` con RBAC mínimo en `default`.
+  - Genera `./kubeconfig-gha`.
+
+2. **Crea/actualiza** el secreto de GitHub con el contenido del kubeconfig:
+  - Repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+  - Name: `KUBECONFIG_GHA`
+  - Value: pega el **contenido completo** de `kubeconfig-gha`.
+>  **BORRA SIEMPRE** el archivo `kubeconfig-gha` luego de copiarlo al secret, para no mostrar su contenido en el respositorio.
+
+
+3. (Opcional) Vuelve a dejar el flag en el script a:
+   ```bash
+   GENERATE_GHA_KUBECONFIG=false
+   ```
+   para ejecuciones normales posteriores.
+
+> Si **borras el Resource Group**, en el siguiente bootstrap vuelve a poner `GENERATE_GHA_KUBECONFIG=true` y **reemplaza** el secreto `KUBECONFIG_GHA` con el nuevo contenido.
+
+---
+
+## Secrets necesarios en GitHub
+
+- `DOCKERHUB_USERNAME` → tu usuario de Docker Hub.
+- `DOCKERHUB_TOKEN` → access token de Docker Hub.
+- `KUBECONFIG_GHA` → contenido del kubeconfig generado para el ServiceAccount.
+
+---
+
+## Variables de entorno del workflow
+
+En `env:` del workflow:
+- `DOCKERHUB_USER` → nombre de usuario de Docker Hub.
+- `REGISTRY` → `docker.io`.
+- `IMAGE_TAG` → `github.sha` (hash de commit).
+- `LATEST_TAG` → `latest`.
+- `K8S_NAMESPACE` → `default`.
