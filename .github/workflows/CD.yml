@@ -6,11 +6,6 @@ on:
       #- main
   workflow_dispatch:
 
-# Avoid overlapping deployments
-concurrency:
-  group: aks-${{ github.ref }}
-  cancel-in-progress: true
-
 env:
   # --- Docker Hub ---
   DOCKERHUB_USER: saac04
