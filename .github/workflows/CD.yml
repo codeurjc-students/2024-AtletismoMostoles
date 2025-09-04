@@ -1,4 +1,4 @@
-name: CD to AKS (Docker Hub)
+name: CD to AKS
 
 on:
   #push:
