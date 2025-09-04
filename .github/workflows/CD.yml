@@ -3,7 +3,7 @@ name: CD to AKS (Docker Hub)
 on:
   push:
     branches:
-        - main  
+      - main
   workflow_dispatch:
 
 # Avoid overlapping deployments
@@ -18,9 +18,7 @@ env:
   IMAGE_TAG: ${{ github.sha }}
   LATEST_TAG: latest
 
-  # --- AKS / Azure ---
-  AZURE_RESOURCE_GROUP: rg-tfg-weu
-  AKS_CLUSTER_NAME: aks-tfg-cluster
+  # --- AKS / Kubernetes ---
   K8S_NAMESPACE: default
 
 jobs:
@@ -41,9 +39,9 @@ jobs:
       - name: Docker Hub login
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}   
-          password: ${{ secrets.DOCKERHUB_TOKEN }}      
-          
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       # FRONTEND
       - name: Build & Push frontend
         uses: docker/build-push-action@v6
@@ -105,23 +103,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 1) Login Azure 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Connecting to the cluster using kubeconfig secret (without Enter ID)
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
 
-      #2) Kubectl context against your AKS
-      - name: Set AKS context
-        uses: azure/aks-set-context@v4
-        with:
-          resource-group: ${{ env.AZURE_RESOURCE_GROUP }}
-          cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+      - name: Write kubeconfig from secret
+        run: |
+          echo "${{ secrets.KUBECONFIG_GHA }}" > $HOME/kubeconfig
+          chmod 600 $HOME/kubeconfig
+          echo "KUBECONFIG=$HOME/kubeconfig" >> $GITHUB_ENV
 
-      # 3) (Optional if your Docker Hub repos are PRIVATE)
-      #    Create/update the pull secret in the chosen namespace and
-      #     remember to reference it in your Deployments: spec.template.spec.imagePullSecrets:
-      #         - name: dockerhub-cred
+      # (Optional) Create/update imagePullSecret if your Docker Hub repos are private
       - name: Upsert imagePullSecret (only if private repos)
         if: ${{ secrets.DOCKERHUB_USERNAME && secrets.DOCKERHUB_TOKEN }}
         run: |
@@ -132,23 +124,23 @@ jobs:
             --docker-password="${{ secrets.DOCKERHUB_TOKEN }}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
-      # 4)Update images on each deployment
+      # Update images on each deployment
       - name: Set images
+        env:
+          NS: ${{ env.K8S_NAMESPACE }}
+          REG: "${{ env.REGISTRY }}/${{ env.DOCKERHUB_USER }}"
+          TAG: ${{ env.IMAGE_TAG }}
         run: |
-          NS="${{ env.K8S_NAMESPACE }}"
-          REG="${{ env.REGISTRY }}/${{ env.DOCKERHUB_USER }}"
-          TAG="${{ env.IMAGE_TAG }}"
+          kubectl -n "$NS" set image deploy/frontend          frontend=${REG}/frontend:${TAG}
+          kubectl -n "$NS" set image deploy/service1-backend  service1-backend=${REG}/service1-backend:${TAG}
+          kubectl -n "$NS" set image deploy/service2-backend  service2-backend=${REG}/service2-result:${TAG}
+          kubectl -n "$NS" set image deploy/service3-backend  service3-backend=${REG}/service3-events:${TAG}
 
-          # OJO: los nombres de contenedor deben coincidir con tus Deployments
-          kubectl -n "$NS" set image deploy/frontend          frontend="${REG}/frontend:${TAG}"
-          kubectl -n "$NS" set image deploy/service1-backend  service1-backend="${REG}/service1-backend:${TAG}"
-          kubectl -n "$NS" set image deploy/service2-backend  service2-backend="${REG}/service2-result:${TAG}"
-          kubectl -n "$NS" set image deploy/service3-backend  service3-backend="${REG}/service3-events:${TAG}"
-
-      # 5) Wait for the rollouts
+      # Wait for rollouts
       - name: Wait for rollouts
+        env:
+          NS: ${{ env.K8S_NAMESPACE }}
         run: |
-          NS="${{ env.K8S_NAMESPACE }}"
           kubectl -n "$NS" rollout status deploy/frontend --timeout=300s
           kubectl -n "$NS" rollout status deploy/service1-backend --timeout=300s
           kubectl -n "$NS" rollout status deploy/service2-backend --timeout=300s
