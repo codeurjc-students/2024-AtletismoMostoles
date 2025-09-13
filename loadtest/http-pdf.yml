@@ -35,14 +35,12 @@ scenarios:
           expect:
             - statusCode: 200
 
-      # Navegación ligera para simular uso real
       - get:
           url: "/api/events?page={{ $randomNumber(0, 3) }}&size=10"
           expect:
             - statusCode: 200
       - think: 1
 
-      # Disparar generación de PDF (ajusta el rango de IDs válidos)
       - post:
           url: "/api/results/pdf/{{ $randomNumber(1, 50) }}"
           # Si tu endpoint devuelve 202 Accepted o 200, puedes ajustar:

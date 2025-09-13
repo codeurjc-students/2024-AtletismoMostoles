@@ -27,7 +27,7 @@ config:
     thresholds:
       - http.codes.5xx: 0
       - errors: 0
-      - http.response_time.p95: 2000   # SLO objetivo para REST
+      - http.response_time.p95: 2000
 
 scenarios:
   - name: step-login-and-browse
