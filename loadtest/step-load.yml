@@ -1,0 +1,48 @@
+config:
+  target: "{{ $env.TARGET_API }}"
+  tls:
+    rejectUnauthorized: false
+  http:
+    timeout: 30
+  phases:
+    - duration: 240
+      arrivalRate: 10
+      name: step10
+    - duration: 240
+      arrivalRate: 20
+      name: step20
+    - duration: 300
+      arrivalRate: 30
+      name: step30
+    - duration: 300
+      arrivalRate: 40
+      name: step40
+  plugins:
+    metrics-by-endpoint: {}
+  processor: "./processors.js"
+  defaults:
+    headers:
+      Content-Type: application/json
+  ensure:
+    thresholds:
+      - http.codes.5xx: 0
+      - errors: 0
+      - http.response_time.p95: 2000   # SLO objetivo para REST
+
+scenarios:
+  - name: step-login-and-browse
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ $env.USERNAME }}"
+            password: "{{ $env.PASSWORD }}"
+          expect:
+            - statusCode: 200
+      - loop:
+          - get:
+              url: "/api/events?page={{ $randomNumber(0,10) }}&size=10"
+              expect:
+                - statusCode: 200
+          - think: 0.5
+        count: 8

@@ -1,0 +1,51 @@
+config:
+  target: "{{ $env.TARGET_API }}"
+  tls:
+    rejectUnauthorized: false
+  phases:
+    - duration: 60
+      arrivalRate: 2
+      name: warmup
+    - duration: 240
+      arrivalRate: 6
+      rampTo: 15
+      name: ramp
+    - duration: 420
+      arrivalRate: 15
+      name: peak
+  plugins:
+    metrics-by-endpoint: {}
+  processor: "./processors.js"
+  defaults:
+    headers:
+      Content-Type: application/json
+  ensure:
+    thresholds:
+      - http.response_time.p95: 4000     # 4 s (PDF es más pesado)
+      - http.codes.200: 1
+
+scenarios:
+  - name: login-browse-generate-pdf
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ $env.USERNAME }}"
+            password: "{{ $env.PASSWORD }}"
+          expect:
+            - statusCode: 200
+
+      # Navegación ligera para simular uso real
+      - get:
+          url: "/api/events?page={{ $randomNumber(0, 3) }}&size=10"
+          expect:
+            - statusCode: 200
+      - think: 1
+
+      # Disparar generación de PDF (ajusta el rango de IDs válidos)
+      - post:
+          url: "/api/results/pdf/{{ $randomNumber(1, 50) }}"
+          # Si tu endpoint devuelve 202 Accepted o 200, puedes ajustar:
+          expect:
+            - statusCode: 200
+      - think: 2

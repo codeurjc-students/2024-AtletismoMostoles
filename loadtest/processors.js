@@ -1,31 +1,47 @@
 'use strict';
 
-// Helper to build athlete IDs with format A001, A002...
-function athleteId(num) {
-    return `A${num.toString().padStart(3, '0')}`;
-}
-
-// Helper to generate random integers between min and max (inclusive)
-function rnd(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-module.exports = {
-    // Executed at the beginning of each scenario iteration
-    seedRandoms: function (context, events, done) {
-        // Athlete IDs: A001 - A005 (String expected in the backend)
-        const athleteNum = rnd(1, 5);
-        context.vars.athleteId = athleteId(athleteNum);
-
-        // Coach IDs: 1001 - 1005 (not used in rest.yml yet)
-        context.vars.coachId = rnd(1001, 1005);
-
-        // Event IDs: adjust the range to match your dataset
-        context.vars.eventId = rnd(1, 6);
-
-        // Page numbers for paginated endpoints
-        context.vars.page = rnd(0, 20);
-
-        return done();
+// Añade Authorization: Bearer <jwt> a todas las peticiones si hay token
+function beforeRequest(req, context, ee, next) {
+    if (context.vars && context.vars.jwt) {
+        req.headers = req.headers || {};
+        req.headers.Authorization = `Bearer ${context.vars.jwt}`;
     }
-};
+    return next();
+}
+
+// Captura robusta del token tras el login (soporta varias claves/estructuras)
+function afterResponse(req, res, context, ee, next) {
+    try {
+        // Cuando sea la llamada de login
+        if (req && typeof req.url === 'string' && req.url.includes('/api/auth/login')) {
+            const body = JSON.parse(res.body || '{}');
+
+            // Candidatas típicas para el JWT
+            const candidates = [
+                body.token,
+                body.jwt,
+                body.accessToken,
+                body.access_token,
+                body.id_token,
+                body?.data?.token,
+                body?.data?.jwt,
+                body?.data?.accessToken
+            ].filter(Boolean);
+
+            if (candidates.length > 0) {
+                context.vars.jwt = candidates[0];
+            } else {
+                // Ayuda de depuración: muestra las claves disponibles
+                // (no rompe el test; sólo informa en consola)
+                const keys = Object.keys(body || {});
+                console.log('[login] No token key found. Body keys:', keys);
+            }
+        }
+    } catch (e) {
+        // Silencioso para no romper el test
+        // console.log('afterResponse error:', e);
+    }
+    return next();
+}
+
+module.exports = { beforeRequest, afterResponse };

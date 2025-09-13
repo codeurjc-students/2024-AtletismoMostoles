@@ -1,0 +1,39 @@
+config:
+  target: "{{ $env.TARGET_API }}"
+  tls:
+    rejectUnauthorized: false
+  http:
+    timeout: 30
+  phases:
+    - duration: 2700     # 45 minutos
+      arrivalRate: 20    # súbelo/bájalo según el umbral estable observado
+      name: steady
+  plugins:
+    metrics-by-endpoint: {}
+  processor: "./processors.js"
+  defaults:
+    headers:
+      Content-Type: application/json
+  ensure:
+    thresholds:
+      - http.codes.5xx: 0
+      - errors: 0
+      - http.response_time.p95: 2000
+
+scenarios:
+  - name: soak-login-and-browse
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ $env.USERNAME }}"
+            password: "{{ $env.PASSWORD }}"
+          expect:
+            - statusCode: 200
+      - loop:
+          - get:
+              url: "/api/events?page={{ $randomNumber(0,10) }}&size=10"
+              expect:
+                - statusCode: 200
+          - think: 0.7
+        count: 12
