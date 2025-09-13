@@ -1,15 +1,40 @@
 'use strict';
 
-// Simple random int helper
-function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-
-module.exports = {
-    // Called at the start of each scenario iteration
-    seedRandoms: function (context, events, done) {
-        // Tune ranges to match your dataset. If IDs don't exist, endpoints still return 200 (empty page).
-        context.vars.athleteId = String(rnd(1, 5000));  // controller expects String
-        context.vars.eventId = rnd(1, 200);             // controller expects Long
-        context.vars.page = rnd(0, 50);
-        return done();
+function beforeRequest(req, context, ee, next) {
+    if (context.vars && context.vars.jwt) {
+        req.headers = req.headers || {};
+        req.headers.Authorization = `Bearer ${context.vars.jwt}`;
     }
-};
+    return next();
+}
+
+function afterResponse(req, res, context, ee, next) {
+    try {
+        if (req && typeof req.url === 'string' && req.url.includes('/api/auth/login')) {
+            const body = JSON.parse(res.body || '{}');
+
+            const candidates = [
+                body.token,
+                body.jwt,
+                body.accessToken,
+                body.access_token,
+                body.id_token,
+                body?.data?.token,
+                body?.data?.jwt,
+                body?.data?.accessToken
+            ].filter(Boolean);
+
+            if (candidates.length > 0) {
+                context.vars.jwt = candidates[0];
+            } else {
+                const keys = Object.keys(body || {});
+                console.log('[login] No token key found. Body keys:', keys);
+            }
+        }
+    } catch (e) {
+       // console.log('afterResponse error:', e);
+    }
+    return next();
+}
+
+module.exports = { beforeRequest, afterResponse };

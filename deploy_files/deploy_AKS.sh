@@ -56,7 +56,7 @@ S1_SEC="${K8S_DIR}/service1/secret.yaml"
 S1_DEP="${K8S_DIR}/service1/deployment.yaml"
 S1_SVC="${K8S_DIR}/service1/service.yaml"
 S1_HPA="${K8S_DIR}/service1/hpa.yaml"
-S1_PDB="${K8S_DIR}/service1/pdb.yaml}"
+S1_PDB="${K8S_DIR}/service1/pdb.yaml"
 
 S2_CM="${K8S_DIR}/service2/configmap.yaml"
 S2_SEC="${K8S_DIR}/service2/secret.yaml"
@@ -153,6 +153,102 @@ fi
 
 log "Fetching AKS credentials"
 az aks get-credentials -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --overwrite-existing
+
+############################################
+#   (ONE-TIME) SA + RBAC + kubeconfig CI   #
+############################################
+GENERATE_GHA_KUBECONFIG=true
+
+if [[ "${GENERATE_GHA_KUBECONFIG}" == true ]]; then
+  log "Creating ServiceAccount + RBAC for CI (namespace default)"
+  cat <<'YAML' | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gha-deployer
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gha-deployer-role
+  namespace: default
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments","replicasets"]
+    verbs: ["get","list","watch","patch","update"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get","list","watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get","create","patch","update"]  # necesario si creas/actualizas imagePullSecret desde CI
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gha-deployer-binding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: gha-deployer
+    namespace: default
+roleRef:
+  kind: Role
+  name: gha-deployer-role
+  apiGroup: rbac.authorization.k8s.io
+YAML
+
+  # Persistent token bound to SA (K8s >=1.24 no longer creates it automatically)
+  cat <<'YAML' | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gha-deployer-token
+  namespace: default
+  annotations:
+    kubernetes.io/service-account.name: gha-deployer
+type: kubernetes.io/service-account-token
+YAML
+
+  log "Waiting for SA token to be populated…"
+  for i in {1..20}; do
+    kubectl -n default get secret gha-deployer-token -o jsonpath='{.data.token}' 2>/dev/null | grep -q .
+    [[ $? -eq 0 ]] && break
+    sleep 2
+  done
+
+  SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
+  CA_CRT=$(kubectl -n default get secret gha-deployer-token -o jsonpath='{.data.ca\.crt}')
+  TOKEN=$(kubectl -n default get secret gha-deployer-token -o jsonpath='{.data.token}' | base64 -d)
+  NAMESPACE=$(kubectl -n default get secret gha-deployer-token -o jsonpath='{.data.namespace}' | base64 -d 2>/dev/null || echo "default")
+
+  cat > kubeconfig-gha <<EOF
+apiVersion: v1
+kind: Config
+clusters:
+- name: aks
+  cluster:
+    certificate-authority-data: ${CA_CRT}
+    server: ${SERVER}
+contexts:
+- name: gha
+  context:
+    cluster: aks
+    namespace: ${NAMESPACE}
+    user: gha-deployer
+current-context: gha
+users:
+- name: gha-deployer
+  user:
+    token: ${TOKEN}
+EOF
+
+  echo
+  echo "Kubeconfig generado en ./kubeconfig-gha"
+  echo "👉 Copia su CONTENIDO a un secret del repo GitHub llamado: KUBECONFIG_GHA"
+  echo "   (no subas este fichero al repo)"
+fi
 
 ############################################
 #   STATIC PIP for Ingress in NODE RG      #

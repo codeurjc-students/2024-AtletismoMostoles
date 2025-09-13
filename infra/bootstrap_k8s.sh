@@ -2,24 +2,24 @@
 set -euo pipefail
 
 ############################################
-#               CONFIG                     #
+#                 CONFIG                   #
 ############################################
 SUBSCRIPTION_ID="0bf7e759-f3b7-4c7f-a702-bb1121cdb095"
 LOCATION="westeurope"
 RESOURCE_GROUP="rg-tfg-weu"
 AKS_NAME="aks-tfg-cluster"
 
-# ===== TLS / cert-manager =====
+# TLS / cert-manager
 INSTALL_CERT_MANAGER=true
 LETSENCRYPT_EMAIL="s.aguiar1.2020@alumnos.urjc.es"
 CLUSTER_ISSUER_NAME="letsencrypt-prod"
 CERT_MANAGER_MANIFEST="https://github.com/cert-manager/cert-manager/releases/download/v1.14.2/cert-manager.yaml"
 
-# ===== Ingress NGINX =====
+# Ingress NGINX
 INSTALL_INGRESS_NGINX=true
 INGRESS_PIP_NAME="pip-ingress-tfg"   # Static PIP in the AKS node RG
 
-# ===== Docker images =====
+# Docker images
 USE_DOCKER_HUB=true
 DOCKER_HUB_USER="saac04"
 IMG_FRONTEND="${DOCKER_HUB_USER}/frontend:latest"
@@ -27,7 +27,7 @@ IMG_SERVICE1="${DOCKER_HUB_USER}/service1-backend:latest"
 IMG_SERVICE2="${DOCKER_HUB_USER}/service2-result:latest"
 IMG_SERVICE3="${DOCKER_HUB_USER}/service3-events:latest"
 
-# ===== K8s manifests =====
+# K8s manifests
 K8S_DIR="k8s"
 
 FRONTEND_DEP="${K8S_DIR}/frontend/deployment.yaml"
@@ -61,8 +61,11 @@ S3_PDB="${K8S_DIR}/service3/pdb.yaml"
 RABBITMQ_OPERATOR_URL="https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml"
 RABBITMQ_CLUSTER_YAML="${K8S_DIR}/rabbitmq/rabbitmq-cluster.yaml"
 
+# One-time kubeconfig generation for CI (set to true on first run or after RG/cluster recreation)
+GENERATE_GHA_KUBECONFIG=true
+
 ############################################
-#         Helper functions (logs)          #
+#            Helper (colored logs)         #
 ############################################
 log()  { echo -e "\n\033[1;36m[INFO]\033[0m $*"; }
 warn() { echo -e "\n\033[1;33m[WARN]\033[0m $*"; }
@@ -86,13 +89,13 @@ fi
 log "Fetching AKS credentials"
 az aks get-credentials -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --overwrite-existing
 
-# Node RG (managed RG where NIC/NSG/PIP live)
+# Managed node RG (NIC/NSG/PIP live here)
 NODE_RG=$(az aks show -g "${RESOURCE_GROUP}" -n "${AKS_NAME}" --query nodeResourceGroup -o tsv)
 
 ############################################
 #   Static Public IP for Ingress (node RG) #
 ############################################
-# Purpose: Keep a fixed IP for ingress-nginx Service across redeploys
+# Keep a fixed IP for ingress-nginx Service across redeploys
 if ! az network public-ip show -g "${NODE_RG}" -n "${INGRESS_PIP_NAME}" 1>/dev/null 2>&1; then
   log "Creating static Public IP ${INGRESS_PIP_NAME} in ${NODE_RG}"
   az network public-ip create -g "${NODE_RG}" -n "${INGRESS_PIP_NAME}" --sku Standard --allocation-method static --version IPv4 1>/dev/null
@@ -101,10 +104,106 @@ PUBIP=$(az network public-ip show -g "${NODE_RG}" -n "${INGRESS_PIP_NAME}" --que
 export PUBIP
 
 ############################################
+#   (ONE-TIME) SA + RBAC + kubeconfig CI   #
+############################################
+if [[ "${GENERATE_GHA_KUBECONFIG}" == true ]]; then
+  log "Creating ServiceAccount + RBAC for CI (namespace default)"
+
+  # SA + Role + RoleBinding (idempotent)
+  cat <<'YAML' | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gha-deployer
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gha-deployer-role
+  namespace: default
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments","replicasets"]
+    verbs: ["get","list","watch","patch","update"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get","list","watch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get","create","patch","update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gha-deployer-binding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: gha-deployer
+    namespace: default
+roleRef:
+  kind: Role
+  name: gha-deployer-role
+  apiGroup: rbac.authorization.k8s.io
+YAML
+
+  # Long-lived token bound to the SA
+  cat <<'YAML' | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gha-deployer-token
+  namespace: default
+  annotations:
+    kubernetes.io/service-account.name: gha-deployer
+type: kubernetes.io/service-account-token
+YAML
+
+  log "Waiting for SA token to be populated..."
+  for i in {1..20}; do
+    kubectl -n default get secret gha-deployer-token -o jsonpath='{.data.token}' 2>/dev/null | grep -q .
+    [[ $? -eq 0 ]] && break
+    sleep 2
+  done
+
+  SERVER=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
+  CA_CRT=$(kubectl -n default get secret gha-deployer-token -o jsonpath='{.data.ca\.crt}')
+  TOKEN=$(kubectl -n default get secret gha-deployer-token -o jsonpath='{.data.token}' | base64 -d)
+  NAMESPACE=$(kubectl -n default get secret gha-deployer-token -o jsonpath='{.data.namespace}' | base64 -d 2>/dev/null || echo "default")
+
+  cat > kubeconfig-gha <<EOF
+apiVersion: v1
+kind: Config
+clusters:
+- name: aks
+  cluster:
+    certificate-authority-data: ${CA_CRT}
+    server: ${SERVER}
+contexts:
+- name: gha
+  context:
+    cluster: aks
+    namespace: ${NAMESPACE}
+    user: gha-deployer
+current-context: gha
+users:
+- name: gha-deployer
+  user:
+    token: ${TOKEN}
+EOF
+
+  echo
+  echo "[INFO] Generated ./kubeconfig-gha"
+  echo "[ACTION] Copy its FULL CONTENT into GitHub Secret: KUBECONFIG_GHA"
+  echo "[TIP] Set GENERATE_GHA_KUBECONFIG=false after the first run."
+fi
+
+############################################
 #        Storage secret for service2       #
 ############################################
-# We can (re)create the connection string secret on each run to keep it fresh
-STG_ACCOUNT="tfgpdfs"   # must match your Bicep param
+# Keep the connection string secret fresh
+STG_ACCOUNT="tfgpdfs"
 log "Creating/Updating K8s secret 'azure-storage-conn' with current connection string"
 CONN_STR=$(az storage account show-connection-string -n "${STG_ACCOUNT}" -g "${RESOURCE_GROUP}" --query connectionString -o tsv)
 kubectl create secret generic azure-storage-conn \
@@ -136,15 +235,12 @@ if [[ "${INSTALL_INGRESS_NGINX}" == true ]]; then
 
   kubectl -n ingress-nginx patch svc ingress-nginx-controller --type='merge' -p "{\"spec\":{\"loadBalancerIP\":\"${PUBIP}\"}}"
 
-  # Use TCP probe (avoid path issues in Windows Git Bash)
   kubectl -n ingress-nginx annotate svc ingress-nginx-controller \
     service.beta.kubernetes.io/azure-load-balancer-health-probe-protocol="tcp" --overwrite
 
-  # Remove any wrong request-path annotation if present
   kubectl -n ingress-nginx annotate svc ingress-nginx-controller \
     service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path- || true
 
-  # Wait the Service to publish our exact IP
   log "Waiting for ingress external IP (${PUBIP})..."
   for i in {1..40}; do
     EXT_IP=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)
@@ -161,7 +257,7 @@ if [[ "${INSTALL_INGRESS_NGINX}" == true ]]; then
   if [[ -n "${NSG_ID}" && "${NSG_ID}" != "null" ]]; then
     NSG_NAME=$(basename "${NSG_ID}")
     NSG_RG=$(echo "${NSG_ID}" | awk -F/ '{for(i=1;i<=NF;i++) if($i=="resourceGroups"){print $(i+1);break}}')
-    log "Ensuring NSG rule on ${NSG_NAME} (${NSG_RG}) for NodePorts 30000-32767"
+    log "Ensuring NSG rule AzureLoadBalancer -> NodePorts 30000-32767"
     az network nsg rule create -g "${NSG_RG}" --nsg-name "${NSG_NAME}" \
       -n aks_allow_lb_to_nodeports --priority 300 --access Allow --protocol Tcp \
       --direction Inbound --source-address-prefixes AzureLoadBalancer \
@@ -297,7 +393,7 @@ kubectl rollout status deploy/service2-backend --timeout=180s || true
 kubectl rollout status deploy/service3-backend --timeout=180s || true
 
 ############################################
-#                Summary                   #
+#                 Summary                  #
 ############################################
 log "Bootstrap completed."
 echo "-------------------------------------------"

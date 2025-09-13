@@ -1,0 +1,55 @@
+config:
+  target: "{{ $env.TARGET_API }}"
+  tls:
+    rejectUnauthorized: false
+  phases:
+    - duration: 60
+      arrivalRate: 2
+      name: warmup
+    - duration: 180
+      arrivalRate: 8
+      rampTo: 25
+      name: ramp
+    - duration: 300
+      arrivalRate: 25
+      name: peak
+  plugins:
+    metrics-by-endpoint: {}
+  processor: "./processors.js"
+  defaults:
+    headers:
+      Content-Type: application/json
+  ensure:
+    thresholds:
+      - http.response_time.p95: 2000
+      - http.requests: 1
+      - http.codes.200: 1
+
+scenarios:
+  - name: login-and-browse
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            username: "{{ $env.USERNAME }}"
+            password: "{{ $env.PASSWORD }}"
+          expect:
+            - statusCode: 200
+
+      - get:
+          url: "/api/events?page={{ $randomNumber(0, 5) }}&size=10"
+          expect:
+            - statusCode: 200
+      - think: 1
+
+      - get:
+          url: "/api/events?organizedByClub=true&page={{ $randomNumber(0, 3) }}&size=10"
+          expect:
+            - statusCode: 200
+      - think: 1
+
+      - get:
+          url: "/api/events?page=0&size=1"
+          expect:
+            - statusCode: 200
+      - think: 1
