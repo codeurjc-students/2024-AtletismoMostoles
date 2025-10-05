@@ -1,9 +1,9 @@
-# Documentación del Proyecto TFG WebApp
+# Documentación del Proyecto Asociación de Atletismo Móstoles Redesigned 
 
 # Fase 1
 
 ## 📌 Introducción
-TFG WebApp es una aplicación desarrollada en Angular y Spring Boot para la gestión de eventos deportivos. La aplicación está contenida en Docker y utiliza MySQL como base de datos.
+Asociación de Atletismo Móstoles Redesigned es una aplicación desarrollada en Angular y Spring Boot para la gestión de eventos deportivos. La aplicación está contenida en Docker y utiliza MySQL como base de datos.
 
 ## 📷 Capturas de Pantalla
 Se incluyen capturas de pantalla de las principales páginas de la aplicación, con una breve descripción de cada una.
